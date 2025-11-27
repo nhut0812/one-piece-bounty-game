@@ -56,10 +56,10 @@ async function syncToFirebase() {
       pirates: pirates,
       rankImages: rankImages,
       lastUpdate: Date.now(),
-      userId: userId
+      lastUserId: userId
     };
     
-    await database.ref('users/' + userId + '/data').set(data);
+    await database.ref('sharedData').set(data);
     console.log('☁️ Synced to Firebase');
     showSyncNotification('✅ Đã đồng bộ lên cloud');
   } catch (error) {
@@ -76,7 +76,7 @@ async function loadFromFirebase() {
   
   try {
     const userId = getUserId();
-    const snapshot = await database.ref('users/' + userId + '/data').once('value');
+    const snapshot = await database.ref('sharedData').once('value');
     const data = snapshot.val();
     
     if (data && data.pirates) {
@@ -106,18 +106,23 @@ function listenToFirebase() {
   if (!database || !syncEnabled) return;
   
   const userId = getUserId();
-  database.ref('users/' + userId + '/data').on('value', (snapshot) => {
+  database.ref('sharedData').on('value', (snapshot) => {
     if (isSyncing) return; // Skip nếu đang sync
     
     const data = snapshot.val();
     if (data && data.pirates) {
+      // Chỉ update nếu là từ device khác
+      if (data.lastUserId === userId) return;
+      
       const localLastUpdate = localStorage.getItem('lastLocalUpdate') || 0;
       const cloudLastUpdate = data.lastUpdate || 0;
       
       if (cloudLastUpdate > localLastUpdate) {
         pirates = data.pirates;
         rankImages = data.rankImages || {};
-        saveToLocalStorage();
+        localStorage.setItem('lastLocalUpdate', cloudLastUpdate);
+        localStorage.setItem('onePiecePirates', JSON.stringify(pirates));
+        localStorage.setItem('onePieceRankImages', JSON.stringify(rankImages));
         renderPirates();
         console.log('🔄 Realtime update from Firebase');
         showSyncNotification('🔄 Dữ liệu đã cập nhật');
@@ -138,13 +143,21 @@ function toggleFirebaseSync() {
       return;
     }
     
-    loadFromFirebase().then(() => {
+    loadFromFirebase().then((loaded) => {
+      if (!loaded) {
+        // Nếu cloud chưa có dữ liệu, upload dữ liệu local lên
+        console.log('📤 Cloud chưa có dữ liệu, upload local lên...');
+        syncToFirebase();
+      }
       listenToFirebase();
-      syncToFirebase();
     });
     
     showSyncNotification('✅ Đã bật đồng bộ cloud');
   } else {
+    // Tắt listener khi disable sync
+    if (database) {
+      database.ref('sharedData').off();
+    }
     showSyncNotification('❌ Đã tắt đồng bộ cloud');
   }
   
