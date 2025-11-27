@@ -108,8 +108,8 @@ function addBulkPirates() {
   
   setTimeout(() => {
     notification.classList.remove('show');
-    setTimeout(() => notification.remove(), 300);
-  }, 2000);
+    setTimeout(() => notification.remove(), 500);
+  }, 5000);
 }
 
 // Preview avatar khi upload

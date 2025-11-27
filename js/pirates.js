@@ -285,8 +285,8 @@ function showRankUpEffect(name, rankName) {
   
   setTimeout(() => {
     notification.classList.remove('show');
-    setTimeout(() => notification.remove(), 300);
-  }, 3000);
+    setTimeout(() => notification.remove(), 500);
+  }, 5000);
 }
 
 // Xóa hải tặc
