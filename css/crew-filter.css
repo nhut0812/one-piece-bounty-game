@@ -1,0 +1,87 @@
+/* Crew Filter */
+.crew-filter {
+  background: linear-gradient(135deg, rgba(44, 62, 80, 0.5) 0%, rgba(52, 73, 94, 0.5) 100%);
+  padding: 18px;
+  border-radius: 18px;
+  margin-bottom: 25px;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  flex-wrap: wrap;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(231, 76, 60, 0.4);
+  backdrop-filter: blur(10px);
+}
+
+.crew-tab {
+  padding: 11px 20px;
+  border: 2px solid rgba(52, 73, 94, 0.6);
+  background: rgba(44, 62, 80, 0.7);
+  border-radius: 30px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 800;
+  color: #ecf0f1;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  font-size: 13px;
+  letter-spacing: 0.8px;
+  animation: fadeInUp 0.5s ease-out;
+  backdrop-filter: blur(5px);
+}
+
+.crew-tab:hover {
+  border-color: #e74c3c;
+  background: rgba(231, 76, 60, 0.3);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+.crew-tab.active {
+  background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+  color: white;
+  border-color: #e74c3c;
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.7), inset 0 2px 10px rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.crew-tab:nth-child(1) { animation-delay: 0s; }
+.crew-tab:nth-child(2) { animation-delay: 0.03s; }
+.crew-tab:nth-child(3) { animation-delay: 0.06s; }
+.crew-tab:nth-child(4) { animation-delay: 0.09s; }
+.crew-tab:nth-child(5) { animation-delay: 0.12s; }
+.crew-tab:nth-child(6) { animation-delay: 0.15s; }
+.crew-tab:nth-child(7) { animation-delay: 0.18s; }
+.crew-tab:nth-child(8) { animation-delay: 0.21s; }
+.crew-tab:nth-child(9) { animation-delay: 0.24s; }
+.crew-tab:nth-child(10) { animation-delay: 0.27s; }
+.crew-tab:nth-child(11) { animation-delay: 0.3s; }
+.crew-tab:nth-child(12) { animation-delay: 0.33s; }
+.crew-tab:nth-child(13) { animation-delay: 0.36s; }
+.crew-tab:nth-child(14) { animation-delay: 0.39s; }
+.crew-tab:nth-child(15) { animation-delay: 0.42s; }
+.crew-tab:nth-child(16) { animation-delay: 0.45s; }
+.crew-tab:nth-child(17) { animation-delay: 0.48s; }
+.crew-tab:nth-child(18) { animation-delay: 0.51s; }
+.crew-tab:nth-child(19) { animation-delay: 0.54s; }
+.crew-tab:nth-child(20) { animation-delay: 0.57s; }
+
+/* Scrollbar cho crew filter */
+.crew-filter::-webkit-scrollbar {
+  height: 8px;
+}
+
+.crew-filter::-webkit-scrollbar-track {
+  background: rgba(44, 62, 80, 0.5);
+  border-radius: 10px;
+}
+
+.crew-filter::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+  border-radius: 10px;
+}
+
+.crew-filter::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #e74c3c, #e67e22);
+}

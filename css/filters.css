@@ -1,0 +1,67 @@
+/* One Piece Filter Tabs */
+.filter-tabs {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 20px;
+  margin-bottom: 35px;
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  flex-wrap: wrap;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  border: 3px solid rgba(243, 156, 18, 0.3);
+}
+
+.filter-tab {
+  padding: 12px 20px;
+  border: 3px solid #34495e;
+  background: rgba(52, 73, 94, 0.8);
+  border-radius: 30px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 900;
+  color: #ecf0f1;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  animation: fadeInUp 0.5s ease-out;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.filter-tab:hover {
+  border-color: #f39c12;
+  background: rgba(243, 156, 18, 0.3);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+}
+
+.filter-tab.active {
+  background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
+  color: white;
+  border-color: #f1c40f;
+  box-shadow: 0 6px 20px rgba(243, 156, 18, 0.7), inset 0 2px 10px rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.filter-tab:nth-child(1) { animation-delay: 0.05s; }
+.filter-tab:nth-child(2) { animation-delay: 0.1s; }
+.filter-tab:nth-child(3) { animation-delay: 0.15s; }
+.filter-tab:nth-child(4) { animation-delay: 0.2s; }
+.filter-tab:nth-child(5) { animation-delay: 0.25s; }
+.filter-tab:nth-child(6) { animation-delay: 0.3s; }
+.filter-tab:nth-child(7) { animation-delay: 0.35s; }
+.filter-tab:nth-child(8) { animation-delay: 0.4s; }
+.filter-tab:nth-child(9) { animation-delay: 0.45s; }
+.filter-tab:nth-child(10) { animation-delay: 0.5s; }
+.filter-tab:nth-child(11) { animation-delay: 0.55s; }
+.filter-tab:nth-child(12) { animation-delay: 0.6s; }
+.filter-tab:nth-child(13) { animation-delay: 0.65s; }
+.filter-tab:nth-child(14) { animation-delay: 0.7s; }
+.filter-tab:nth-child(15) { animation-delay: 0.75s; }
+.filter-tab:nth-child(16) { animation-delay: 0.8s; }
+.filter-tab:nth-child(9) { animation-delay: 0.45s; }
+.filter-tab:nth-child(10) { animation-delay: 0.5s; }
+.filter-tab:nth-child(11) { animation-delay: 0.55s; }
+.filter-tab:nth-child(8) { animation-delay: 0.4s; }

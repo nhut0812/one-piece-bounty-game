@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚓ One Piece - Hệ thống Bounty Hunter</title>
+  
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/crew-filter.css">
+  <link rel="stylesheet" href="css/filters.css">
+  <link rel="stylesheet" href="css/cards.css">
+  <link rel="stylesheet" href="css/modal.css">
+  <link rel="stylesheet" href="css/wanted.css">
+  <link rel="stylesheet" href="css/rank-settings.css">
+  <link rel="stylesheet" href="css/effects.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <h1>⚓ ONE PIECE BOUNTY</h1>
+      </div>
+      <div class="header-buttons">
+        <button class="header-btn info" onclick="openModal('settingsModal')">🏴‍☠️ Cài Đặt Cấp Độ</button>
+        <button class="header-btn success" onclick="openModal('addPirateModal')">👤 Thêm Hải Tặc</button>
+        <button class="header-btn primary" onclick="showTopPirate()">🎯 Truy Nã Gắt</button>
+      </div>
+      <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+    </header>
+
+    <!-- Data Management Bar -->
+    <div class="data-management">
+      <button class="data-btn export" onclick="exportData()">
+        <span class="data-icon">💾</span>
+        <span class="data-text">Xuất Dữ Liệu</span>
+      </button>
+      <button class="data-btn import" onclick="document.getElementById('importFile').click()">
+        <span class="data-icon">📥</span>
+        <span class="data-text">Nhập Dữ Liệu</span>
+      </button>
+    </div>
+
+    <!-- Crew Filter -->
+    <div class="crew-filter">
+      <button class="crew-tab active" data-crew="all" onclick="filterByCrew('all')">🌊 TẤT CẢ</button>
+      <button class="crew-tab" data-crew="Straw Hat Pirates" onclick="filterByCrew('Straw Hat Pirates')">🏴‍☠️ Mũ Rơm</button>
+      <button class="crew-tab" data-crew="Roger Pirates" onclick="filterByCrew('Roger Pirates')">👑 Roger</button>
+      <button class="crew-tab" data-crew="Whitebeard Pirates" onclick="filterByCrew('Whitebeard Pirates')">⚔️ Râu Trắng</button>
+      <button class="crew-tab" data-crew="Blackbeard Pirates" onclick="filterByCrew('Blackbeard Pirates')">💀 Râu Đen</button>
+      <button class="crew-tab" data-crew="Heart Pirates" onclick="filterByCrew('Heart Pirates')">❤️ Heart</button>
+      <button class="crew-tab" data-crew="Beast Pirates" onclick="filterByCrew('Beast Pirates')">🐉 Bách Thú</button>
+      <button class="crew-tab" data-crew="Big Mom Pirates" onclick="filterByCrew('Big Mom Pirates')">🍰 Big Mom</button>
+      <button class="crew-tab" data-crew="Red Hair Pirates" onclick="filterByCrew('Red Hair Pirates')">💥 Tóc Đỏ</button>
+      <button class="crew-tab" data-crew="Kid Pirates" onclick="filterByCrew('Kid Pirates')">🧲 Kid</button>
+      <button class="crew-tab" data-crew="Kuja Pirates" onclick="filterByCrew('Kuja Pirates')">🐍 Kuja</button>
+      <button class="crew-tab" data-crew="Donquixote Pirates" onclick="filterByCrew('Donquixote Pirates')">🦩 Doflamingo</button>
+      <button class="crew-tab" data-crew="Baroque Works" onclick="filterByCrew('Baroque Works')">🎭 Baroque</button>
+      <button class="crew-tab" data-crew="Arlong Pirates" onclick="filterByCrew('Arlong Pirates')">🦈 Arlong</button>
+      <button class="crew-tab" data-crew="Buggy Pirates" onclick="filterByCrew('Buggy Pirates')">🤡 Buggy</button>
+      <button class="crew-tab" data-crew="Krieg Pirates" onclick="filterByCrew('Krieg Pirates')">⚙️ Krieg</button>
+      <button class="crew-tab" data-crew="Hawkins Pirates" onclick="filterByCrew('Hawkins Pirates')">🎴 Hawkins</button>
+      <button class="crew-tab" data-crew="Bonney Pirates" onclick="filterByCrew('Bonney Pirates')">🍕 Bonney</button>
+      <button class="crew-tab" data-crew="Drake Pirates" onclick="filterByCrew('Drake Pirates')">🦖 Drake</button>
+      <button class="crew-tab" data-crew="No Crew" onclick="filterByCrew('No Crew')">⚖️ Độc Lập</button>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all">TẤT CẢ</button>
+      <button class="filter-tab" data-filter="0-29">0-29฿: Tân Binh</button>
+      <button class="filter-tab" data-filter="30-99">30-99฿: Hải Tặc</button>
+      <button class="filter-tab" data-filter="100-299">100-299฿: Tân Tinh</button>
+      <button class="filter-tab" data-filter="300-499">300-499฿: Siêu Tân Tinh</button>
+      <button class="filter-tab" data-filter="500-799">500-799฿: Thất Vũ Hải</button>
+      <button class="filter-tab" data-filter="800-999">800-999฿: Đại Tướng</button>
+      <button class="filter-tab" data-filter="1000-2499">1K-2.4K฿: Tư Lệnh</button>
+      <button class="filter-tab" data-filter="2500-3999">2.5K-3.9K฿: Đô Đốc</button>
+      <button class="filter-tab" data-filter="4000-5999">4K-5.9K฿: Tứ Hoàng</button>
+      <button class="filter-tab" data-filter="6000-9999">6K-9.9K฿: Đế Vương</button>
+      <button class="filter-tab" data-filter="10000-19999">10K-19K฿: Truyền Thuyết</button>
+      <button class="filter-tab" data-filter="20000-39999">20K-39K฿: Huyền Thoại</button>
+      <button class="filter-tab" data-filter="40000-69999">40K-69K฿: Thần Thoại</button>
+      <button class="filter-tab" data-filter="70000-99999">70K-99K฿: Bán Thần</button>
+      <button class="filter-tab" data-filter="100000+">100K+฿: Chí Tôn</button>
+    </div>
+
+    <!-- Pirates Grid -->
+    <main class="grid" id="pirateGrid">
+      <!-- Thẻ hải tặc sẽ được JS chèn vào đây -->
+    </main>
+
+    <!-- Footer -->
+    <div class="footer">
+      ⚓ Hệ thống truy nã Hải Tặc - One Piece Bounty System
+    </div>
+  </div>
+
+  <!-- Modal Thêm Hải Tặc -->
+  <div id="addPirateModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('addPirateModal')">&times;</span>
+      <h2>🏴‍☠️ Thêm Hải Tặc Mới</h2>
+      
+      <!-- Tab chuyển đổi -->
+      <div class="add-tabs">
+        <button class="add-tab active" onclick="switchAddMode('single')">
+          <span style="font-size: 20px;">👤</span><br>
+          <span style="font-size: 14px;">Thêm 1</span>
+        </button>
+        <button class="add-tab" onclick="switchAddMode('bulk')">
+          <span style="font-size: 20px;">👥</span><br>
+          <span style="font-size: 14px;">Thêm Nhiều</span>
+        </button>
+      </div>
+      
+      <!-- Form thêm đơn -->
+      <form id="singleAddForm" onsubmit="addPirate(event)" class="add-form">
+        <div class="form-group">
+          <label class="form-label">
+            <span style="font-size: 18px;">🏴‍☠️</span> Tên Hải Tặc
+          </label>
+          <input type="text" id="pirateName" placeholder="Nhập tên hải tặc..." required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">
+            <span style="font-size: 18px;">⚓</span> Băng Nhóm
+          </label>
+          <select id="pirateCrew" required>
+            <option value="">-- Chọn băng nhóm --</option>
+            <option value="Straw Hat Pirates">🏴‍☠️ Straw Hat Pirates (Mũ Rơm)</option>
+            <option value="Roger Pirates">👑 Roger Pirates (Roger)</option>
+            <option value="Whitebeard Pirates">⚔️ Whitebeard Pirates (Râu Trắng)</option>
+            <option value="Blackbeard Pirates">💀 Blackbeard Pirates (Râu Đen)</option>
+            <option value="Heart Pirates">❤️ Heart Pirates (Trái Tim)</option>
+            <option value="Beast Pirates">🐉 Beast Pirates (Bách Thú)</option>
+            <option value="Big Mom Pirates">🍰 Big Mom Pirates (Big Mom)</option>
+            <option value="Red Hair Pirates">💥 Red Hair Pirates (Tóc Đỏ)</option>
+            <option value="Kid Pirates">🧲 Kid Pirates (Eustass Kid)</option>
+            <option value="Kuja Pirates">🐍 Kuja Pirates (Kuja)</option>
+            <option value="Donquixote Pirates">🦩 Donquixote Pirates (Doflamingo)</option>
+            <option value="Baroque Works">🎭 Baroque Works (Crocodile)</option>
+            <option value="Arlong Pirates">🦈 Arlong Pirates (Arlong)</option>
+            <option value="Buggy Pirates">🤡 Buggy Pirates (Buggy)</option>
+            <option value="Krieg Pirates">⚙️ Krieg Pirates (Don Krieg)</option>
+            <option value="Hawkins Pirates">🎴 Hawkins Pirates (Basil Hawkins)</option>
+            <option value="Bonney Pirates">🍕 Bonney Pirates (Jewelry Bonney)</option>
+            <option value="Drake Pirates">🦖 Drake Pirates (X Drake)</option>
+            <option value="No Crew">⚖️ No Crew (Độc Lập)</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">
+            <span style="font-size: 18px;">📸</span> Ảnh Đại Diện
+          </label>
+          <div class="image-preview" id="avatarPreview" onclick="document.getElementById('avatarUpload').click()">
+            <div style="text-align: center;">
+              <div style="font-size: 60px; margin-bottom: 8px;">📷</div>
+              <div style="font-size: 13px; color: #95a5a6; font-weight: 600;">Click để chọn ảnh</div>
+            </div>
+          </div>
+          <input type="file" id="avatarUpload" accept="image/*" onchange="previewAvatar(event)" style="display: none;">
+        </div>
+        
+        <button type="submit" class="submit-btn">
+          <span style="font-size: 20px;">🏴‍☠️</span> Thêm Vào Băng
+        </button>
+      </form>
+      
+      <!-- Form thêm nhiều -->
+      <div id="bulkAddForm" class="add-form" style="display: none;">
+        <div class="info-box">
+          <div class="info-icon">💡</div>
+          <div class="info-content">
+            <div class="info-title">HƯỚNG DẪN SỬ DỤNG</div>
+            <div class="info-text">
+              ✓ Nhập mỗi tên một dòng<br>
+              ✓ Nhấn Enter để xuống dòng<br>
+              ✓ Có thể paste từ Excel/Word
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">
+            <span style="font-size: 18px;">📝</span> Danh Sách Tên
+          </label>
+          <textarea id="bulkNames" placeholder="Nhập danh sách tên hải tặc...&#10;&#10;Ví dụ:&#10;Monkey D. Luffy&#10;Roronoa Zoro&#10;Sanji&#10;Nami&#10;Nico Robin"></textarea>
+        </div>
+        
+        <button type="button" onclick="addBulkPirates()" class="submit-btn">
+          <span style="font-size: 20px;">🏴‍☠️</span> Thêm Tất Cả Vào Băng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Wanted Poster -->
+  <div id="wantedModal" class="modal">
+    <div class="wanted-poster">
+      <span class="close" onclick="closeModal('wantedModal')">&times;</span>
+      <h2>WANTED</h2>
+      <div class="dead-or-alive">DEAD OR ALIVE</div>
+      
+      <div class="wanted-avatar" id="wantedAvatar">
+        <img src="" alt="Pirate" id="wantedAvatarImg" style="display: none;">
+      </div>
+      
+      <div class="wanted-name" id="wantedName">---</div>
+      
+      <div class="wanted-crew" id="wantedCrew">
+        <span class="crew-icon" id="wantedCrewIcon">🏴‍☠️</span>
+        <span class="crew-name" id="wantedCrewName">Unknown Crew</span>
+      </div>
+      
+      <div class="wanted-bounty">BOUNTY</div>
+      <div class="wanted-bounty-value" id="wantedBounty">0฿</div>
+      
+      <div class="wanted-rank" id="wantedRank">---</div>
+      
+      <button class="print-poster-btn" onclick="printPoster()">
+        🖨️ IN POSTER
+      </button>
+      
+      <div class="wanted-footer">By Order of World Government</div>
+    </div>
+  </div>
+
+  <!-- Modal Cài Đặt Cấp Độ -->
+  <div id="settingsModal" class="modal">
+    <div class="modal-content" style="max-width: 900px;">
+      <span class="close" onclick="closeModal('settingsModal')">&times;</span>
+      <h2>⚙️ Cài Đặt Ảnh Cấp Độ</h2>
+      <div class="rank-settings-info">
+        Tải lên ảnh đại diện cho từng cấp độ hải tặc. Ảnh sẽ được dùng làm <strong>mặc định</strong> khi thăng cấp.
+      </div>
+      
+      <div class="rank-settings-grid">
+        <div class="rank-setting-card rookie">
+          <div class="rank-title">Tân Binh</div>
+          <div class="rank-range">0-29฿</div>
+          <div class="rank-image-preview" id="rank-rookie-preview">👶</div>
+          <button class="upload-rank-btn" onclick="uploadRankImage('rookie')">📤 Tải Lên</button>
+          <input type="file" id="rank-rookie-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'rookie')">
+        </div>
+
+        <div class="rank-setting-card pirate">
+          <div class="rank-title">Hải Tặc</div>
+          <div class="rank-range">30-99฿</div>
+          <div class="rank-image-preview" id="rank-pirate-preview">🏴‍☠️</div>
+          <button class="upload-rank-btn" onclick="uploadRankImage('pirate')">📤 Tải Lên</button>
+          <input type="file" id="rank-pirate-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'pirate')">
+        </div>
+
+        <div class="rank-setting-card rising">
+          <div class="rank-title">Tân Tinh</div>
+          <div class="rank-range">100-299฿</div>
+          <div class="rank-image-preview" id="rank-rising-preview">🌠</div>
+          <button class="upload-rank-btn" onclick="uploadRankImage('rising')">📤 Tải Lên</button>
+          <input type="file" id="rank-rising-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'rising')">
+        </div>
+
+        <div class="rank-setting-card supernova">
+          <div class="rank-title">Siêu Tân Tinh</div>
+          <div class="rank-range">300-499฿</div>
+          <div class="rank-image-preview" id="rank-supernova-preview">⭐</div>
+          <button class="upload-rank-btn" onclick="uploadRankImage('supernova')">📤 Tải Lên</button>
+          <input type="file" id="rank-supernova-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'supernova')">
+        </div>
+
+        <div class="rank-setting-card warlord">
+          <div class="rank-title">Thất Vũ Hải</div>
+          <div class="rank-range">500-799฿</div>
+          <div class="rank-image-preview" id="rank-warlord-preview">⚔️</div>
+          <button class="upload-rank-btn" onclick="uploadRankImage('warlord')">📤 Tải Lên</button>
+          <input type="file" id="rank-warlord-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'warlord')">
+        </div>
+
+        <div class="rank-setting-card general">
+          <div class="rank-title">Đại Tướng</div>
+          <div class="rank-range">800-999฿</div>
+          <div class="rank-image-preview" id="rank-general-preview">🛡️</div>
+          <button class="upload-rank-btn" onclick="uploadRankImage('general')">📤 Tải Lên</button>
+          <input type="file" id="rank-general-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'general')">
+        </div>
+
+        <div class="rank-setting-card commander">
+          <div class="rank-title">Tư Lệnh</div>
+          <div class="rank-range">1K-2.4K฿</div>
+          <div class="rank-image-preview" id="rank-commander-preview">💪</div>
+          <button class="upload-rank-btn" onclick="uploadRankImage('commander')">📤 Tải Lên</button>
+          <input type="file" id="rank-commander-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'commander')">
+        </div>
+
+        <div class="rank-setting-card admiral">
+          <div class="rank-title">Đô Đốc</div>
+          <div class="rank-range">2.5K-3.9K฿</div>
+          <div class="rank-image-preview" id="rank-admiral-preview">🎖️</div>
+          <button class="upload-rank-btn" onclick="uploadRankImage('admiral')">📤 Tải Lên</button>
+          <input type="file" id="rank-admiral-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'admiral')">
+        </div>
+
+        <div class="rank-setting-card yonko">
+          <div class="rank-title">Tứ Hoàng</div>
+          <div class="rank-range">4K-5.9K฿</div>
+          <div class="rank-image-preview" id="rank-yonko-preview">👹</div>
+          <button class="upload-rank-btn" onclick="uploadRankImage('yonko')">📤 Tải Lên</button>
+          <input type="file" id="rank-yonko-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'yonko')">
+        </div>
+
+        <div class="rank-setting-card emperor">
+          <div class="rank-title">Đế Vương</div>
+          <div class="rank-range">6K-9.9K฿</div>
+          <div class="rank-image-preview" id="rank-emperor-preview">👑</div>
+          <button class="upload-rank-btn" onclick="uploadRankImage('emperor')">📤 Tải Lên</button>
+          <input type="file" id="rank-emperor-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'emperor')">
+        </div>
+
+        <div class="rank-setting-card legend">
+          <div class="rank-title">Truyền Thuyết</div>
+          <div class="rank-range">10K-19K฿</div>
+          <div class="rank-image-preview" id="rank-legend-preview">💎</div>
+          <button class="upload-rank-btn" onclick="uploadRankImage('legend')">📤 Tải Lên</button>
+          <input type="file" id="rank-legend-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'legend')">
+        </div>
+
+        <div class="rank-setting-card mythic">
+          <div class="rank-title">Huyền Thoại</div>
+          <div class="rank-range">20K-39K฿</div>
+          <div class="rank-image-preview" id="rank-mythic-preview">🔥</div>
+          <button class="upload-rank-btn" onclick="uploadRankImage('mythic')">📤 Tải Lên</button>
+          <input type="file" id="rank-mythic-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'mythic')">
+        </div>
+
+        <div class="rank-setting-card divine">
+          <div class="rank-title">Thần Thoại</div>
+          <div class="rank-range">40K-69K฿</div>
+          <div class="rank-image-preview" id="rank-divine-preview">⚡</div>
+          <button class="upload-rank-btn" onclick="uploadRankImage('divine')">📤 Tải Lên</button>
+          <input type="file" id="rank-divine-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'divine')">
+        </div>
+
+        <div class="rank-setting-card demigod">
+          <div class="rank-title">Bán Thần</div>
+          <div class="rank-range">70K-99K฿</div>
+          <div class="rank-image-preview" id="rank-demigod-preview">✨</div>
+          <button class="upload-rank-btn" onclick="uploadRankImage('demigod')">📤 Tải Lên</button>
+          <input type="file" id="rank-demigod-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'demigod')">
+        </div>
+
+        <div class="rank-setting-card supreme">
+          <div class="rank-title">Chí Tôn</div>
+          <div class="rank-range">100K+฿</div>
+          <div class="rank-image-preview" id="rank-supreme-preview">🌟</div>
+          <button class="upload-rank-btn" onclick="uploadRankImage('supreme')">📤 Tải Lên</button>
+          <input type="file" id="rank-supreme-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'supreme')">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Files -->
+  <script src="js/pirates.js"></script>
+  <script src="js/modals.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/image-loader.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,518 @@
+/* Wanted Poster Modal */
+.wanted-poster {
+  background: linear-gradient(135deg, #d4a574 0%, #b8956a 50%, #d4a574 100%);
+  padding: 45px 35px;
+  border-radius: 20px;
+  box-shadow: 
+    0 30px 80px rgba(0, 0, 0, 0.8),
+    inset 0 0 50px rgba(0, 0, 0, 0.2),
+    0 0 100px rgba(212, 165, 116, 0.3);
+  position: relative;
+  border: 10px solid #8b6f47;
+  max-width: 520px;
+  width: 90%;
+  animation: posterDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: top center;
+}
+
+@keyframes posterDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-100px) rotateX(45deg);
+  }
+  60% {
+    transform: translateY(15px) rotateX(-5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+  }
+}
+
+/* Vintage Paper Effect */
+.wanted-poster::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0px, transparent 1px, transparent 2px, rgba(0,0,0,0.03) 3px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.03) 0px, transparent 1px, transparent 2px, rgba(0,0,0,0.03) 3px);
+  pointer-events: none;
+  border-radius: 8px;
+}
+
+/* Torn Edge Effect */
+.wanted-poster::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 L0,100 Z" fill="none" stroke="%238b6f47" stroke-width="2" opacity="0.3"/></svg>');
+  pointer-events: none;
+  opacity: 0.5;
+  border-radius: 8px;
+}
+
+/* Wanted Header */
+.wanted-poster h2 {
+  text-align: center;
+  font-size: 48px;
+  font-weight: 900;
+  color: #2c1810;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+  font-family: 'Impact', 'Arial Black', sans-serif;
+  background: linear-gradient(135deg, #2c1810 0%, #5c3a21 50%, #2c1810 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+}
+
+.wanted-poster h2::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 5px;
+  background: linear-gradient(90deg, transparent, #2c1810, transparent);
+}
+
+/* Dead or Alive */
+.dead-or-alive {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 900;
+  color: #5c3a21;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Wanted Avatar */
+.wanted-avatar {
+  width: 240px;
+  height: 240px;
+  margin: 0 auto 20px;
+  border: 10px solid #2c1810;
+  border-radius: 15px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+  box-shadow: 
+    0 15px 40px rgba(0, 0, 0, 0.6),
+    inset 0 0 30px rgba(0, 0, 0, 0.4),
+    0 0 50px rgba(44, 24, 16, 0.3);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 120px;
+  animation: avatarPulse 2s ease-in-out infinite;
+}
+
+@keyframes avatarPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.wanted-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Wanted Name */
+.wanted-name {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 900;
+  color: #2c1810;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-shadow: 
+    3px 3px 0 rgba(0, 0, 0, 0.2),
+    0 0 20px rgba(44, 24, 16, 0.3);
+  line-height: 1.2;
+  min-height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Wanted Crew */
+.wanted-crew {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 25px;
+  padding: 12px 20px;
+  background: rgba(44, 24, 16, 0.15);
+  border: 3px solid #8b6f47;
+  border-radius: 30px;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.3),
+    inset 0 2px 5px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s;
+}
+
+.wanted-crew:hover {
+  transform: scale(1.05);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.4),
+    inset 0 2px 8px rgba(255, 255, 255, 0.15);
+}
+
+.wanted-crew .crew-icon {
+  font-size: 28px;
+  filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.3));
+}
+
+.wanted-crew .crew-name {
+  font-size: 18px;
+  font-weight: 900;
+  color: #2c1810;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Wanted Bounty */
+.wanted-bounty {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 900;
+  color: #5c3a21;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+.wanted-bounty-value {
+  display: block;
+  text-align: center;
+  font-size: 64px;
+  color: #c0392b;
+  text-shadow: 
+    4px 4px 0 rgba(0, 0, 0, 0.2),
+    0 0 30px rgba(192, 57, 43, 0.4);
+  margin-bottom: 20px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  animation: bountyGlow 2s ease-in-out infinite;
+  line-height: 1;
+}
+
+@keyframes bountyGlow {
+  0%, 100% { 
+    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+    transform: scale(1);
+  }
+  50% { 
+    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 30px rgba(192, 57, 43, 0.6);
+    transform: scale(1.05);
+  }
+}
+
+/* Wanted Rank */
+.wanted-rank {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 25px;
+  padding: 12px 20px;
+  background: rgba(44, 24, 16, 0.15);
+  border: 2px solid rgba(139, 111, 71, 0.5);
+  border-radius: 15px;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 2px 5px rgba(255, 255, 255, 0.1);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Print Styles */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+  
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
+  /* Ẩn tất cả ngoại trừ modal */
+  body > *:not(#wantedModal) {
+    display: none !important;
+  }
+  
+  /* Ẩn header, footer, URL, ngày tháng của trình duyệt */
+  @page {
+    margin: 0;
+  }
+  
+  body {
+    counter-reset: page;
+  }
+  
+  /* Ẩn thông tin trình duyệt */
+  header, footer, nav, aside {
+    display: none !important;
+  }
+  
+  #wantedModal {
+    position: static !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: white !important;
+    padding: 15mm !important;
+    margin: 0 !important;
+    height: 100vh !important;
+    width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+  
+  .wanted-poster {
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4) !important;
+    page-break-inside: avoid;
+    page-break-after: avoid;
+    page-break-before: avoid;
+    max-width: 650px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    background: linear-gradient(135deg, #d4a574 0%, #b8956a 50%, #d4a574 100%) !important;
+    border: 10px solid #8b6f47 !important;
+    padding: 35px 30px !important;
+    border-radius: 15px !important;
+    height: auto !important;
+    min-height: auto !important;
+    box-sizing: border-box !important;
+  }
+  
+  .wanted-poster::before {
+    background: 
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.05) 0px, transparent 1px, transparent 2px, rgba(0,0,0,0.05) 3px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0px, transparent 1px, transparent 2px, rgba(0,0,0,0.05) 3px) !important;
+  }
+  
+  .wanted-poster .close,
+  .print-poster-btn {
+    display: none !important;
+  }
+  
+  /* Header WANTED */
+  .wanted-poster h2 {
+    font-size: 48px !important;
+    margin-bottom: 8px !important;
+    color: #2c1810 !important;
+    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .dead-or-alive {
+    font-size: 18px !important;
+    margin-bottom: 20px !important;
+    color: #5c3a21 !important;
+  }
+  
+  /* Avatar */
+  .wanted-avatar {
+    width: 200px !important;
+    height: 200px !important;
+    border: 10px solid #2c1810 !important;
+    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
+    margin: 0 auto 18px !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  .wanted-avatar img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+  
+  /* Name */
+  .wanted-name {
+    font-size: 32px !important;
+    margin-bottom: 15px !important;
+    color: #2c1810 !important;
+    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2) !important;
+    letter-spacing: 3px !important;
+  }
+  
+  /* Crew Info */
+  .wanted-crew {
+    background: rgba(44, 24, 16, 0.2) !important;
+    border: 3px solid #8b6f47 !important;
+    padding: 10px 18px !important;
+    margin-bottom: 20px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .wanted-crew .crew-icon {
+    font-size: 24px !important;
+  }
+  
+  .wanted-crew .crew-name {
+    font-size: 16px !important;
+    color: #2c1810 !important;
+    letter-spacing: 1.5px !important;
+  }
+  
+  /* Bounty */
+  .wanted-bounty {
+    font-size: 24px !important;
+    margin-bottom: 10px !important;
+    color: #5c3a21 !important;
+    letter-spacing: 2px !important;
+  }
+  
+  .wanted-bounty-value {
+    font-size: 56px !important;
+    color: #c0392b !important;
+    text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3) !important;
+    margin-bottom: 18px !important;
+    letter-spacing: 3px !important;
+  }
+  
+  /* Rank */
+  .wanted-rank {
+    font-size: 18px !important;
+    margin-bottom: 20px !important;
+    padding: 10px 18px !important;
+    background: rgba(44, 24, 16, 0.2) !important;
+    border: 3px solid rgba(139, 111, 71, 0.6) !important;
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Footer */
+  .wanted-footer {
+    font-size: 14px !important;
+    color: #5c3a21 !important;
+    letter-spacing: 1.5px !important;
+    margin-bottom: 0 !important;
+  }
+  
+  /* Tắt animation */
+  .wanted-poster,
+  .wanted-avatar,
+  .wanted-bounty-value {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* Print Poster Button */
+.print-poster-btn {
+  display: block;
+  width: 100%;
+  padding: 15px 30px;
+  margin: 20px 0 10px;
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  color: white;
+  border: 3px solid #229954;
+  border-radius: 15px;
+  font-size: 18px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.print-poster-btn:hover {
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(39, 174, 96, 0.6);
+}
+
+.print-poster-btn:active {
+  transform: translateY(0) scale(1);
+}
+
+/* Close Button (Overrides) */
+.wanted-poster .close {
+  color: #2c1810;
+  font-size: 40px;
+  font-weight: 900;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  top: 10px;
+  right: 15px;
+  transition: all 0.3s;
+}
+
+.wanted-poster .close:hover {
+  color: #c0392b;
+  transform: rotate(90deg) scale(1.3);
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2), 0 0 20px rgba(192, 57, 43, 0.8);
+}
+
+/* Stamp Effect */
+.wanted-stamp {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  width: 100px;
+  height: 100px;
+  border: 5px solid rgba(192, 57, 43, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-15deg);
+  opacity: 0.4;
+  font-size: 14px;
+  font-weight: 900;
+  color: #c0392b;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1.3;
+  animation: stampFade 3s ease-in-out infinite;
+}
+
+@keyframes stampFade {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+/* Wanted Footer */
+.wanted-footer {
+  text-align: center;
+  font-size: 14px;
+  color: #5c3a21;
+  font-weight: 700;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 3px double #5c3a21;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}

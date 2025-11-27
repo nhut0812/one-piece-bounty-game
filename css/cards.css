@@ -1,0 +1,351 @@
+/* One Piece Cards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  padding: 5px;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
+}
+
+/* Card Styles */
+.card {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  padding: 25px;
+  position: relative;
+  transition: transform 0.3s, box-shadow 0.3s;
+  border: 4px solid #95a5a6;
+  overflow: hidden;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.7s;
+}
+
+.card:hover::before {
+  transform: translateX(100%);
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  z-index: 10;
+}
+
+/* Rank specific colors */
+.card.king {
+  border-color: #f1c40f;
+  background: linear-gradient(135deg, #3d2a00 0%, #5a3e00 100%);
+  box-shadow: 0 10px 30px rgba(241, 196, 15, 0.4), 0 0 40px rgba(241, 196, 15, 0.3);
+  animation: kingGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes kingGlow {
+  0%, 100% { box-shadow: 0 10px 30px rgba(241, 196, 15, 0.4), 0 0 40px rgba(241, 196, 15, 0.3); }
+  50% { box-shadow: 0 10px 30px rgba(241, 196, 15, 0.6), 0 0 60px rgba(241, 196, 15, 0.5), 0 0 80px rgba(241, 196, 15, 0.3); }
+}
+
+.card.yonko {
+  border-color: #c0392b;
+  background: linear-gradient(135deg, #2c0a0a 0%, #3d0d0d 100%);
+  box-shadow: 0 10px 30px rgba(192, 57, 43, 0.4);
+}
+
+.card.commander {
+  border-color: #e67e22;
+  background: linear-gradient(135deg, #3a2008 0%, #4d2b10 100%);
+}
+
+.card.emperor {
+  border-color: #f1c40f;
+  background: linear-gradient(135deg, #3d2a00 0%, #5a3e00 100%);
+  box-shadow: 0 10px 30px rgba(241, 196, 15, 0.4), 0 0 40px rgba(241, 196, 15, 0.3);
+  animation: kingGlow 2.5s ease-in-out infinite;
+}
+
+.card.legend {
+  border-color: #3498db;
+  background: linear-gradient(135deg, #0a1f2e 0%, #0d2636 100%);
+  box-shadow: 0 10px 30px rgba(52, 152, 219, 0.5), 0 0 50px rgba(52, 152, 219, 0.4);
+  animation: kingGlow 2.5s ease-in-out infinite;
+}
+
+.card.mythic {
+  border-color: #e74c3c;
+  background: linear-gradient(135deg, #2e0a0a 0%, #4a0e0e 100%);
+  box-shadow: 0 10px 30px rgba(231, 76, 60, 0.6), 0 0 60px rgba(231, 76, 60, 0.5), 0 0 80px rgba(231, 76, 60, 0.3);
+  animation: kingGlow 2s ease-in-out infinite;
+}
+
+.card.rising {
+  border-color: #3498db;
+  background: linear-gradient(135deg, #0d2636 0%, #133347 100%);
+}
+
+.card.general {
+  border-color: #16a085;
+  background: linear-gradient(135deg, #0d3d34 0%, #145a4d 100%);
+  box-shadow: 0 10px 30px rgba(22, 160, 133, 0.4);
+}
+
+.card.admiral {
+  border-color: #d35400;
+  background: linear-gradient(135deg, #3d1a00 0%, #5a2700 100%);
+  box-shadow: 0 10px 30px rgba(211, 84, 0, 0.4);
+}
+
+.card.divine {
+  border-color: #9b59b6;
+  background: linear-gradient(135deg, #1a0a2e 0%, #2d1248 100%);
+  box-shadow: 0 10px 30px rgba(155, 89, 182, 0.6), 0 0 60px rgba(155, 89, 182, 0.5);
+  animation: kingGlow 2s ease-in-out infinite;
+}
+
+.card.demigod {
+  border-color: #e8daef;
+  background: linear-gradient(135deg, #2d1f3a 0%, #4a335a 100%);
+  box-shadow: 0 10px 30px rgba(232, 218, 239, 0.7), 0 0 70px rgba(232, 218, 239, 0.6), 0 0 90px rgba(232, 218, 239, 0.4);
+  animation: kingGlow 1.5s ease-in-out infinite;
+}
+
+.card.supreme {
+  border-color: #ffffff;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.8), 0 0 80px rgba(255, 255, 255, 0.7), 0 0 120px rgba(255, 255, 255, 0.5);
+  animation: kingGlow 1.2s ease-in-out infinite;
+}
+
+.card.warlord {
+  border-color: #9b59b6;
+  background: linear-gradient(135deg, #261835 0%, #352145 100%);
+}
+
+.card.supernova {
+  border-color: #f39c12;
+  background: linear-gradient(135deg, #3a2608 0%, #4d3210 100%);
+}
+
+.card.pirate {
+  border-color: #3498db;
+  background: linear-gradient(135deg, #0d2636 0%, #133347 100%);
+}
+
+.card-icon {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 32px;
+  z-index: 10;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+  animation: iconFloat 3.5s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(5deg); }
+}
+
+/* Avatar */
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+  margin: 0 auto 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+  border: 5px solid #ecf0f1;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card:hover .avatar {
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 30px rgba(243, 156, 18, 0.3);
+  border-color: #f39c12;
+}
+
+/* Name & Role */
+.name {
+  text-align: center;
+  font-weight: 900;
+  margin-bottom: 10px;
+  font-size: 22px;
+  text-transform: uppercase;
+  color: #ecf0f1;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
+  letter-spacing: 1.5px;
+}
+
+.role {
+  text-align: center;
+  font-size: 15px;
+  margin-bottom: 18px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 900;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
+  opacity: 0.95;
+}
+
+/* Bounty Display */
+.bounty {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 18px;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: #f39c12;
+  padding: 14px 16px;
+  border-radius: 25px;
+  font-weight: 900;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5), inset 0 2px 5px rgba(0, 0, 0, 0.3);
+  border: 3px solid #f39c12;
+  letter-spacing: 1px;
+}
+
+.bounty::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(243, 156, 18, 0.3), transparent);
+  animation: bountyShine 2.5s infinite;
+}
+
+@keyframes bountyShine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.bounty span {
+  font-size: 30px;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6), 0 0 10px rgba(243, 156, 18, 0.4);
+  display: inline-block;
+  animation: bountyPulse 2s ease-in-out infinite;
+}
+
+@keyframes bountyPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 5px;
+}
+
+.btn {
+  border: none;
+  border-radius: 18px;
+  padding: 12px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 900;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.5px;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+.btn-plus {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  color: #fff;
+  border: 3px solid #2ecc71;
+}
+
+.btn-plus:hover {
+  box-shadow: 0 8px 20px rgba(46, 204, 113, 0.5);
+}
+
+.btn-plus-large {
+  background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+  color: #fff;
+  border: 3px solid #3498db;
+}
+
+.btn-minus {
+  background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+  color: #fff;
+  border: 3px solid #e74c3c;
+}
+
+.btn-minus:hover {
+  box-shadow: 0 8px 20px rgba(231, 76, 60, 0.5);
+}
+
+.btn-delete {
+  background: linear-gradient(135deg, #7f8c8d 0%, #95a5a6 100%);
+  color: #fff;
+  border: 3px solid #95a5a6;
+  padding: 12px 18px;
+}
+
+.btn-delete:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+  border-color: #e74c3c;
+  box-shadow: 0 8px 20px rgba(231, 76, 60, 0.6);
+  transform: translateY(-4px) scale(1.05);
+}
