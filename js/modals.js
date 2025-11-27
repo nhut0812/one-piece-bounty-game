@@ -136,7 +136,15 @@ function showTopPirate() {
   const rank = getRankByBounty(topPirate.bounty);
   
   // Set ảnh
+  const avatarContainer = document.getElementById('wantedAvatar');
   const avatarImg = document.getElementById('wantedAvatarImg');
+  
+  // Reset container nếu cần
+  if (!avatarImg) {
+    avatarContainer.innerHTML = '<img src="" alt="Pirate" id="wantedAvatarImg" style="display: none;">';
+    avatarImg = document.getElementById('wantedAvatarImg');
+  }
+  
   if (topPirate.image) {
     avatarImg.src = topPirate.image;
     avatarImg.style.display = 'block';
@@ -144,8 +152,27 @@ function showTopPirate() {
     avatarImg.src = rankImages[rank.type];
     avatarImg.style.display = 'block';
   } else {
-    document.getElementById('wantedAvatar').innerHTML = `<div style="font-size: 120px;">${rank.icon}</div>`;
     avatarImg.style.display = 'none';
+    // Thêm icon nếu không có ảnh
+    const existingIcon = avatarContainer.querySelector('.rank-icon-fallback');
+    if (!existingIcon) {
+      const iconDiv = document.createElement('div');
+      iconDiv.className = 'rank-icon-fallback';
+      iconDiv.style.fontSize = '120px';
+      iconDiv.textContent = rank.icon;
+      avatarContainer.appendChild(iconDiv);
+    } else {
+      existingIcon.textContent = rank.icon;
+      existingIcon.style.display = 'block';
+    }
+  }
+  
+  // Xóa icon fallback nếu có ảnh
+  if (topPirate.image || rankImages[rank.type]) {
+    const iconFallback = avatarContainer.querySelector('.rank-icon-fallback');
+    if (iconFallback) {
+      iconFallback.style.display = 'none';
+    }
   }
   
   document.getElementById('wantedName').textContent = topPirate.name;
