@@ -508,13 +508,20 @@
   
   /* Rank Up Notification */
   .rank-up-notification {
-    font-size: 18px;
-    padding: 20px 30px;
+    font-size: 16px;
+    padding: 15px 20px;
     border-radius: 15px;
-    border-width: 4px;
-    letter-spacing: 1px;
-    max-width: 85%;
-    word-break: break-word;
+    border-width: 3px;
+    letter-spacing: 0.5px;
+    max-width: 90%;
+    word-break: keep-all;
+    white-space: normal;
+    line-height: 1.4;
+  }
+  
+  .rank-up-notification strong {
+    white-space: nowrap;
+    display: inline;
   }
 }
 
