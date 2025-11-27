@@ -46,6 +46,10 @@
         <span class="data-icon">📥</span>
         <span class="data-text">Nhập Dữ Liệu</span>
       </button>
+      <button class="data-btn sync" id="syncToggleBtn" onclick="toggleFirebaseSync()">
+        <span class="data-icon">☁️</span>
+        <span class="data-text">Đồng Bộ: Tắt</span>
+      </button>
     </div>
 
     <!-- Crew Filter -->
@@ -368,11 +372,16 @@
     </div>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  
   <!-- JavaScript Files -->
   <script src="js/pirates.js"></script>
   <script src="js/modals.js"></script>
   <script src="js/effects.js"></script>
   <script src="js/image-loader.js"></script>
+  <script src="js/firebase-sync.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

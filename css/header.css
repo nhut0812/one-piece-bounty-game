@@ -200,8 +200,95 @@
   transform: scale(1.2) rotate(10deg);
 }
 
+.data-btn.sync {
+  background: linear-gradient(135deg, #7f8c8d 0%, #95a5a6 100%);
+  color: white;
+  border-color: #95a5a6;
+  box-shadow: 0 4px 12px rgba(149, 165, 166, 0.4);
+}
+
+.data-btn.sync.active {
+  background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+  border-color: #3498db;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+  animation: syncPulse 2s ease-in-out infinite;
+}
+
+@keyframes syncPulse {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(52, 152, 219, 0.8);
+  }
+}
+
+.data-btn.sync:hover {
+  transform: translateY(-3px) scale(1.05);
+}
+
+.data-btn.sync.active:hover {
+  background: linear-gradient(135deg, #3498db 0%, #5dade2 100%);
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+}
+
+.data-btn.sync:hover .data-icon {
+  transform: scale(1.2);
+  animation: cloudFloat 1s ease-in-out infinite;
+}
+
+@keyframes cloudFloat {
+  0%, 100% { transform: scale(1.2) translateY(0); }
+  50% { transform: scale(1.2) translateY(-3px); }
+}
+
 .data-btn:active {
   transform: translateY(0) scale(1);
+}
+
+/* Sync notification toast */
+.sync-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.5);
+  z-index: 10000;
+  animation: slideInRight 0.5s ease-out;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.sync-notification.hide {
+  animation: slideOutRight 0.5s ease-out forwards;
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(400px);
+    opacity: 0;
+  }
 }
 
 @media (max-width: 768px) {
@@ -213,5 +300,12 @@
   .data-btn {
     width: 100%;
     justify-content: center;
+  }
+  
+  .sync-notification {
+    right: 10px;
+    top: 10px;
+    left: 10px;
+    max-width: calc(100% - 20px);
   }
 }
