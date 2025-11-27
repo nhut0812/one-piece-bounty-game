@@ -25,12 +25,19 @@ async function tryLoadImage(rankType, fileName, extension) {
     const img = new Image();
     const path = `img/${fileName}.${extension}`;
     
+    // Timeout nhanh hơn để không chặn lâu
+    const timeout = setTimeout(() => {
+      resolve(null);
+    }, 300);
+    
     img.onload = function() {
+      clearTimeout(timeout);
       console.log(`✅ Loaded: ${path} for rank ${rankType}`);
       resolve(path);
     };
     
     img.onerror = function() {
+      clearTimeout(timeout);
       resolve(null);
     };
     
