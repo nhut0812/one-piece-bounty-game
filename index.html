@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="css/wanted.css">
   <link rel="stylesheet" href="css/rank-settings.css">
   <link rel="stylesheet" href="css/effects.css">
+  <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
   <div class="container">
@@ -38,14 +39,6 @@
 
     <!-- Data Management Bar -->
     <div class="data-management">
-      <button class="data-btn export" onclick="exportData()">
-        <span class="data-icon">💾</span>
-        <span class="data-text">Xuất Dữ Liệu</span>
-      </button>
-      <button class="data-btn import" onclick="document.getElementById('importFile').click()">
-        <span class="data-icon">📥</span>
-        <span class="data-text">Nhập Dữ Liệu</span>
-      </button>
       <button class="data-btn sync" id="syncToggleBtn" onclick="toggleFirebaseSync()">
         <span class="data-icon">☁️</span>
         <span class="data-text">Đồng Bộ: Tắt</span>
