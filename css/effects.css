@@ -84,7 +84,10 @@
   text-transform: uppercase;
   letter-spacing: 3px;
   pointer-events: none;
-  animation: rankUpPop 2s ease-out forwards;
+  animation: rankUpPop 5s ease-out forwards;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @keyframes rankUpPop {
@@ -92,20 +95,20 @@
     transform: translate(-50%, -50%) scale(0) rotate(-45deg);
     opacity: 0;
   }
-  15% {
+  8% {
     transform: translate(-50%, -50%) scale(1.3) rotate(5deg);
     opacity: 1;
   }
-  25% {
+  12% {
     transform: translate(-50%, -50%) scale(0.9) rotate(-3deg);
   }
-  35% {
+  16% {
     transform: translate(-50%, -50%) scale(1.1) rotate(2deg);
   }
-  45% {
+  20% {
     transform: translate(-50%, -50%) scale(1) rotate(0deg);
   }
-  85% {
+  88% {
     transform: translate(-50%, -50%) scale(1) rotate(0deg);
     opacity: 1;
   }
