@@ -69,10 +69,16 @@ function addPirate(event) {
 // Thêm hải tặc hàng loạt
 function addBulkPirates() {
   const text = document.getElementById('bulkNames').value;
+  const crew = document.getElementById('bulkCrew').value;
   const names = text.split('\n').map(n => n.trim()).filter(n => n.length > 0);
   
   if (names.length === 0) {
     alert('Vui lòng nhập danh sách tên!');
+    return;
+  }
+  
+  if (!crew) {
+    alert('Vui lòng chọn băng nhóm!');
     return;
   }
   
@@ -83,7 +89,7 @@ function addBulkPirates() {
       bounty: 0,
       image: null,
       type: 'rookie',
-      crew: 'No Crew'
+      crew: crew
     });
     addedCount++;
   });
@@ -92,6 +98,7 @@ function addBulkPirates() {
   saveToLocalStorage();
   closeModal('addPirateModal');
   document.getElementById('bulkNames').value = '';
+  document.getElementById('bulkCrew').value = '';
   
   // Hiệu ứng thông báo
   const notification = document.createElement('div');
