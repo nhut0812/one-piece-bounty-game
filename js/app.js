@@ -2,6 +2,12 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Load dữ liệu ngay lập tức
   loadFromLocalStorage();
+  
+  // Populate crew filter
+  if (typeof populateCrewFilter === 'function') {
+    populateCrewFilter();
+  }
+  
   renderPirates();
   
   console.log('⚓ One Piece Bounty System sẵn sàng!');

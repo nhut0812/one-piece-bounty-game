@@ -1,18 +1,149 @@
 /* Wanted Poster Modal */
 .wanted-poster {
-  background: linear-gradient(135deg, #d4a574 0%, #b8956a 50%, #d4a574 100%);
-  padding: 45px 35px;
-  border-radius: 20px;
+  background: #d4a574;
+  padding: 20px 25px 18px 25px;
+  border-radius: 10px;
   box-shadow: 
     0 30px 80px rgba(0, 0, 0, 0.8),
-    inset 0 0 50px rgba(0, 0, 0, 0.2),
-    0 0 100px rgba(212, 165, 116, 0.3);
+    inset 0 0 100px rgba(0, 0, 0, 0.1);
   position: relative;
-  border: 10px solid #8b6f47;
-  max-width: 520px;
+  border: 6px solid #5a4428;
+  max-width: 450px;
   width: 90%;
   animation: posterDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   transform-origin: top center;
+}
+
+/* Rank-based poster border effects */
+.wanted-poster[data-rank="rookie"] {
+  border-color: #95a5a6;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2);
+}
+
+.wanted-poster[data-rank="pirate"] {
+  border-color: #3498db;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 40px rgba(52, 152, 219, 0.5);
+}
+
+.wanted-poster[data-rank="rising"] {
+  border-color: #5dade2;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 50px rgba(93, 173, 226, 0.6);
+}
+
+.wanted-poster[data-rank="supernova"] {
+  border-color: #ffd93d;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 60px rgba(255, 217, 61, 0.7);
+}
+
+.wanted-poster[data-rank="warlord"] {
+  border-color: #d8b4fe;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 70px rgba(216, 180, 254, 0.7);
+}
+
+.wanted-poster[data-rank="general"] {
+  border-color: #6ee7b7;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 75px rgba(110, 231, 183, 0.7);
+}
+
+.wanted-poster[data-rank="commander"] {
+  border-color: #fbbf24;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 80px rgba(251, 191, 36, 0.7);
+}
+
+.wanted-poster[data-rank="admiral"] {
+  border-color: #fb923c;
+  border-width: 12px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 90px rgba(251, 146, 60, 0.8);
+  animation: posterDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), wantedAdmiralGlow 4s ease-in-out infinite;
+}
+
+@keyframes wantedAdmiralGlow {
+  0%, 100% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 90px rgba(251, 146, 60, 0.8); }
+  50% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 120px rgba(251, 146, 60, 1); }
+}
+
+.wanted-poster[data-rank="yonko"] {
+  border-color: #ef4444;
+  border-width: 12px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 100px rgba(239, 68, 68, 0.9);
+  animation: posterDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), wantedYonkoGlow 4s ease-in-out infinite;
+}
+
+@keyframes wantedYonkoGlow {
+  0%, 100% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 100px rgba(239, 68, 68, 0.9); }
+  50% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 130px rgba(239, 68, 68, 1); }
+}
+
+.wanted-poster[data-rank="emperor"] {
+  border-color: #fde047;
+  border-width: 12px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 110px rgba(253, 224, 71, 0.9);
+  animation: posterDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), wantedEmperorGlow 4s ease-in-out infinite;
+}
+
+@keyframes wantedEmperorGlow {
+  0%, 100% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 110px rgba(253, 224, 71, 0.9); }
+  50% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 150px rgba(253, 224, 71, 1); }
+}
+
+.wanted-poster[data-rank="legend"] {
+  border-color: #60a5fa;
+  border-width: 14px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 120px rgba(96, 165, 250, 0.9);
+  animation: posterDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), wantedLegendGlow 5s ease-in-out infinite;
+}
+
+@keyframes wantedLegendGlow {
+  0%, 100% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 120px rgba(96, 165, 250, 0.9); }
+  50% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 160px rgba(96, 165, 250, 1); }
+}
+
+.wanted-poster[data-rank="mythic"] {
+  border-color: #f87171;
+  border-width: 14px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 130px rgba(248, 113, 113, 0.9);
+  animation: posterDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), wantedMythicGlow 5s ease-in-out infinite;
+}
+
+@keyframes wantedMythicGlow {
+  0%, 100% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 130px rgba(248, 113, 113, 0.9); }
+  50% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 170px rgba(248, 113, 113, 1); }
+}
+
+.wanted-poster[data-rank="divine"] {
+  border-color: #c084fc;
+  border-width: 15px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 140px rgba(192, 132, 252, 0.9);
+  animation: posterDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), wantedDivineGlow 6s ease-in-out infinite;
+}
+
+@keyframes wantedDivineGlow {
+  0%, 100% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 140px rgba(192, 132, 252, 0.9); }
+  50% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 180px rgba(192, 132, 252, 1); }
+}
+
+.wanted-poster[data-rank="demigod"] {
+  border-color: #fef3c7;
+  border-width: 15px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 150px rgba(254, 243, 199, 0.9);
+  animation: posterDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), wantedDemigodGlow 6s ease-in-out infinite;
+}
+
+@keyframes wantedDemigodGlow {
+  0%, 100% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 150px rgba(254, 243, 199, 0.9); }
+  50% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 190px rgba(254, 243, 199, 1); }
+}
+
+.wanted-poster[data-rank="supreme"] {
+  border-color: #ffffff;
+  border-width: 16px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 160px rgba(255, 255, 255, 0.9);
+  animation: posterDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), wantedSupremeGlow 6s ease-in-out infinite;
+}
+
+@keyframes wantedSupremeGlow {
+  0%, 100% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 160px rgba(255, 255, 255, 0.9); }
+  50% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 50px rgba(0, 0, 0, 0.2), 0 0 210px rgba(255, 255, 255, 1); }
 }
 
 @keyframes posterDrop {
@@ -61,68 +192,192 @@
 /* Wanted Header */
 .wanted-poster h2 {
   text-align: center;
-  font-size: 48px;
+  font-size: 56px;
   font-weight: 900;
-  color: #2c1810;
-  margin: 0 0 10px 0;
+  color: #4a3420;
+  margin: 0 0 3px 0;
   text-transform: uppercase;
-  letter-spacing: 6px;
-  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+  letter-spacing: 12px;
+  text-shadow: 
+    2px 2px 0 rgba(0, 0, 0, 0.2),
+    -1px -1px 0 rgba(255, 255, 255, 0.1);
   font-family: 'Impact', 'Arial Black', sans-serif;
-  background: linear-gradient(135deg, #2c1810 0%, #5c3a21 50%, #2c1810 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
   position: relative;
 }
 
 .wanted-poster h2::after {
   content: '';
   position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: -3px;
+  left: 10%;
   width: 80%;
-  height: 5px;
-  background: linear-gradient(90deg, transparent, #2c1810, transparent);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #3d2817 10%, #3d2817 90%, transparent);
 }
 
 /* Dead or Alive */
 .dead-or-alive {
   text-align: center;
-  font-size: 20px;
-  font-weight: 900;
-  color: #5c3a21;
-  margin-bottom: 25px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #3d2817;
+  margin-bottom: 12px;
   text-transform: uppercase;
-  letter-spacing: 4px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  letter-spacing: 6px;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(61, 40, 23, 0.3);
+  font-style: italic;
 }
 
 /* Wanted Avatar */
 .wanted-avatar {
   width: 240px;
   height: 240px;
-  margin: 0 auto 20px;
-  border: 10px solid #2c1810;
-  border-radius: 15px;
+  margin: 0 auto 12px;
+  border: 1px solid #1a1410;
+  border-radius: 5px;
   overflow: hidden;
-  background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+  background: #f8f4ed;
   box-shadow: 
-    0 15px 40px rgba(0, 0, 0, 0.6),
-    inset 0 0 30px rgba(0, 0, 0, 0.4),
-    0 0 50px rgba(44, 24, 16, 0.3);
+    0 6px 15px rgba(0, 0, 0, 0.4),
+    inset 0 0 10px rgba(0, 0, 0, 0.1);
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 120px;
-  animation: avatarPulse 2s ease-in-out infinite;
+  font-size: 100px;
 }
 
-@keyframes avatarPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+/* Rank-based avatar border effects */
+.wanted-poster[data-rank="rookie"] .wanted-avatar {
+  border-color: #95a5a6;
+}
+
+.wanted-poster[data-rank="pirate"] .wanted-avatar {
+  border-color: #3498db;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(52, 152, 219, 0.5);
+}
+
+.wanted-poster[data-rank="rising"] .wanted-avatar {
+  border-color: #5dade2;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(93, 173, 226, 0.6);
+}
+
+.wanted-poster[data-rank="supernova"] .wanted-avatar {
+  border-color: #ffd93d;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 217, 61, 0.7);
+}
+
+.wanted-poster[data-rank="warlord"] .wanted-avatar {
+  border-color: #d8b4fe;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 35px rgba(216, 180, 254, 0.7);
+}
+
+.wanted-poster[data-rank="general"] .wanted-avatar {
+  border-color: #6ee7b7;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 35px rgba(110, 231, 183, 0.7);
+}
+
+.wanted-poster[data-rank="commander"] .wanted-avatar {
+  border-color: #fbbf24;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 40px rgba(251, 191, 36, 0.7);
+}
+
+.wanted-poster[data-rank="admiral"] .wanted-avatar {
+  border-color: #fb923c;
+  border-width: 10px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 40px rgba(251, 146, 60, 0.8);
+  animation: wantedAvatarAdmiral 4s ease-in-out infinite;
+}
+
+@keyframes wantedAvatarAdmiral {
+  0%, 100% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 40px rgba(251, 146, 60, 0.8); }
+  50% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 55px rgba(251, 146, 60, 1); }
+}
+
+.wanted-poster[data-rank="yonko"] .wanted-avatar {
+  border-color: #ef4444;
+  border-width: 10px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 45px rgba(239, 68, 68, 0.8);
+  animation: wantedAvatarYonko 4.5s ease-in-out infinite;
+}
+
+@keyframes wantedAvatarYonko {
+  0%, 100% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 45px rgba(239, 68, 68, 0.8); }
+  50% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 60px rgba(239, 68, 68, 1); }
+}
+
+.wanted-poster[data-rank="emperor"] .wanted-avatar {
+  border-color: #fde047;
+  border-width: 10px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 50px rgba(253, 224, 71, 0.8);
+  animation: wantedAvatarEmperor 5s ease-in-out infinite;
+}
+
+@keyframes wantedAvatarEmperor {
+  0%, 100% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 50px rgba(253, 224, 71, 0.8); }
+  50% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 65px rgba(253, 224, 71, 1); }
+}
+
+.wanted-poster[data-rank="legend"] .wanted-avatar {
+  border-color: #60a5fa;
+  border-width: 11px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 55px rgba(96, 165, 250, 0.9);
+  animation: wantedAvatarLegend 5s ease-in-out infinite;
+}
+
+@keyframes wantedAvatarLegend {
+  0%, 100% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 55px rgba(96, 165, 250, 0.9); }
+  50% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 70px rgba(96, 165, 250, 1); }
+}
+
+.wanted-poster[data-rank="mythic"] .wanted-avatar {
+  border-color: #f87171;
+  border-width: 11px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 60px rgba(248, 113, 113, 0.9);
+  animation: wantedAvatarMythic 5s ease-in-out infinite;
+}
+
+@keyframes wantedAvatarMythic {
+  0%, 100% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 60px rgba(248, 113, 113, 0.9); }
+  50% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 75px rgba(248, 113, 113, 1); }
+}
+
+.wanted-poster[data-rank="divine"] .wanted-avatar {
+  border-color: #c084fc;
+  border-width: 12px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 65px rgba(192, 132, 252, 0.9);
+  animation: wantedAvatarDivine 6s ease-in-out infinite;
+}
+
+@keyframes wantedAvatarDivine {
+  0%, 100% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 65px rgba(192, 132, 252, 0.9); }
+  50% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 80px rgba(192, 132, 252, 1); }
+}
+
+.wanted-poster[data-rank="demigod"] .wanted-avatar {
+  border-color: #fef3c7;
+  border-width: 12px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 70px rgba(254, 243, 199, 0.9);
+  animation: wantedAvatarDemigod 6s ease-in-out infinite;
+}
+
+@keyframes wantedAvatarDemigod {
+  0%, 100% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 70px rgba(254, 243, 199, 0.9); }
+  50% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 85px rgba(254, 243, 199, 1); }
+}
+
+.wanted-poster[data-rank="supreme"] .wanted-avatar {
+  border-color: #ffffff;
+  border-width: 13px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 75px rgba(255, 255, 255, 0.9);
+  animation: wantedAvatarSupreme 6s ease-in-out infinite;
+}
+
+@keyframes wantedAvatarSupreme {
+  0%, 100% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 75px rgba(255, 255, 255, 0.9); }
+  50% { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.4), 0 0 95px rgba(255, 255, 255, 1); }
 }
 
 .wanted-avatar img {
@@ -134,20 +389,152 @@
 /* Wanted Name */
 .wanted-name {
   text-align: center;
-  font-size: 36px;
+  font-size: 28px;
   font-weight: 900;
-  color: #2c1810;
-  margin-bottom: 15px;
+  color: #1a1410;
+  margin: 8px 0;
   text-transform: uppercase;
-  letter-spacing: 4px;
-  text-shadow: 
-    3px 3px 0 rgba(0, 0, 0, 0.2),
-    0 0 20px rgba(44, 24, 16, 0.3);
-  line-height: 1.2;
-  min-height: 45px;
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+  line-height: 1.1;
+  min-height: auto;
+  display: block;
+  font-family: 'Impact', 'Arial Black', sans-serif;
+  position: relative;
+}
+
+.wanted-name::before {
+  content: '‹';
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 40px;
+  color: #3d2817;
+  opacity: 0.5;
+  font-weight: 100;
+  font-family: Georgia, serif;
+}
+
+.wanted-name::after {
+  content: '›';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 40px;
+  color: #3d2817;
+  opacity: 0.5;
+  font-weight: 100;
+  font-family: Georgia, serif;
+}
+
+/* Rank-based name color effects */
+.wanted-poster[data-rank="pirate"] .wanted-name {
+  color: #3498db !important;
+}
+
+.wanted-poster[data-rank="rising"] .wanted-name {
+  color: #5dade2 !important;
+}
+
+.wanted-poster[data-rank="supernova"] .wanted-name {
+  color: #f39c12 !important;
+}
+
+.wanted-poster[data-rank="warlord"] .wanted-name {
+  color: #9b59b6 !important;
+}
+
+.wanted-poster[data-rank="general"] .wanted-name {
+  color: #16a085 !important;
+}
+
+.wanted-poster[data-rank="commander"] .wanted-name {
+  color: #e67e22 !important;
+}
+
+.wanted-poster[data-rank="admiral"] .wanted-name {
+  color: #d35400 !important;
+}
+
+@keyframes wantedNameAdmiral {
+  0%, 100% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 25px rgba(251, 146, 60, 0.8) !important; }
+  50% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 35px rgba(251, 146, 60, 1) !important; }
+}
+
+.wanted-poster[data-rank="yonko"] .wanted-name {
+  color: #c0392b !important;
+}
+
+@keyframes wantedNameYonko {
+  0%, 100% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 28px rgba(239, 68, 68, 0.8) !important; }
+  50% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 38px rgba(239, 68, 68, 1) !important; }
+}
+
+.wanted-poster[data-rank="emperor"] .wanted-name {
+  color: #f1c40f !important;
+}
+
+@keyframes wantedNameEmperor {
+  0%, 100% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 30px rgba(253, 224, 71, 0.8) !important; }
+  50% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 40px rgba(253, 224, 71, 1) !important; }
+}
+
+.wanted-poster[data-rank="legend"] .wanted-name {
+  color: #3498db !important;
+}
+
+@keyframes wantedNameLegend {
+  0%, 100% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 32px rgba(96, 165, 250, 0.9) !important; }
+  50% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 42px rgba(96, 165, 250, 1) !important; }
+}
+
+.wanted-poster[data-rank="mythic"] .wanted-name {
+  color: #e74c3c !important;
+}
+
+@keyframes wantedNameMythic {
+  0%, 100% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 35px rgba(248, 113, 113, 0.9) !important; }
+  50% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 45px rgba(248, 113, 113, 1) !important; }
+}
+
+.wanted-poster[data-rank="divine"] .wanted-name {
+  color: #9b59b6 !important;
+}
+
+@keyframes wantedNameDivine {
+  0%, 100% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 38px rgba(192, 132, 252, 0.9) !important; }
+  50% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 48px rgba(192, 132, 252, 1) !important; }
+}
+
+.wanted-poster[data-rank="demigod"] .wanted-name {
+  color: #e8daef !important;
+}
+
+@keyframes wantedNameDemigod {
+  0%, 100% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 40px rgba(254, 243, 199, 0.9) !important; }
+  50% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 50px rgba(254, 243, 199, 1) !important; }
+}
+
+.wanted-poster[data-rank="supreme"] .wanted-name {
+  color: #ffffff !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+@keyframes wantedNameSupreme {
+  0%, 100% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 45px rgba(255, 255, 255, 0.9) !important; }
+  50% { text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 55px rgba(255, 255, 255, 1) !important; }
+}
+
+/* Wanted Info Box */
+.wanted-info-box {
+  background: transparent;
+  padding: 5px 15px;
+  margin: 8px 0 12px 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
 }
 
 /* Wanted Crew */
@@ -155,93 +542,74 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-bottom: 25px;
-  padding: 12px 20px;
-  background: rgba(44, 24, 16, 0.15);
-  border: 3px solid #8b6f47;
-  border-radius: 30px;
-  box-shadow: 
-    0 4px 15px rgba(0, 0, 0, 0.3),
-    inset 0 2px 5px rgba(255, 255, 255, 0.1);
+  gap: 5px;
+  margin-bottom: 3px;
+  padding: 0;
+  background: transparent;
+  border: none;
   transition: all 0.3s;
 }
 
-.wanted-crew:hover {
-  transform: scale(1.05);
-  box-shadow: 
-    0 6px 20px rgba(0, 0, 0, 0.4),
-    inset 0 2px 8px rgba(255, 255, 255, 0.15);
-}
-
 .wanted-crew .crew-icon {
-  font-size: 28px;
-  filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.3));
+  font-size: 18px;
 }
 
 .wanted-crew .crew-name {
-  font-size: 18px;
-  font-weight: 900;
-  color: #2c1810;
+  font-size: 15px;
+  font-weight: 700;
+  color: #3d2817;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* Wanted Bounty */
-.wanted-bounty {
-  text-align: center;
-  font-size: 26px;
-  font-weight: 900;
-  color: #5c3a21;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.05);
 }
 
 .wanted-bounty-value {
   display: block;
   text-align: center;
-  font-size: 64px;
-  color: #c0392b;
-  text-shadow: 
-    4px 4px 0 rgba(0, 0, 0, 0.2),
-    0 0 30px rgba(192, 57, 43, 0.4);
-  margin-bottom: 20px;
+  font-size: 44px;
+  color: #1a1410;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.15);
+  margin: 10px 0 15px 0;
+  padding-bottom: 12px;
   font-weight: 900;
-  letter-spacing: 3px;
-  animation: bountyGlow 2s ease-in-out infinite;
+  letter-spacing: 0px;
   line-height: 1;
+  font-family: 'Impact', 'Arial Black', sans-serif;
+  position: relative;
+}
+
+.wanted-bounty-value::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 80%;
+  height: 1px;
+  background: #3d2817;
+  opacity: 0.4;
 }
 
 @keyframes bountyGlow {
   0%, 100% { 
-    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
     transform: scale(1);
   }
   50% { 
-    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2), 0 0 30px rgba(192, 57, 43, 0.6);
-    transform: scale(1.05);
+    transform: scale(1.02);
   }
 }
 
 /* Wanted Rank */
 .wanted-rank {
   text-align: center;
-  font-size: 20px;
-  font-weight: 900;
+  font-size: 16px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 25px;
-  padding: 12px 20px;
-  background: rgba(44, 24, 16, 0.15);
-  border: 2px solid rgba(139, 111, 71, 0.5);
-  border-radius: 15px;
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.3),
-    inset 0 2px 5px rgba(255, 255, 255, 0.1);
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1px;
+  margin-bottom: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.05);
 }
 
 /* Print Styles */
@@ -298,7 +666,6 @@
   }
   
   .wanted-poster {
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4) !important;
     page-break-inside: avoid;
     page-break-after: avoid;
     page-break-before: avoid;
@@ -306,13 +673,29 @@
     width: 100% !important;
     margin: 0 auto !important;
     background: linear-gradient(135deg, #d4a574 0%, #b8956a 50%, #d4a574 100%) !important;
-    border: 10px solid #8b6f47 !important;
     padding: 35px 30px !important;
     border-radius: 15px !important;
     height: auto !important;
     min-height: auto !important;
     box-sizing: border-box !important;
   }
+  
+  /* Keep rank-based border colors in print */
+  .wanted-poster[data-rank="rookie"] { border: 10px solid #95a5a6 !important; }
+  .wanted-poster[data-rank="pirate"] { border: 10px solid #3498db !important; }
+  .wanted-poster[data-rank="rising"] { border: 10px solid #5dade2 !important; }
+  .wanted-poster[data-rank="supernova"] { border: 10px solid #ffd93d !important; }
+  .wanted-poster[data-rank="warlord"] { border: 10px solid #d8b4fe !important; }
+  .wanted-poster[data-rank="general"] { border: 10px solid #6ee7b7 !important; }
+  .wanted-poster[data-rank="commander"] { border: 10px solid #fbbf24 !important; }
+  .wanted-poster[data-rank="admiral"] { border: 12px solid #fb923c !important; }
+  .wanted-poster[data-rank="yonko"] { border: 12px solid #ef4444 !important; }
+  .wanted-poster[data-rank="emperor"] { border: 12px solid #fde047 !important; }
+  .wanted-poster[data-rank="legend"] { border: 14px solid #60a5fa !important; }
+  .wanted-poster[data-rank="mythic"] { border: 14px solid #f87171 !important; }
+  .wanted-poster[data-rank="divine"] { border: 15px solid #c084fc !important; }
+  .wanted-poster[data-rank="demigod"] { border: 15px solid #fef3c7 !important; }
+  .wanted-poster[data-rank="supreme"] { border: 16px solid #ffffff !important; }
   
   .wanted-poster::before {
     background: 
@@ -432,20 +815,20 @@
 .print-poster-btn {
   display: block;
   width: 100%;
-  padding: 15px 30px;
-  margin: 20px 0 10px;
+  padding: 12px 25px;
+  margin: 15px 0 8px;
   background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
   color: white;
-  border: 3px solid #229954;
-  border-radius: 15px;
-  font-size: 18px;
+  border: 2px solid #229954;
+  border-radius: 10px;
+  font-size: 16px;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .print-poster-btn:hover {

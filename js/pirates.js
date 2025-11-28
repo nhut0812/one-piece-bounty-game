@@ -24,152 +24,162 @@ let pirates = [
 
 // DANH SÁCH BĂNG NHÓM (18 băng thực tế theo One Piece)
 let crews = [
-  { name: "Straw Hat Pirates", icon: "🏴‍☠️", color: "#e74c3c", captain: "Monkey D. Luffy" },
-  { name: "Roger Pirates", icon: "👑", color: "#f1c40f", captain: "Gol D. Roger" },
-  { name: "Whitebeard Pirates", icon: "⚔️", color: "#95a5a6", captain: "Edward Newgate" },
-  { name: "Blackbeard Pirates", icon: "💀", color: "#2c3e50", captain: "Marshall D. Teach" },
-  { name: "Heart Pirates", icon: "❤️", color: "#3498db", captain: "Trafalgar D. Water Law" },
-  { name: "Beast Pirates", icon: "🐉", color: "#9b59b6", captain: "Kaido" },
-  { name: "Big Mom Pirates", icon: "🎂", color: "#e91e63", captain: "Charlotte Linlin" },
-  { name: "Red Hair Pirates", icon: "💥", color: "#c0392b", captain: "Shanks" },
-  { name: "Kid Pirates", icon: "🧠", color: "#d35400", captain: "Eustass Kid" },
-  { name: "Kuja Pirates", icon: "🐍", color: "#8e44ad", captain: "Boa Hancock" },
-  { name: "Donquixote Pirates", icon: "🦩", color: "#ff1493", captain: "Donquixote Doflamingo" },
-  { name: "Baroque Works", icon: "🎭", color: "#d4af37", captain: "Crocodile" },
-  { name: "Arlong Pirates", icon: "🦈", color: "#1e90ff", captain: "Arlong" },
-  { name: "Buggy Pirates", icon: "🤡", color: "#ff6347", captain: "Buggy" },
-  { name: "Krieg Pirates", icon: "⚙️", color: "#708090", captain: "Don Krieg" },
-  { name: "Hawkins Pirates", icon: "🎴", color: "#dda0dd", captain: "Basil Hawkins" },
-  { name: "Bonney Pirates", icon: "🍕", color: "#ff69b4", captain: "Jewelry Bonney" },
-  { name: "Drake Pirates", icon: "🦖", color: "#8b4513", captain: "X Drake" },
-  { name: "No Crew", icon: "⚖️", color: "#7f8c8d", captain: "Independent" }
+  { name: "Straw Hat Pirates", nameVi: "Mũ Rơm", icon: "🏴‍☠️", color: "#e74c3c", captain: "Monkey D. Luffy" },
+  { name: "Roger Pirates", nameVi: "Roger", icon: "👑", color: "#f1c40f", captain: "Gol D. Roger" },
+  { name: "Whitebeard Pirates", nameVi: "Râu Trắng", icon: "⚔️", color: "#95a5a6", captain: "Edward Newgate" },
+  { name: "Blackbeard Pirates", nameVi: "Râu Đen", icon: "💀", color: "#2c3e50", captain: "Marshall D. Teach" },
+  { name: "Heart Pirates", nameVi: "Trái Tim", icon: "❤️", color: "#3498db", captain: "Trafalgar D. Water Law" },
+  { name: "Beast Pirates", nameVi: "Bách Thú", icon: "🐉", color: "#9b59b6", captain: "Kaido" },
+  { name: "Big Mom Pirates", nameVi: "Big Mom", icon: "🎂", color: "#e91e63", captain: "Charlotte Linlin" },
+  { name: "Red Hair Pirates", nameVi: "Tóc Đỏ", icon: "💥", color: "#c0392b", captain: "Shanks" },
+  { name: "Kid Pirates", nameVi: "Kid", icon: "🧠", color: "#d35400", captain: "Eustass Kid" },
+  { name: "Kuja Pirates", nameVi: "Kuja", icon: "🐍", color: "#8e44ad", captain: "Boa Hancock" },
+  { name: "Donquixote Pirates", nameVi: "Doflamingo", icon: "🦩", color: "#ff1493", captain: "Donquixote Doflamingo" },
+  { name: "Baroque Works", nameVi: "Baroque Works", icon: "🎭", color: "#d4af37", captain: "Crocodile" },
+  { name: "Arlong Pirates", nameVi: "Arlong", icon: "🦈", color: "#1e90ff", captain: "Arlong" },
+  { name: "Buggy Pirates", nameVi: "Buggy", icon: "🤡", color: "#ff6347", captain: "Buggy" },
+  { name: "Krieg Pirates", nameVi: "Don Krieg", icon: "⚙️", color: "#708090", captain: "Don Krieg" },
+  { name: "Hawkins Pirates", nameVi: "Hawkins", icon: "🎴", color: "#dda0dd", captain: "Basil Hawkins" },
+  { name: "Bonney Pirates", nameVi: "Bonney", icon: "🍕", color: "#ff69b4", captain: "Jewelry Bonney" },
+  { name: "Drake Pirates", nameVi: "X Drake", icon: "🦖", color: "#8b4513", captain: "X Drake" },
+  { name: "No Crew", nameVi: "Độc Lập", icon: "⚖️", color: "#7f8c8d", captain: "Independent" }
 ];
 
 // Lưu ảnh cấp độ mặc định
 let rankImages = {
-  rookie: null,       // 0-29
-  pirate: null,       // 30-99
-  rising: null,       // 100-299
-  supernova: null,    // 300-499
-  warlord: null,      // 500-799
-  general: null,      // 800-999
-  commander: null,    // 1000-2499
-  admiral: null,      // 2500-3999
-  yonko: null,        // 4000-5999
-  emperor: null,      // 6000-9999
-  legend: null,       // 10000-19999
-  mythic: null,       // 20000-39999
-  divine: null,       // 40000-69999
-  demigod: null,      // 70000-99999
-  supreme: null       // 100000+
+  rookie: null,       // 0-79
+  pirate: null,       // 80-179
+  rising: null,       // 180-349
+  supernova: null,    // 350-599
+  warlord: null,      // 600-999
+  general: null,      // 1000-1999
+  commander: null,    // 2000-3999
+  admiral: null,      // 4000-7999
+  yonko: null,        // 8000-14999
+  emperor: null,      // 15000-24999
+  legend: null,       // 25000-49999
+  mythic: null,       // 50000-99999
+  divine: null,       // 100000-249999
+  demigod: null,      // 250000-499999
+  supreme: null       // 500000+
 };
+
+// Lưu ảnh băng nhóm
+let crewImages = {};
 
 // Hàm xác định cấp độ dựa trên bounty
 function getRankByBounty(bounty) {
-  if (bounty >= 100000) return { 
+  if (bounty >= 500000) return { 
     type: 'supreme', 
     name: 'Chí Tôn', 
     icon: '🌟',
     color: '#ffffff',
-    minBounty: 100000
+    minBounty: 500000
   };
-  if (bounty >= 70000) return { 
+  if (bounty >= 250000) return { 
     type: 'demigod', 
     name: 'Bán Thần', 
     icon: '✨',
     color: '#e8daef',
-    minBounty: 70000
+    minBounty: 250000
   };
-  if (bounty >= 40000) return { 
+  if (bounty >= 100000) return { 
     type: 'divine', 
     name: 'Thần Thoại', 
     icon: '⚡',
     color: '#9b59b6',
-    minBounty: 40000
+    minBounty: 100000
   };
-  if (bounty >= 20000) return { 
+  if (bounty >= 50000) return { 
     type: 'mythic', 
     name: 'Huyền Thoại', 
     icon: '🔥',
     color: '#e74c3c',
-    minBounty: 20000
+    minBounty: 50000
   };
-  if (bounty >= 10000) return { 
+  if (bounty >= 25000) return { 
     type: 'legend', 
     name: 'Truyền Thuyết', 
     icon: '💎',
     color: '#3498db',
-    minBounty: 10000
+    minBounty: 25000
   };
-  if (bounty >= 6000) return { 
+  if (bounty >= 15000) return { 
     type: 'emperor', 
     name: 'Đế Vương', 
     icon: '👑',
     color: '#f1c40f',
-    minBounty: 6000
+    minBounty: 15000
   };
-  if (bounty >= 4000) return { 
+  if (bounty >= 8000) return { 
     type: 'yonko', 
     name: 'Tứ Hoàng', 
     icon: '👹',
     color: '#c0392b',
-    minBounty: 4000
+    minBounty: 8000
   };
-  if (bounty >= 2500) return { 
+  if (bounty >= 4000) return { 
     type: 'admiral', 
     name: 'Đô Đốc', 
     icon: '🎖️',
     color: '#d35400',
-    minBounty: 2500
+    minBounty: 4000
   };
-  if (bounty >= 1000) return { 
+  if (bounty >= 2000) return { 
     type: 'commander', 
     name: 'Tư Lệnh', 
     icon: '💪',
     color: '#e67e22',
-    minBounty: 1000
+    minBounty: 2000
   };
-  if (bounty >= 800) return { 
+  if (bounty >= 1000) return { 
     type: 'general', 
     name: 'Đại Tướng', 
     icon: '🛡️',
     color: '#16a085',
-    minBounty: 800
+    minBounty: 1000
   };
-  if (bounty >= 500) return { 
+  if (bounty >= 600) return { 
     type: 'warlord', 
     name: 'Thất Vũ Hải', 
     icon: '⚔️',
     color: '#8e44ad',
-    minBounty: 500
+    minBounty: 600
   };
-  if (bounty >= 300) return { 
+  if (bounty >= 350) return { 
     type: 'supernova', 
     name: 'Siêu Tân Tinh', 
     icon: '⭐',
     color: '#f39c12',
-    minBounty: 300
+    minBounty: 350
   };
-  if (bounty >= 100) return { 
+  if (bounty >= 180) return { 
     type: 'rising', 
     name: 'Tân Tinh', 
     icon: '🌠',
     color: '#3498db',
-    minBounty: 100
+    minBounty: 180
   };
-  if (bounty >= 30) return { 
+  if (bounty >= 80) return { 
     type: 'pirate', 
     name: 'Hải Tặc', 
     icon: '🏴‍☠️',
     color: '#3498db',
-    minBounty: 30
+    minBounty: 80
   };
-  return { 
+  if (bounty >= 0) return { 
     type: 'rookie', 
     name: 'Tân Binh', 
     icon: '👶',
     color: '#95a5a6',
     minBounty: 0
+  };
+  return { 
+    type: 'prisoner', 
+    name: 'Tù Nhân', 
+    icon: '⛓️',
+    color: '#7f8c8d',
+    minBounty: -Infinity
   };
 }
 
@@ -184,6 +194,11 @@ function formatBounty(bounty) {
   return bounty.toString();
 }
 
+// Filter by bounty range using combobox
+function filterByBounty(range) {
+  renderPirates(range);
+}
+
 // Render hải tặc
 function renderPirates(filter = 'all') {
   const grid = document.getElementById("pirateGrid");
@@ -191,23 +206,36 @@ function renderPirates(filter = 'all') {
 
   let filteredPirates = pirates;
   
+  // Filter by crew
+  if (currentCrewFilter !== 'all') {
+    filteredPirates = filteredPirates.filter(p => p.crew === currentCrewFilter);
+  }
+  
+  // Filter by search
+  if (searchQuery) {
+    filteredPirates = filteredPirates.filter(p => 
+      p.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }
+  
+  // Filter by bounty range
   if (filter !== 'all') {
-    filteredPirates = pirates.filter(p => {
-      if (filter === '0-29') return p.bounty < 30;
-      if (filter === '30-99') return p.bounty >= 30 && p.bounty < 100;
-      if (filter === '100-299') return p.bounty >= 100 && p.bounty < 300;
-      if (filter === '300-499') return p.bounty >= 300 && p.bounty < 500;
-      if (filter === '500-799') return p.bounty >= 500 && p.bounty < 800;
-      if (filter === '800-999') return p.bounty >= 800 && p.bounty < 1000;
-      if (filter === '1000-2499') return p.bounty >= 1000 && p.bounty < 2500;
-      if (filter === '2500-3999') return p.bounty >= 2500 && p.bounty < 4000;
-      if (filter === '4000-5999') return p.bounty >= 4000 && p.bounty < 6000;
-      if (filter === '6000-9999') return p.bounty >= 6000 && p.bounty < 10000;
-      if (filter === '10000-19999') return p.bounty >= 10000 && p.bounty < 20000;
-      if (filter === '20000-39999') return p.bounty >= 20000 && p.bounty < 40000;
-      if (filter === '40000-69999') return p.bounty >= 40000 && p.bounty < 70000;
-      if (filter === '70000-99999') return p.bounty >= 70000 && p.bounty < 100000;
-      if (filter === '100000+') return p.bounty >= 100000;
+    filteredPirates = filteredPirates.filter(p => {
+      if (filter === '0-79') return p.bounty < 80;
+      if (filter === '80-179') return p.bounty >= 80 && p.bounty < 180;
+      if (filter === '180-349') return p.bounty >= 180 && p.bounty < 350;
+      if (filter === '350-599') return p.bounty >= 350 && p.bounty < 600;
+      if (filter === '600-999') return p.bounty >= 600 && p.bounty < 1000;
+      if (filter === '1000-1999') return p.bounty >= 1000 && p.bounty < 2000;
+      if (filter === '2000-3999') return p.bounty >= 2000 && p.bounty < 4000;
+      if (filter === '4000-7999') return p.bounty >= 4000 && p.bounty < 8000;
+      if (filter === '8000-14999') return p.bounty >= 8000 && p.bounty < 15000;
+      if (filter === '15000-24999') return p.bounty >= 15000 && p.bounty < 25000;
+      if (filter === '25000-49999') return p.bounty >= 25000 && p.bounty < 50000;
+      if (filter === '50000-99999') return p.bounty >= 50000 && p.bounty < 100000;
+      if (filter === '100000-249999') return p.bounty >= 100000 && p.bounty < 250000;
+      if (filter === '250000-499999') return p.bounty >= 250000 && p.bounty < 500000;
+      if (filter === '500000+') return p.bounty >= 500000;
       return true;
     });
   }
@@ -228,19 +256,24 @@ function renderPirates(filter = 'all') {
     
     card.innerHTML = `
       <div class="card-icon">${rank.icon}</div>
-      <div class="avatar">${avatarContent}</div>
+      <div class="avatar" onclick="changeAvatar(${realIndex})" style="cursor: pointer;" title="Nhấn để đổi ảnh đại diện">${avatarContent}</div>
+      <input type="file" id="avatar-input-${realIndex}" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event, ${realIndex})">
       <div class="name">${p.name}</div>
-      <div class="crew-badge" style="background: ${crewInfo.color}; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 900; margin: 8px auto; display: inline-block; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
-        ${crewInfo.icon} ${crewInfo.name}
+      <div style="text-align: center;">
+        <div class="crew-badge" style="background: ${crewInfo.color}; color: white; padding: 5px 12px; border-radius: 12px; font-size: 13px; font-weight: 900; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+          ${crewImages[crewInfo.name] ? `<img src="${crewImages[crewInfo.name]}" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;">` : crewInfo.icon} ${crewInfo.name}
+        </div>
       </div>
-      <div class="role" style="color: ${rank.color}">${rank.name}</div>
+      <div class="role" style="color: ${rank.color}; font-size: 16px; font-weight: bold;">${rank.name}</div>
       <div class="bounty">
         <span id="bounty-${realIndex}">${formatBounty(p.bounty)}</span>฿
       </div>
       <div class="actions">
         <button class="btn btn-plus" onclick="changeBounty(${realIndex}, 10)">+10</button>
+        <button class="btn btn-plus" onclick="changeBounty(${realIndex}, 50)">+50</button>
         <button class="btn btn-plus-large" onclick="changeBounty(${realIndex}, 100)">+100</button>
         <button class="btn btn-minus" onclick="changeBounty(${realIndex}, -10)">-10</button>
+        <button class="btn btn-minus" onclick="changeBounty(${realIndex}, -50)">-50</button>
         <button class="btn btn-delete" onclick="deletePirate(${realIndex})">🗑️</button>
       </div>
     `;
@@ -248,10 +281,10 @@ function renderPirates(filter = 'all') {
   });
 }
 
-// Thay đổi bounty
+// Format số bounty
 function changeBounty(index, delta) {
   const oldRank = getRankByBounty(pirates[index].bounty);
-  pirates[index].bounty = Math.max(0, pirates[index].bounty + delta);
+  pirates[index].bounty += delta;
   const newRank = getRankByBounty(pirates[index].bounty);
   
   // Cập nhật type khi thăng hạng
@@ -298,8 +331,69 @@ function deletePirate(index) {
   }
 }
 
+// Đổi avatar
+function changeAvatar(index) {
+  const fileInput = document.getElementById(`avatar-input-${index}`);
+  if (fileInput) {
+    fileInput.click();
+  }
+}
+
+// Xử lý upload avatar
+function handleAvatarUpload(event, index) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // Kiểm tra file là ảnh
+  if (!file.type.startsWith('image/')) {
+    alert('Vui lòng chọn file ảnh!');
+    return;
+  }
+
+  // Kiểm tra kích thước file (giới hạn 5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    alert('Kích thước ảnh không được vượt quá 5MB!');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    pirates[index].image = e.target.result;
+    renderPirates();
+    saveToLocalStorage();
+    
+    // Hiển thị thông báo
+    showNotification(`🖼️ Đã cập nhật ảnh đại diện cho ${pirates[index].name}!`);
+  };
+  reader.readAsDataURL(file);
+}
+
 // Crew Filter
 let currentCrewFilter = 'all';
+let searchQuery = '';
+
+// Populate crew filter dropdown
+function populateCrewFilter() {
+  const select = document.getElementById('crewFilter');
+  if (!select) return;
+  
+  // Lưu giá trị hiện tại
+  const currentValue = select.value;
+  
+  // Clear và thêm option mặc định
+  select.innerHTML = '<option value="all">TẤT CẢ</option>';
+  
+  // Thêm các crew từ danh sách
+  crews.forEach(crew => {
+    const option = document.createElement('option');
+    option.value = crew.name;
+    option.textContent = `${crew.name} (${crew.nameVi})`;
+    select.appendChild(option);
+  });
+  
+  // Khôi phục giá trị
+  select.value = currentValue || 'all';
+}
 
 function filterByCrew(crewName) {
   currentCrewFilter = crewName;
@@ -312,50 +406,12 @@ function filterByCrew(crewName) {
     }
   });
   
-  // Filter pirates
-  const grid = document.getElementById("pirateGrid");
-  grid.innerHTML = "";
-  
-  let filteredPirates = crewName === 'all' ? pirates : pirates.filter(p => p.crew === crewName);
-  
-  // Sort by bounty
-  filteredPirates.sort((a, b) => b.bounty - a.bounty);
-  
-  filteredPirates.forEach((p, index) => {
-    const realIndex = pirates.indexOf(p);
-    const rank = getRankByBounty(p.bounty);
-    const avatarContent = p.image ? 
-      `<img src="${p.image}" alt="${p.name}">` : 
-      (rankImages[rank.type] ? `<img src="${rankImages[rank.type]}" alt="${rank.name}">` : rank.icon);
-
-    const card = document.createElement("div");
-    card.className = "card " + rank.type;
-    const crewInfo = crews.find(c => c.name === p.crew) || crews[crews.length - 1];
-    
-    card.innerHTML = `
-      <div class="card-icon">${rank.icon}</div>
-      <div class="avatar">${avatarContent}</div>
-      <div class="name">${p.name}</div>
-      <div class="crew-badge" style="background: ${crewInfo.color}; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 900; margin: 8px auto; display: inline-block; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
-        ${crewInfo.icon} ${crewInfo.name}
-      </div>
-      <div class="role" style="color: ${rank.color}">${rank.name}</div>
-      <div class="bounty">
-        <span id="bounty-${realIndex}">${formatBounty(p.bounty)}</span>฿
-      </div>
-      <div class="actions">
-        <button class="btn btn-plus" onclick="changeBounty(${realIndex}, 10)">+10</button>
-        <button class="btn btn-plus-large" onclick="changeBounty(${realIndex}, 100)">+100</button>
-        <button class="btn btn-minus" onclick="changeBounty(${realIndex}, -10)">-10</button>
-        <button class="btn btn-delete" onclick="deletePirate(${realIndex})">🗑️</button>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
+  // Use renderPirates to maintain consistency
+  renderPirates();
   
   // Show crew stats
   if (crewName !== 'all') {
-    const crewPirates = filteredPirates;
+    const crewPirates = pirates.filter(p => p.crew === crewName);
     const totalBounty = crewPirates.reduce((sum, p) => sum + p.bounty, 0);
     const avgBounty = crewPirates.length > 0 ? Math.round(totalBounty / crewPirates.length) : 0;
     
@@ -365,6 +421,12 @@ function filterByCrew(crewName) {
       avgBounty: formatBounty(avgBounty) + '฿'
     });
   }
+}
+
+// Search function
+function searchPirates(query) {
+  searchQuery = query;
+  renderPirates();
 }
 
 // Local Storage
@@ -442,6 +504,9 @@ function importData(event) {
 function loadFromLocalStorage() {
   const saved = localStorage.getItem('onePiecePirates');
   const savedRanks = localStorage.getItem('onePieceRankImages');
+  const savedCrewImages = localStorage.getItem('onePieceCrewImages');
+  const savedCrews = localStorage.getItem('onePieceCrews');
+  
   if (saved) {
     pirates = JSON.parse(saved);
   }
@@ -456,6 +521,37 @@ function loadFromLocalStorage() {
             `<img src="${rankImages[rank]}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
         }
       }
+    });
+  }
+  if (savedCrewImages) {
+    crewImages = JSON.parse(savedCrewImages);
+  }
+  if (savedCrews) {
+    const loadedCrews = JSON.parse(savedCrews);
+    // Merge nameVi từ default crews vào loaded crews
+    crews = loadedCrews.map(loadedCrew => {
+      const defaultCrew = [
+        { name: "Straw Hat Pirates", nameVi: "Mũ Rơm" },
+        { name: "Roger Pirates", nameVi: "Roger" },
+        { name: "Whitebeard Pirates", nameVi: "Râu Trắng" },
+        { name: "Blackbeard Pirates", nameVi: "Râu Đen" },
+        { name: "Heart Pirates", nameVi: "Trái Tim" },
+        { name: "Beast Pirates", nameVi: "Bách Thú" },
+        { name: "Big Mom Pirates", nameVi: "Big Mom" },
+        { name: "Red Hair Pirates", nameVi: "Tóc Đỏ" },
+        { name: "Kid Pirates", nameVi: "Kid" },
+        { name: "Kuja Pirates", nameVi: "Kuja" },
+        { name: "Donquixote Pirates", nameVi: "Doflamingo" },
+        { name: "Baroque Works", nameVi: "Baroque Works" },
+        { name: "Arlong Pirates", nameVi: "Arlong" },
+        { name: "Buggy Pirates", nameVi: "Buggy" },
+        { name: "Krieg Pirates", nameVi: "Don Krieg" },
+        { name: "Hawkins Pirates", nameVi: "Hawkins" },
+        { name: "Bonney Pirates", nameVi: "Bonney" },
+        { name: "Drake Pirates", nameVi: "X Drake" },
+        { name: "No Crew", nameVi: "Độc Lập" }
+      ].find(d => d.name === loadedCrew.name);
+      return { ...loadedCrew, nameVi: loadedCrew.nameVi || (defaultCrew ? defaultCrew.nameVi : loadedCrew.name) };
     });
   }
 }

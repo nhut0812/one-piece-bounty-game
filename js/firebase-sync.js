@@ -54,14 +54,16 @@ async function syncToFirebase() {
     const userId = getUserId();
     const data = {
       pirates: pirates,
+      crews: crews,
       rankImages: rankImages,
+      crewImages: crewImages,
       lastUpdate: Date.now(),
       lastUserId: userId
     };
     
     await database.ref('sharedData').set(data);
-    console.log('☁️ Synced to Firebase');
-    showSyncNotification('✅ Đã đồng bộ lên cloud');
+    console.log('☁️ Synced to Firebase:', pirates.length, 'pirates');
+    showSyncNotification(`✅ Đã đồng bộ ${pirates.length} hải tặc lên cloud`);
   } catch (error) {
     console.error('❌ Sync error:', error);
     showSyncNotification('⚠️ Lỗi đồng bộ');
@@ -71,7 +73,7 @@ async function syncToFirebase() {
 }
 
 // Load dữ liệu từ Firebase
-async function loadFromFirebase() {
+async function loadFromFirebase(forceLoad = false) {
   if (!database || !syncEnabled) return false;
   
   try {
@@ -79,18 +81,24 @@ async function loadFromFirebase() {
     const snapshot = await database.ref('sharedData').once('value');
     const data = snapshot.val();
     
-    if (data && data.pirates) {
-      // So sánh timestamp
+    if (data && data.pirates && data.pirates.length > 0) {
       const localLastUpdate = localStorage.getItem('lastLocalUpdate') || 0;
       const cloudLastUpdate = data.lastUpdate || 0;
       
-      if (cloudLastUpdate > localLastUpdate) {
+      // Khi bật sync lần đầu (forceLoad), luôn ưu tiên cloud nếu có dữ liệu
+      if (forceLoad || cloudLastUpdate > localLastUpdate) {
         pirates = data.pirates;
         rankImages = data.rankImages || {};
-        saveToLocalStorage();
+        crewImages = data.crewImages || {};
+        if (data.crews) crews = data.crews;
+        localStorage.setItem('lastLocalUpdate', cloudLastUpdate);
+        localStorage.setItem('onePiecePirates', JSON.stringify(pirates));
+        localStorage.setItem('onePieceRankImages', JSON.stringify(rankImages));
+        localStorage.setItem('onePieceCrewImages', JSON.stringify(crewImages));
+        if (data.crews) localStorage.setItem('onePieceCrews', JSON.stringify(crews));
         renderPirates();
-        console.log('☁️ Loaded from Firebase');
-        showSyncNotification('📥 Đã tải dữ liệu từ cloud');
+        console.log('☁️ Loaded from Firebase:', pirates.length, 'pirates');
+        showSyncNotification(`📥 Đã tải ${pirates.length} hải tặc từ cloud`);
         return true;
       }
     }
@@ -120,9 +128,13 @@ function listenToFirebase() {
       if (cloudLastUpdate > localLastUpdate) {
         pirates = data.pirates;
         rankImages = data.rankImages || {};
+        crewImages = data.crewImages || {};
+        if (data.crews) crews = data.crews;
         localStorage.setItem('lastLocalUpdate', cloudLastUpdate);
         localStorage.setItem('onePiecePirates', JSON.stringify(pirates));
         localStorage.setItem('onePieceRankImages', JSON.stringify(rankImages));
+        localStorage.setItem('onePieceCrewImages', JSON.stringify(crewImages));
+        if (data.crews) localStorage.setItem('onePieceCrews', JSON.stringify(crews));
         renderPirates();
         console.log('🔄 Realtime update from Firebase');
         showSyncNotification('🔄 Dữ liệu đã cập nhật');
@@ -143,11 +155,16 @@ function toggleFirebaseSync() {
       return;
     }
     
-    loadFromFirebase().then((loaded) => {
+    // Luôn load từ cloud trước khi bật sync
+    loadFromFirebase(true).then((loaded) => {
       if (!loaded) {
-        // Nếu cloud chưa có dữ liệu, upload dữ liệu local lên
-        console.log('📤 Cloud chưa có dữ liệu, upload local lên...');
-        syncToFirebase();
+        // Chỉ upload khi cloud thực sự trống
+        console.log('📤 Cloud trống, upload dữ liệu local lên...');
+        if (pirates.length > 0) {
+          syncToFirebase();
+        }
+      } else {
+        console.log('✅ Đã load dữ liệu từ cloud');
       }
       listenToFirebase();
     });
@@ -222,7 +239,12 @@ window.addEventListener('load', () => {
     if (initFirebase()) {
       syncEnabled = localStorage.getItem('firebaseSyncEnabled') === 'true';
       if (syncEnabled) {
-        loadFromFirebase().then(() => {
+        // Khi mở trang, nếu sync đang bật, load từ cloud ngay
+        console.log('🔄 Sync đang bật, đang load dữ liệu từ cloud...');
+        loadFromFirebase(true).then((loaded) => {
+          if (loaded) {
+            console.log('✅ Đã load dữ liệu từ cloud khi khởi động');
+          }
           listenToFirebase();
         });
       }

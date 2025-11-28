@@ -57,9 +57,10 @@
     padding: 10px 15px;
   }
   
-  /* Data Management Bar */
-  .data-management {
+  /* Top Controls */
+  .top-controls {
     padding: 10px 15px;
+    flex-direction: column;
   }
   
   .data-btn {
@@ -67,26 +68,46 @@
     font-size: 13px;
   }
   
-  /* Crew Filter */
-  .crew-filter {
-    gap: 8px;
-    padding: 12px;
+  .search-container {
+    max-width: 100%;
   }
   
-  .crew-tab {
-    padding: 8px 14px;
-    font-size: 12px;
+  /* Filters Row */
+  .filters-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  /* Crew Filter */
+  .crew-filter-container {
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+  }
+  
+  .crew-filter-container label {
+    font-size: 16px;
+  }
+  
+  #crewFilter {
+    min-width: 250px;
+    font-size: 13px;
   }
   
   /* Bounty Filter */
-  .filter-tabs {
-    gap: 8px;
-    padding: 12px;
+  .bounty-filter-container {
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
   }
   
-  .filter-tab {
-    padding: 8px 12px;
-    font-size: 11px;
+  .bounty-filter-container label {
+    font-size: 16px;
+  }
+  
+  #bountyFilter {
+    min-width: 250px;
+    font-size: 13px;
   }
   
   /* Cards Grid */
@@ -192,8 +213,8 @@
     border-radius: 20px;
   }
   
-  /* Data Management */
-  .data-management {
+  /* Top Controls */
+  .top-controls {
     padding: 8px 12px;
     border-radius: 10px;
     margin-bottom: 15px;
@@ -213,32 +234,39 @@
     font-size: 11px;
   }
   
-  /* Crew Filter */
-  .crew-filter {
-    gap: 6px;
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 12px;
-  }
-  
-  .crew-tab {
-    padding: 6px 10px;
-    font-size: 11px;
-    border-radius: 15px;
-  }
-  
-  /* Bounty Filter */
-  .filter-tabs {
-    gap: 6px;
-    padding: 10px;
-    border-radius: 10px;
+  /* Filters Row */
+  .filters-row {
     margin-bottom: 15px;
   }
   
-  .filter-tab {
-    padding: 6px 10px;
-    font-size: 10px;
-    border-radius: 15px;
+  /* Crew Filter */
+  .crew-filter-container {
+    padding: 12px;
+  }
+  
+  .crew-filter-container label {
+    font-size: 14px;
+  }
+  
+  #crewFilter {
+    min-width: 200px;
+    font-size: 12px;
+    padding: 10px 15px;
+  }
+  
+  /* Bounty Filter */
+  .bounty-filter-container {
+    padding: 12px;
+  }
+  
+  .bounty-filter-container label {
+    font-size: 14px;
+  }
+  
+  #bountyFilter {
+    min-width: 200px;
+    font-size: 12px;
+    padding: 10px 15px;
   }
   
   /* Cards */

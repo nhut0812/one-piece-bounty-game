@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="css/wanted.css">
   <link rel="stylesheet" href="css/rank-settings.css">
   <link rel="stylesheet" href="css/effects.css">
+  <link rel="stylesheet" href="css/search.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
@@ -30,6 +31,7 @@
         <h1>⚓ ONE PIECE BOUNTY</h1>
       </div>
       <div class="header-buttons">
+        <a href="admin.html" class="header-btn admin" style="text-decoration: none;">⚙️ Admin</a>
         <button class="header-btn info" onclick="openModal('settingsModal')">🏴‍☠️ Cài Đặt Cấp Độ</button>
         <button class="header-btn success" onclick="openModal('addPirateModal')">👤 Thêm Hải Tặc</button>
         <button class="header-btn primary" onclick="showTopPirate()">🎯 Truy Nã Gắt</button>
@@ -37,56 +39,50 @@
       <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
     </header>
 
-    <!-- Data Management Bar -->
-    <div class="data-management">
+    <!-- Data Management and Search Bar -->
+    <div class="top-controls">
       <button class="data-btn sync" id="syncToggleBtn" onclick="toggleFirebaseSync()">
         <span class="data-icon">☁️</span>
         <span class="data-text">Đồng Bộ: Tắt</span>
       </button>
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm hải tặc..." oninput="searchPirates(this.value)">
+      </div>
     </div>
 
-    <!-- Crew Filter -->
-    <div class="crew-filter">
-      <button class="crew-tab active" data-crew="all" onclick="filterByCrew('all')">🌊 TẤT CẢ</button>
-      <button class="crew-tab" data-crew="Straw Hat Pirates" onclick="filterByCrew('Straw Hat Pirates')">🏴‍☠️ Mũ Rơm</button>
-      <button class="crew-tab" data-crew="Roger Pirates" onclick="filterByCrew('Roger Pirates')">👑 Roger</button>
-      <button class="crew-tab" data-crew="Whitebeard Pirates" onclick="filterByCrew('Whitebeard Pirates')">⚔️ Râu Trắng</button>
-      <button class="crew-tab" data-crew="Blackbeard Pirates" onclick="filterByCrew('Blackbeard Pirates')">💀 Râu Đen</button>
-      <button class="crew-tab" data-crew="Heart Pirates" onclick="filterByCrew('Heart Pirates')">❤️ Heart</button>
-      <button class="crew-tab" data-crew="Beast Pirates" onclick="filterByCrew('Beast Pirates')">🐉 Bách Thú</button>
-      <button class="crew-tab" data-crew="Big Mom Pirates" onclick="filterByCrew('Big Mom Pirates')">🍰 Big Mom</button>
-      <button class="crew-tab" data-crew="Red Hair Pirates" onclick="filterByCrew('Red Hair Pirates')">💥 Tóc Đỏ</button>
-      <button class="crew-tab" data-crew="Kid Pirates" onclick="filterByCrew('Kid Pirates')">🧲 Kid</button>
-      <button class="crew-tab" data-crew="Kuja Pirates" onclick="filterByCrew('Kuja Pirates')">🐍 Kuja</button>
-      <button class="crew-tab" data-crew="Donquixote Pirates" onclick="filterByCrew('Donquixote Pirates')">🦩 Doflamingo</button>
-      <button class="crew-tab" data-crew="Baroque Works" onclick="filterByCrew('Baroque Works')">🎭 Baroque</button>
-      <button class="crew-tab" data-crew="Arlong Pirates" onclick="filterByCrew('Arlong Pirates')">🦈 Arlong</button>
-      <button class="crew-tab" data-crew="Buggy Pirates" onclick="filterByCrew('Buggy Pirates')">🤡 Buggy</button>
-      <button class="crew-tab" data-crew="Krieg Pirates" onclick="filterByCrew('Krieg Pirates')">⚙️ Krieg</button>
-      <button class="crew-tab" data-crew="Hawkins Pirates" onclick="filterByCrew('Hawkins Pirates')">🎴 Hawkins</button>
-      <button class="crew-tab" data-crew="Bonney Pirates" onclick="filterByCrew('Bonney Pirates')">🍕 Bonney</button>
-      <button class="crew-tab" data-crew="Drake Pirates" onclick="filterByCrew('Drake Pirates')">🦖 Drake</button>
-      <button class="crew-tab" data-crew="No Crew" onclick="filterByCrew('No Crew')">⚖️ Độc Lập</button>
-    </div>
+    <!-- Filters (Crew + Bounty) -->
+    <div class="filters-row">
+      <!-- Crew Filter -->
+      <div class="crew-filter-container">
+        <label for="crewFilter">🏴‍☠️ Băng nhóm:</label>
+        <select id="crewFilter" onchange="filterByCrew(this.value)">
+          <option value="all">TẤT CẢ</option>
+          <!-- Options sẽ được load động từ JS -->
+        </select>
+      </div>
 
-    <!-- Filter Tabs -->
-    <div class="filter-tabs">
-      <button class="filter-tab active" data-filter="all">TẤT CẢ</button>
-      <button class="filter-tab" data-filter="0-29">0-29฿: Tân Binh</button>
-      <button class="filter-tab" data-filter="30-99">30-99฿: Hải Tặc</button>
-      <button class="filter-tab" data-filter="100-299">100-299฿: Tân Tinh</button>
-      <button class="filter-tab" data-filter="300-499">300-499฿: Siêu Tân Tinh</button>
-      <button class="filter-tab" data-filter="500-799">500-799฿: Thất Vũ Hải</button>
-      <button class="filter-tab" data-filter="800-999">800-999฿: Đại Tướng</button>
-      <button class="filter-tab" data-filter="1000-2499">1K-2.4K฿: Tư Lệnh</button>
-      <button class="filter-tab" data-filter="2500-3999">2.5K-3.9K฿: Đô Đốc</button>
-      <button class="filter-tab" data-filter="4000-5999">4K-5.9K฿: Tứ Hoàng</button>
-      <button class="filter-tab" data-filter="6000-9999">6K-9.9K฿: Đế Vương</button>
-      <button class="filter-tab" data-filter="10000-19999">10K-19K฿: Truyền Thuyết</button>
-      <button class="filter-tab" data-filter="20000-39999">20K-39K฿: Huyền Thoại</button>
-      <button class="filter-tab" data-filter="40000-69999">40K-69K฿: Thần Thoại</button>
-      <button class="filter-tab" data-filter="70000-99999">70K-99K฿: Bán Thần</button>
-      <button class="filter-tab" data-filter="100000+">100K+฿: Chí Tôn</button>
+      <!-- Bounty Filter -->
+      <div class="bounty-filter-container">
+        <label for="bountyFilter">🏆 Cấp độ:</label>
+        <select id="bountyFilter" onchange="filterByBounty(this.value)">
+          <option value="all">TẤT CẢ</option>
+          <option value="0-79">0-79฿: Tân Binh</option>
+          <option value="80-179">80-179฿: Hải Tặc</option>
+          <option value="180-349">180-349฿: Tân Tinh</option>
+          <option value="350-599">350-599฿: Siêu Tân Tinh</option>
+          <option value="600-999">600-999฿: Thất Vũ Hải</option>
+          <option value="1000-1999">1K-1.9K฿: Đại Tướng</option>
+          <option value="2000-3999">2K-3.9K฿: Tư Lệnh</option>
+          <option value="4000-7999">4K-7.9K฿: Đô Đốc</option>
+          <option value="8000-14999">8K-14.9K฿: Tứ Hoàng</option>
+          <option value="15000-24999">15K-24.9K฿: Đế Vương</option>
+          <option value="25000-49999">25K-49.9K฿: Truyền Thuyết</option>
+          <option value="50000-99999">50K-99.9K฿: Huyền Thoại</option>
+          <option value="100000-249999">100K-249K฿: Thần Thoại</option>
+          <option value="250000-499999">250K-499K฿: Bán Thần</option>
+          <option value="500000+">500K+฿: Chí Tôn</option>
+        </select>
+      </div>
     </div>
 
     <!-- Pirates Grid -->
@@ -242,21 +238,22 @@
       
       <div class="wanted-name" id="wantedName">---</div>
       
-      <div class="wanted-crew" id="wantedCrew">
-        <span class="crew-icon" id="wantedCrewIcon">🏴‍☠️</span>
-        <span class="crew-name" id="wantedCrewName">Unknown Crew</span>
+      <div class="wanted-bounty-value" id="wantedBounty">฿ 0</div>
+      
+      <div class="wanted-info-box">
+        <div class="wanted-crew" id="wantedCrew">
+          <span class="crew-icon" id="wantedCrewIcon">🏴‍☠️</span>
+          <span class="crew-name" id="wantedCrewName">Unknown Crew</span>
+        </div>
+        
+        <div class="wanted-rank" id="wantedRank">---</div>
       </div>
-      
-      <div class="wanted-bounty">BOUNTY</div>
-      <div class="wanted-bounty-value" id="wantedBounty">0฿</div>
-      
-      <div class="wanted-rank" id="wantedRank">---</div>
       
       <button class="print-poster-btn" onclick="printPoster()">
         🖨️ IN POSTER
       </button>
       
-      <div class="wanted-footer">By Order of World Government</div>
+      <div class="wanted-footer">BY ORDER OF WORLD GOVERNMENT</div>
     </div>
   </div>
 
@@ -272,7 +269,7 @@
       <div class="rank-settings-grid">
         <div class="rank-setting-card rookie">
           <div class="rank-title">Tân Binh</div>
-          <div class="rank-range">0-29฿</div>
+          <div class="rank-range">0-79฿</div>
           <div class="rank-image-preview" id="rank-rookie-preview">👶</div>
           <button class="upload-rank-btn" onclick="uploadRankImage('rookie')">📤 Tải Lên</button>
           <input type="file" id="rank-rookie-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'rookie')">
@@ -280,7 +277,7 @@
 
         <div class="rank-setting-card pirate">
           <div class="rank-title">Hải Tặc</div>
-          <div class="rank-range">30-99฿</div>
+          <div class="rank-range">80-179฿</div>
           <div class="rank-image-preview" id="rank-pirate-preview">🏴‍☠️</div>
           <button class="upload-rank-btn" onclick="uploadRankImage('pirate')">📤 Tải Lên</button>
           <input type="file" id="rank-pirate-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'pirate')">
@@ -288,7 +285,7 @@
 
         <div class="rank-setting-card rising">
           <div class="rank-title">Tân Tinh</div>
-          <div class="rank-range">100-299฿</div>
+          <div class="rank-range">180-349฿</div>
           <div class="rank-image-preview" id="rank-rising-preview">🌠</div>
           <button class="upload-rank-btn" onclick="uploadRankImage('rising')">📤 Tải Lên</button>
           <input type="file" id="rank-rising-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'rising')">
@@ -296,7 +293,7 @@
 
         <div class="rank-setting-card supernova">
           <div class="rank-title">Siêu Tân Tinh</div>
-          <div class="rank-range">300-499฿</div>
+          <div class="rank-range">350-599฿</div>
           <div class="rank-image-preview" id="rank-supernova-preview">⭐</div>
           <button class="upload-rank-btn" onclick="uploadRankImage('supernova')">📤 Tải Lên</button>
           <input type="file" id="rank-supernova-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'supernova')">
@@ -304,7 +301,7 @@
 
         <div class="rank-setting-card warlord">
           <div class="rank-title">Thất Vũ Hải</div>
-          <div class="rank-range">500-799฿</div>
+          <div class="rank-range">600-999฿</div>
           <div class="rank-image-preview" id="rank-warlord-preview">⚔️</div>
           <button class="upload-rank-btn" onclick="uploadRankImage('warlord')">📤 Tải Lên</button>
           <input type="file" id="rank-warlord-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'warlord')">
@@ -312,7 +309,7 @@
 
         <div class="rank-setting-card general">
           <div class="rank-title">Đại Tướng</div>
-          <div class="rank-range">800-999฿</div>
+          <div class="rank-range">1K-1.9K฿</div>
           <div class="rank-image-preview" id="rank-general-preview">🛡️</div>
           <button class="upload-rank-btn" onclick="uploadRankImage('general')">📤 Tải Lên</button>
           <input type="file" id="rank-general-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'general')">
@@ -320,7 +317,7 @@
 
         <div class="rank-setting-card commander">
           <div class="rank-title">Tư Lệnh</div>
-          <div class="rank-range">1K-2.4K฿</div>
+          <div class="rank-range">2K-3.9K฿</div>
           <div class="rank-image-preview" id="rank-commander-preview">💪</div>
           <button class="upload-rank-btn" onclick="uploadRankImage('commander')">📤 Tải Lên</button>
           <input type="file" id="rank-commander-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'commander')">
@@ -328,7 +325,7 @@
 
         <div class="rank-setting-card admiral">
           <div class="rank-title">Đô Đốc</div>
-          <div class="rank-range">2.5K-3.9K฿</div>
+          <div class="rank-range">4K-7.9K฿</div>
           <div class="rank-image-preview" id="rank-admiral-preview">🎖️</div>
           <button class="upload-rank-btn" onclick="uploadRankImage('admiral')">📤 Tải Lên</button>
           <input type="file" id="rank-admiral-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'admiral')">
@@ -336,7 +333,7 @@
 
         <div class="rank-setting-card yonko">
           <div class="rank-title">Tứ Hoàng</div>
-          <div class="rank-range">4K-5.9K฿</div>
+          <div class="rank-range">8K-14.9K฿</div>
           <div class="rank-image-preview" id="rank-yonko-preview">👹</div>
           <button class="upload-rank-btn" onclick="uploadRankImage('yonko')">📤 Tải Lên</button>
           <input type="file" id="rank-yonko-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'yonko')">
@@ -344,7 +341,7 @@
 
         <div class="rank-setting-card emperor">
           <div class="rank-title">Đế Vương</div>
-          <div class="rank-range">6K-9.9K฿</div>
+          <div class="rank-range">15K-24.9K฿</div>
           <div class="rank-image-preview" id="rank-emperor-preview">👑</div>
           <button class="upload-rank-btn" onclick="uploadRankImage('emperor')">📤 Tải Lên</button>
           <input type="file" id="rank-emperor-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'emperor')">
@@ -352,7 +349,7 @@
 
         <div class="rank-setting-card legend">
           <div class="rank-title">Truyền Thuyết</div>
-          <div class="rank-range">10K-19K฿</div>
+          <div class="rank-range">25K-49.9K฿</div>
           <div class="rank-image-preview" id="rank-legend-preview">💎</div>
           <button class="upload-rank-btn" onclick="uploadRankImage('legend')">📤 Tải Lên</button>
           <input type="file" id="rank-legend-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'legend')">
@@ -360,7 +357,7 @@
 
         <div class="rank-setting-card mythic">
           <div class="rank-title">Huyền Thoại</div>
-          <div class="rank-range">20K-39K฿</div>
+          <div class="rank-range">50K-99.9K฿</div>
           <div class="rank-image-preview" id="rank-mythic-preview">🔥</div>
           <button class="upload-rank-btn" onclick="uploadRankImage('mythic')">📤 Tải Lên</button>
           <input type="file" id="rank-mythic-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'mythic')">
@@ -368,7 +365,7 @@
 
         <div class="rank-setting-card divine">
           <div class="rank-title">Thần Thoại</div>
-          <div class="rank-range">40K-69K฿</div>
+          <div class="rank-range">100K-249K฿</div>
           <div class="rank-image-preview" id="rank-divine-preview">⚡</div>
           <button class="upload-rank-btn" onclick="uploadRankImage('divine')">📤 Tải Lên</button>
           <input type="file" id="rank-divine-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'divine')">
@@ -376,7 +373,7 @@
 
         <div class="rank-setting-card demigod">
           <div class="rank-title">Bán Thần</div>
-          <div class="rank-range">70K-99K฿</div>
+          <div class="rank-range">250K-499K฿</div>
           <div class="rank-image-preview" id="rank-demigod-preview">✨</div>
           <button class="upload-rank-btn" onclick="uploadRankImage('demigod')">📤 Tải Lên</button>
           <input type="file" id="rank-demigod-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'demigod')">
@@ -384,7 +381,7 @@
 
         <div class="rank-setting-card supreme">
           <div class="rank-title">Chí Tôn</div>
-          <div class="rank-range">100K+฿</div>
+          <div class="rank-range">500K+฿</div>
           <div class="rank-image-preview" id="rank-supreme-preview">🌟</div>
           <button class="upload-rank-btn" onclick="uploadRankImage('supreme')">📤 Tải Lên</button>
           <input type="file" id="rank-supreme-upload" class="rank-file-input" accept="image/*" onchange="handleRankUpload(event, 'supreme')">

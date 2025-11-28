@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚙️ Admin - One Piece Bounty System</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>⚓ ADMIN</h2>
+        <p>One Piece System</p>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="pirates">
+          <span class="nav-icon">🏴‍☠️</span>
+          <span class="nav-text">Quản lý Hải Tặc</span>
+        </button>
+        <button class="nav-item" data-tab="crews">
+          <span class="nav-icon">⚔️</span>
+          <span class="nav-text">Quản lý Băng Nhóm</span>
+        </button>
+        <button class="nav-item" data-tab="ranks">
+          <span class="nav-icon">🏆</span>
+          <span class="nav-text">Quản lý Cấp Độ</span>
+        </button>
+        <button class="nav-item" data-tab="accounts">
+          <span class="nav-icon">👥</span>
+          <span class="nav-text">Quản lý Tài Khoản</span>
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="index.html" class="back-btn">
+          <span>🔙</span> Quay lại trang chính
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="admin-header">
+        <h1 id="pageTitle">🏴‍☠️ Quản lý Hải Tặc</h1>
+        <div class="header-actions">
+          <button class="action-btn export" onclick="exportData()">
+            <span>📤</span> Xuất dữ liệu
+          </button>
+          <button class="action-btn import" onclick="document.getElementById('importFile').click()">
+            <span>📥</span> Nhập dữ liệu
+          </button>
+          <button class="action-btn sync" onclick="syncToCloud()" title="Đồng bộ lên Firebase">
+            <span>☁️</span> Sync Cloud
+          </button>
+          <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+        </div>
+      </header>
+
+      <!-- Tab Content: Pirates -->
+      <section id="pirates-tab" class="tab-content active">
+        <div class="tab-header">
+          <div class="search-box">
+            <input type="text" id="pirateSearch" placeholder="🔍 Tìm kiếm hải tặc..." oninput="searchPirates(this.value)">
+          </div>
+          <button class="add-btn" onclick="openAddPirateModal()">
+            <span>➕</span> Thêm Hải Tặc
+          </button>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-icon">🏴‍☠️</span>
+            <div class="stat-info">
+              <span class="stat-value" id="totalPirates">0</span>
+              <span class="stat-label">Tổng Hải Tặc</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">💰</span>
+            <div class="stat-info">
+              <span class="stat-value" id="totalBounty">0฿</span>
+              <span class="stat-label">Tổng Bounty</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">👑</span>
+            <div class="stat-info">
+              <span class="stat-value" id="topRank">-</span>
+              <span class="stat-label">Cấp Cao Nhất</span>
+            </div>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table" id="piratesTable">
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>Avatar</th>
+                <th>Tên</th>
+                <th>Băng Nhóm</th>
+                <th>Bounty</th>
+                <th>Cấp Độ</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="piratesTableBody">
+              <!-- Data will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Tab Content: Crews -->
+      <section id="crews-tab" class="tab-content">
+        <div class="tab-header">
+          <div class="search-box">
+            <input type="text" id="crewSearch" placeholder="🔍 Tìm kiếm băng nhóm..." oninput="searchCrews(this.value)">
+          </div>
+          <button class="add-btn" onclick="openAddCrewModal()">
+            <span>➕</span> Thêm Băng Nhóm
+          </button>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-icon">⚔️</span>
+            <div class="stat-info">
+              <span class="stat-value" id="totalCrews">0</span>
+              <span class="stat-label">Tổng Băng Nhóm</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">👥</span>
+            <div class="stat-info">
+              <span class="stat-value" id="avgMembers">0</span>
+              <span class="stat-label">TB Thành Viên</span>
+            </div>
+          </div>
+        </div>
+        <div class="crews-grid" id="crewsGrid">
+          <!-- Crews will be loaded here -->
+        </div>
+      </section>
+
+      <!-- Tab Content: Ranks -->
+      <section id="ranks-tab" class="tab-content">
+        <div class="tab-header">
+          <h3>⚙️ Cấu hình các cấp độ bounty</h3>
+          <button class="add-btn" onclick="openAddRankModal()">
+            <span>➕</span> Thêm Cấp Độ
+          </button>
+        </div>
+        <div class="ranks-list" id="ranksList">
+          <!-- Ranks will be loaded here -->
+        </div>
+      </section>
+
+      <!-- Tab Content: Accounts -->
+      <section id="accounts-tab" class="tab-content">
+        <div class="tab-header">
+          <div class="search-box">
+            <input type="text" id="accountSearch" placeholder="🔍 Tìm kiếm tài khoản..." oninput="searchAccounts(this.value)">
+          </div>
+          <button class="add-btn" onclick="openAddAccountModal()">
+            <span>➕</span> Thêm Tài Khoản
+          </button>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-icon">👥</span>
+            <div class="stat-info">
+              <span class="stat-value" id="totalAccounts">0</span>
+              <span class="stat-label">Tổng Tài Khoản</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">👑</span>
+            <div class="stat-info">
+              <span class="stat-value" id="adminAccounts">0</span>
+              <span class="stat-label">Admin</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">👤</span>
+            <div class="stat-info">
+              <span class="stat-value" id="userAccounts">0</span>
+              <span class="stat-label">User</span>
+            </div>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table" id="accountsTable">
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>🏴‍☠️ Hải Tặc</th>
+                <th>Vai trò</th>
+                <th>Trạng thái</th>
+                <th>Ngày tạo</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="accountsTableBody">
+              <!-- Data will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal: Add/Edit Pirate -->
+  <div class="modal-overlay" id="pirateModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="pirateModalTitle">➕ Thêm Hải Tặc</h3>
+        <button class="close-btn" onclick="closeModal('pirateModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="pirateForm" onsubmit="savePirate(event)">
+          <input type="hidden" id="pirateIndex" value="-1">
+          <div class="form-group">
+            <label>🏴‍☠️ Tên Hải Tặc</label>
+            <input type="text" id="pirateName" required placeholder="Nhập tên hải tặc...">
+          </div>
+          <div class="form-group">
+            <label>⚔️ Băng Nhóm</label>
+            <select id="pirateCrew" required>
+              <!-- Options will be loaded -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label>💰 Bounty</label>
+            <input type="number" id="pirateBounty" required min="0" placeholder="Nhập số tiền truy nã...">
+          </div>
+          <div class="form-group">
+            <label>🖼️ Avatar (URL hoặc Base64)</label>
+            <input type="text" id="pirateImage" placeholder="URL ảnh hoặc để trống...">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal('pirateModal')">Hủy</button>
+            <button type="submit" class="btn-save">Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add/Edit Crew -->
+  <div class="modal-overlay" id="crewModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="crewModalTitle">➕ Thêm Băng Nhóm</h3>
+        <button class="close-btn" onclick="closeModal('crewModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="crewForm" onsubmit="saveCrew(event)">
+          <input type="hidden" id="crewIndex" value="-1">
+          <div class="form-group">
+            <label>⚔️ Tên Băng Nhóm</label>
+            <input type="text" id="crewName" required placeholder="Nhập tên băng nhóm...">
+          </div>
+          <div class="form-group">
+            <label>🎨 Icon</label>
+            <input type="text" id="crewIcon" required placeholder="Emoji icon (ví dụ: 🏴‍☠️)">
+          </div>
+          <div class="form-group">
+            <label>🎨 Màu sắc</label>
+            <input type="color" id="crewColor" value="#e74c3c">
+          </div>
+          <div class="form-group">
+            <label>👑 Thuyền Trưởng</label>
+            <input type="text" id="crewCaptain" required placeholder="Tên thuyền trưởng...">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal('crewModal')">Hủy</button>
+            <button type="submit" class="btn-save">Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add/Edit Rank -->
+  <div class="modal-overlay" id="rankModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="rankModalTitle">➕ Thêm Cấp Độ</h3>
+        <button class="close-btn" onclick="closeModal('rankModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="rankForm" onsubmit="saveRank(event)">
+          <input type="hidden" id="rankIndex" value="-1">
+          <div class="form-group">
+            <label>🏷️ Type (ID)</label>
+            <input type="text" id="rankType" required placeholder="rookie, pirate, supernova...">
+          </div>
+          <div class="form-group">
+            <label>📛 Tên Hiển Thị</label>
+            <input type="text" id="rankName" required placeholder="Tân Binh, Hải Tặc...">
+          </div>
+          <div class="form-group">
+            <label>🎨 Icon</label>
+            <input type="text" id="rankIcon" required placeholder="👶, 🏴‍☠️, ⭐...">
+          </div>
+          <div class="form-group">
+            <label>🎨 Màu sắc</label>
+            <input type="color" id="rankColor" value="#95a5a6">
+          </div>
+          <div class="form-group">
+            <label>💰 Bounty Tối Thiểu</label>
+            <input type="number" id="rankMinBounty" required min="0" placeholder="0, 80, 180...">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal('rankModal')">Hủy</button>
+            <button type="submit" class="btn-save">Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add/Edit Account -->
+  <div class="modal-overlay" id="accountModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="accountModalTitle">➕ Thêm Tài Khoản</h3>
+        <button class="close-btn" onclick="closeModal('accountModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="accountForm" onsubmit="saveAccount(event)">
+          <input type="hidden" id="accountIndex" value="-1">
+          <div class="form-group">
+            <label>👤 Username</label>
+            <input type="text" id="accountUsername" required placeholder="Nhập username...">
+          </div>
+          <div class="form-group">
+            <label>📧 Email</label>
+            <input type="email" id="accountEmail" required placeholder="Nhập email...">
+          </div>
+          <div class="form-group">
+            <label>🔒 Mật khẩu</label>
+            <input type="password" id="accountPassword" placeholder="Nhập mật khẩu...">
+          </div>
+          <div class="form-group">
+            <label>🏴‍☠️ Hải Tặc Liên Kết</label>
+            <select id="accountPirate">
+              <option value="">-- Không liên kết --</option>
+              <!-- Options will be loaded -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label>👑 Vai trò</label>
+            <select id="accountRole" required>
+              <option value="user">User</option>
+              <option value="moderator">Moderator</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>📊 Trạng thái</label>
+            <select id="accountStatus" required>
+              <option value="active">Hoạt động</option>
+              <option value="inactive">Không hoạt động</option>
+              <option value="banned">Bị cấm</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal('accountModal')">Hủy</button>
+            <button type="submit" class="btn-save">Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3>⚠️ Xác nhận</h3>
+        <button class="close-btn" onclick="closeModal('confirmModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirmMessage">Bạn có chắc chắn muốn thực hiện hành động này?</p>
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" onclick="closeModal('confirmModal')">Hủy</button>
+          <button type="button" class="btn-danger" id="confirmBtn">Xác nhận</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script>
+    // Firebase config - same as firebase-sync.js
+    const firebaseConfig = {
+      apiKey: "AIzaSyCMow1S51XanUxwyLbwt714Wgqjue7-2Mk",
+      authDomain: "one-piece-bounty-game.firebaseapp.com",
+      databaseURL: "https://one-piece-bounty-game-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "one-piece-bounty-game",
+      storageBucket: "one-piece-bounty-game.firebasestorage.app",
+      messagingSenderId: "410745987244",
+      appId: "1:410745987244:web:b1053716c882ebae77bf09"
+    };
+    
+    // Initialize Firebase if not already
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+  </script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

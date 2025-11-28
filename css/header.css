@@ -128,18 +128,25 @@
   box-shadow: 0 4px 15px rgba(230, 126, 34, 0.5);
 }
 
-/* Data Management Bar */
-.data-management {
+.header-btn.admin {
+  background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+  border-color: #9b59b6;
+  box-shadow: 0 4px 15px rgba(155, 89, 182, 0.5);
+}
+
+/* Top Controls (Sync + Search) */
+.top-controls {
   background: rgba(52, 73, 94, 0.4);
   padding: 12px 20px;
   border-radius: 12px;
   margin-bottom: 20px;
   display: flex;
   gap: 15px;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   border: 2px solid rgba(52, 152, 219, 0.3);
+  flex-wrap: wrap;
 }
 
 .data-btn {

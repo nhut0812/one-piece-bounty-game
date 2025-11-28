@@ -23,6 +23,56 @@ function switchAddMode(mode) {
   }
 }
 
+// Chuyển tên có dấu thành không dấu và viết liền
+function removeVietnameseTones(str) {
+  str = str.toLowerCase();
+  str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, 'a');
+  str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, 'e');
+  str = str.replace(/ì|í|ị|ỉ|ĩ/g, 'i');
+  str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, 'o');
+  str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, 'u');
+  str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, 'y');
+  str = str.replace(/đ/g, 'd');
+  str = str.replace(/\s+/g, ''); // Xóa khoảng trắng
+  return str;
+}
+
+// Tạo tài khoản tự động cho hải tặc mới
+function createAccountForPirate(pirateName) {
+  const username = removeVietnameseTones(pirateName);
+  
+  // Load accounts từ localStorage
+  let accounts = JSON.parse(localStorage.getItem('onePieceAccounts') || '[]');
+  
+  console.log('Tạo tài khoản cho:', pirateName, '-> username:', username);
+  console.log('Accounts hiện tại:', accounts.length);
+  
+  // Kiểm tra xem tài khoản đã tồn tại chưa
+  const existingAccount = accounts.find(a => a.username === username);
+  if (existingAccount) {
+    console.log('Tài khoản đã tồn tại:', username);
+    return null; // Tài khoản đã tồn tại
+  }
+  
+  const newAccount = {
+    username: username,
+    email: username + '@onepiece.com',
+    password: '123456',
+    role: 'user',
+    status: 'active',
+    createdAt: new Date().toISOString().split('T')[0],
+    pirateId: pirateName
+  };
+  
+  accounts.push(newAccount);
+  localStorage.setItem('onePieceAccounts', JSON.stringify(accounts));
+  
+  console.log('Đã tạo tài khoản:', newAccount);
+  console.log('Tổng accounts sau khi tạo:', accounts.length);
+  
+  return newAccount;
+}
+
 // Thêm hải tặc đơn
 function addPirate(event) {
   event.preventDefault();
@@ -42,6 +92,10 @@ function addPirate(event) {
         type: 'rookie',
         crew: crew
       });
+      
+      // Tự động tạo tài khoản
+      createAccountForPirate(name);
+      
       renderPirates();
       saveToLocalStorage();
       closeModal('addPirateModal');
@@ -58,6 +112,10 @@ function addPirate(event) {
       type: 'rookie',
       crew: crew
     });
+    
+    // Tự động tạo tài khoản
+    createAccountForPirate(name);
+    
     renderPirates();
     saveToLocalStorage();
     closeModal('addPirateModal');
@@ -83,6 +141,7 @@ function addBulkPirates() {
   }
   
   let addedCount = 0;
+  let accountsCreated = 0;
   names.forEach(name => {
     pirates.push({
       name: name,
@@ -91,6 +150,11 @@ function addBulkPirates() {
       type: 'rookie',
       crew: crew
     });
+    
+    // Tự động tạo tài khoản cho mỗi hải tặc
+    const account = createAccountForPirate(name);
+    if (account) accountsCreated++;
+    
     addedCount++;
   });
   
@@ -103,7 +167,7 @@ function addBulkPirates() {
   // Hiệu ứng thông báo
   const notification = document.createElement('div');
   notification.className = 'rank-up-notification show';
-  notification.innerHTML = `🎉 Đã thêm ${addedCount} hải tặc vào băng! 🏴‍☠️`;
+  notification.innerHTML = `🎉 Đã thêm ${addedCount} hải tặc và ${accountsCreated} tài khoản! 🏴‍☠️`;
   document.body.appendChild(notification);
   
   setTimeout(() => {
@@ -176,15 +240,26 @@ function showTopPirate() {
   }
   
   document.getElementById('wantedName').textContent = topPirate.name;
-  document.getElementById('wantedBounty').textContent = formatBounty(topPirate.bounty);
+  document.getElementById('wantedBounty').textContent = `฿ ${formatBounty(topPirate.bounty)}`;
   document.getElementById('wantedRank').textContent = rank.name;
   document.getElementById('wantedRank').style.color = rank.color;
   
-  // Hiển thị thông tin băng
+  // Hiển thị thông tin băng với hình ảnh
   const pirateCrew = crews.find(c => c.name === topPirate.crew) || crews.find(c => c.name === 'No Crew');
-  document.getElementById('wantedCrewIcon').textContent = pirateCrew.icon;
+  const crewIconEl = document.getElementById('wantedCrewIcon');
+  if (crewImages && crewImages[pirateCrew.name]) {
+    crewIconEl.innerHTML = `<img src="${crewImages[pirateCrew.name]}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; vertical-align: middle;">`;
+  } else {
+    crewIconEl.textContent = pirateCrew.icon;
+  }
   document.getElementById('wantedCrewName').textContent = pirateCrew.name;
   document.getElementById('wantedCrew').style.borderColor = pirateCrew.color;
+  
+  // Set rank attribute for poster styling
+  const wantedPoster = document.querySelector('.wanted-poster');
+  if (wantedPoster) {
+    wantedPoster.setAttribute('data-rank', rank.type);
+  }
   
   openModal('wantedModal');
   createConfetti();
