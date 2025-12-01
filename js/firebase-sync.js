@@ -97,8 +97,19 @@ async function loadFromFirebase(forceLoad = false) {
         crewImages = data.crewImages || {};
         if (data.crews) crews = data.crews;
         if (data.accounts) {
-          // Lưu accounts từ cloud
-          localStorage.setItem('onePieceAccounts', JSON.stringify(data.accounts));
+          // Đảm bảo luôn có admin account
+          const hasAdmin = data.accounts.some(a => a.role === 'admin');
+          let finalAccounts = data.accounts;
+          
+          if (!hasAdmin) {
+            // Thêm admin mặc định nếu không có
+            finalAccounts = [
+              { username: 'admin', email: 'admin@onepiece.com', password: 'admin123', role: 'admin', status: 'active', createdAt: '2025-01-01' },
+              ...data.accounts
+            ];
+          }
+          
+          localStorage.setItem('onePieceAccounts', JSON.stringify(finalAccounts));
         }
         localStorage.setItem('lastLocalUpdate', cloudLastUpdate);
         localStorage.setItem('onePiecePirates', JSON.stringify(pirates));
@@ -140,7 +151,18 @@ function listenToFirebase() {
         crewImages = data.crewImages || {};
         if (data.crews) crews = data.crews;
         if (data.accounts) {
-          localStorage.setItem('onePieceAccounts', JSON.stringify(data.accounts));
+          // Đảm bảo luôn có admin account
+          const hasAdmin = data.accounts.some(a => a.role === 'admin');
+          let finalAccounts = data.accounts;
+          
+          if (!hasAdmin) {
+            finalAccounts = [
+              { username: 'admin', email: 'admin@onepiece.com', password: 'admin123', role: 'admin', status: 'active', createdAt: '2025-01-01' },
+              ...data.accounts
+            ];
+          }
+          
+          localStorage.setItem('onePieceAccounts', JSON.stringify(finalAccounts));
         }
         localStorage.setItem('lastLocalUpdate', cloudLastUpdate);
         localStorage.setItem('onePiecePirates', JSON.stringify(pirates));

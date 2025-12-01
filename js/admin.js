@@ -90,6 +90,12 @@ function loadData() {
   const savedAccounts = localStorage.getItem(ACCOUNTS_KEY);
   if (savedAccounts) {
     accounts = JSON.parse(savedAccounts);
+  } else {
+    // Khởi tạo tài khoản admin mặc định nếu chưa có
+    accounts = [
+      { username: 'admin', email: 'admin@onepiece.com', password: 'admin123', role: 'admin', status: 'active', createdAt: '2025-01-01' }
+    ];
+    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
   }
   
   // Load rank images
