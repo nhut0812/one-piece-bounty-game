@@ -899,12 +899,22 @@ function saveAccount(event) {
 }
 
 function deleteAccount(index) {
-  showConfirm(`Bạn có chắc muốn xóa tài khoản "${accounts[index].username}"?`, () => {
+  const account = accounts[index];
+  showConfirm(`Bạn có chắc muốn xóa tài khoản "${account.username}"?\nHải tặc liên kết cũng sẽ bị xóa.`, () => {
+    // Xóa hải tặc liên kết nếu có
+    if (account.pirateId) {
+      const pirateIndex = pirates.findIndex(p => p.name === account.pirateId);
+      if (pirateIndex !== -1) {
+        pirates.splice(pirateIndex, 1);
+      }
+    }
+    
     accounts.splice(index, 1);
     saveData();
     renderAccounts();
+    renderPirates();
     updateStats();
-    showToast('success', '✅ Đã xóa tài khoản!');
+    showToast('success', '✅ Đã xóa tài khoản và hải tặc liên kết!');
   });
 }
 
@@ -1002,6 +1012,13 @@ async function syncToCloud() {
   try {
     const database = firebase.database();
     const userId = localStorage.getItem('onePieceUserId') || 'admin_' + Date.now();
+    
+    // Đảm bảo admin luôn có trong danh sách
+    const hasAdmin = accounts.some(a => a.role === 'admin');
+    if (!hasAdmin) {
+      accounts.unshift({ username: 'admin', email: 'admin@onepiece.com', password: 'admin123', role: 'admin', status: 'active', createdAt: '2025-01-01' });
+      saveData(); // Lưu lại
+    }
     
     const data = {
       pirates: pirates,

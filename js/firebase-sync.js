@@ -54,7 +54,18 @@ async function syncToFirebase() {
     const userId = getUserId();
     
     // Load accounts từ localStorage
-    const accounts = JSON.parse(localStorage.getItem('onePieceAccounts') || '[]');
+    let accounts = JSON.parse(localStorage.getItem('onePieceAccounts') || '[]');
+    
+    // Đảm bảo luôn có admin trong danh sách sync lên
+    const hasAdmin = accounts.some(a => a.role === 'admin');
+    if (!hasAdmin) {
+      accounts = [
+        { username: 'admin', email: 'admin@onepiece.com', password: 'admin123', role: 'admin', status: 'active', createdAt: '2025-01-01' },
+        ...accounts
+      ];
+      // Cập nhật lại localStorage
+      localStorage.setItem('onePieceAccounts', JSON.stringify(accounts));
+    }
     
     const data = {
       pirates: pirates,
