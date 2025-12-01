@@ -458,8 +458,31 @@ function openAddPirateModal() {
   document.getElementById('pirateModalTitle').textContent = '➕ Thêm Hải Tặc';
   document.getElementById('pirateForm').reset();
   document.getElementById('pirateIndex').value = -1;
+  document.getElementById('pirateAvatarPreview').innerHTML = '📷';
   loadCrewOptions();
   openModal('pirateModal');
+}
+
+// Preview ảnh đại diện hải tặc
+function previewPirateAvatar(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const imageData = e.target.result;
+      document.getElementById('pirateAvatarPreview').innerHTML = 
+        `<img src="${imageData}" style="width: 100%; height: 100%; object-fit: cover;">`;
+      document.getElementById('pirateImage').value = imageData;
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+// Xóa ảnh đại diện
+function clearPirateAvatar() {
+  document.getElementById('pirateAvatarPreview').innerHTML = '📷';
+  document.getElementById('pirateImage').value = '';
+  document.getElementById('pirateAvatarUpload').value = '';
 }
 
 function loadCrewOptions() {
@@ -477,6 +500,16 @@ function editPirate(index) {
   document.getElementById('pirateName').value = pirate.name;
   document.getElementById('pirateBounty').value = pirate.bounty;
   document.getElementById('pirateImage').value = pirate.image || '';
+  
+  // Hiển thị ảnh hiện tại
+  const preview = document.getElementById('pirateAvatarPreview');
+  if (pirate.image) {
+    preview.innerHTML = `<img src="${pirate.image}" style="width: 100%; height: 100%; object-fit: cover;">`;
+  } else {
+    const rank = getRankByBounty(pirate.bounty);
+    preview.innerHTML = `<div style="font-size: 40px;">${rank.icon}</div>`;
+  }
+  
   loadCrewOptions();
   document.getElementById('pirateCrew').value = pirate.crew;
   openModal('pirateModal');
