@@ -178,15 +178,29 @@
 }
 
 .card.supreme {
-  border: 8px solid #ffffff;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 100px rgba(255, 255, 255, 0.9);
-  animation: supremeBorder 6s ease-in-out infinite;
+  border: 10px solid #ffffff;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 
+              0 0 80px rgba(255, 255, 255, 0.9),
+              0 0 120px rgba(56, 189, 248, 0.6),
+              inset 0 0 30px rgba(255, 255, 255, 0.1);
+  animation: supremeBorder 4s ease-in-out infinite;
+  will-change: box-shadow;
 }
 
 @keyframes supremeBorder {
-  0%, 100% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 100px rgba(255, 255, 255, 0.9); }
-  50% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 140px rgba(255, 255, 255, 1); }
+  0%, 100% { 
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 
+                0 0 80px rgba(255, 255, 255, 0.9),
+                0 0 120px rgba(56, 189, 248, 0.6),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+  }
+  50% { 
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5), 
+                0 0 120px rgba(255, 255, 255, 1),
+                0 0 180px rgba(56, 189, 248, 0.8),
+                inset 0 0 50px rgba(255, 255, 255, 0.15);
+  }
 }
 
 .card-icon {
@@ -318,17 +332,21 @@
 }
 
 .supreme .avatar {
-  border: 7px solid #ffffff;
-  box-shadow: 0 0 50px rgba(255, 255, 255, 0.9);
-  animation: supremeAvatarFire 5s ease-in-out infinite;
+  border: 8px solid #ffffff;
+  box-shadow: 0 0 50px rgba(255, 255, 255, 0.95),
+              0 0 80px rgba(56, 189, 248, 0.7);
+  animation: supremeAvatarFire 3s ease-in-out infinite;
+  will-change: box-shadow;
 }
 
 @keyframes supremeAvatarFire {
   0%, 100% { 
-    box-shadow: 0 0 50px rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 50px rgba(255, 255, 255, 0.95),
+                0 0 80px rgba(56, 189, 248, 0.7);
   }
   50% { 
-    box-shadow: 0 0 70px rgba(255, 255, 255, 1);
+    box-shadow: 0 0 70px rgba(255, 255, 255, 1),
+                0 0 110px rgba(56, 189, 248, 0.9);
   }
 }
 
@@ -737,62 +755,51 @@
 
 .supreme .name {
   color: #ffffff;
-  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 4%, #e0f2fe 8%, #bae6fd 12%, #7dd3fc 16%, #38bdf8 20%, #0ea5e9 24%, #0284c7 28%, #0369a1 32%, #075985 36%, #0c4a6e 40%, #082f49 44%, #0c4a6e 48%, #075985 52%, #0369a1 56%, #0284c7 60%, #0ea5e9 64%, #38bdf8 68%, #7dd3fc 72%, #bae6fd 76%, #e0f2fe 80%, #f0f9ff 84%, #ffffff 88%, #fefce8 92%, #ffffff 96%, #ffffff 100%);
-  background-size: 800% 800%;
+  background: linear-gradient(90deg, 
+    #ffffff 0%, 
+    #bfdbfe 10%, 
+    #38bdf8 25%, 
+    #0ea5e9 40%, 
+    #ffffff 50%, 
+    #0ea5e9 60%, 
+    #38bdf8 75%, 
+    #bfdbfe 90%, 
+    #ffffff 100%);
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-shadow: none;
-  filter: drop-shadow(0 0 120px rgba(255, 255, 255, 1)) 
-          drop-shadow(0 0 170px rgba(56, 189, 248, 1)) 
-          drop-shadow(0 0 230px rgba(14, 165, 233, 0.9))
-          drop-shadow(0 0 300px rgba(255, 255, 255, 0.8))
-          drop-shadow(0 0 380px rgba(56, 189, 248, 0.7))
-          drop-shadow(0 0 460px rgba(254, 252, 232, 0.5))
-          drop-shadow(10px 10px 30px rgba(0, 0, 0, 1));
-  animation: supremeCelestial 8s ease-in-out infinite;
-  transform: scale(1.08);
-  letter-spacing: 2px;
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 1)) 
+          drop-shadow(0 0 30px rgba(56, 189, 248, 1)) 
+          drop-shadow(0 0 50px rgba(255, 255, 255, 0.8))
+          drop-shadow(0 0 80px rgba(56, 189, 248, 0.6));
+  animation: supremeCelestial 3s linear infinite;
+  transform: scale(1.12);
+  letter-spacing: 3px;
+  will-change: filter, background-position;
 }
 
 @keyframes supremeCelestial {
-  0%, 100% { 
+  0% { 
     background-position: 0% 50%; 
-    filter: drop-shadow(0 0 120px rgba(255, 255, 255, 1)) 
-            drop-shadow(0 0 170px rgba(56, 189, 248, 1)) 
-            drop-shadow(0 0 230px rgba(14, 165, 233, 0.9))
-            drop-shadow(0 0 300px rgba(255, 255, 255, 0.8))
-            drop-shadow(0 0 380px rgba(56, 189, 248, 0.7))
-            drop-shadow(0 0 460px rgba(254, 252, 232, 0.5))
-            drop-shadow(10px 10px 30px rgba(0, 0, 0, 1));
-  }
-  25% { 
-    filter: drop-shadow(0 0 160px rgba(255, 255, 255, 1)) 
-            drop-shadow(0 0 230px rgba(56, 189, 248, 1)) 
-            drop-shadow(0 0 310px rgba(14, 165, 233, 1))
-            drop-shadow(0 0 400px rgba(255, 255, 255, 1))
-            drop-shadow(0 0 500px rgba(56, 189, 248, 0.9))
-            drop-shadow(0 0 600px rgba(254, 252, 232, 0.7))
-            drop-shadow(10px 10px 30px rgba(0, 0, 0, 1));
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 1)) 
+            drop-shadow(0 0 30px rgba(56, 189, 248, 1)) 
+            drop-shadow(0 0 50px rgba(255, 255, 255, 0.8))
+            drop-shadow(0 0 80px rgba(56, 189, 248, 0.6));
   }
   50% { 
-    background-position: 100% 50%; 
-    filter: drop-shadow(0 0 200px rgba(255, 255, 255, 1)) 
-            drop-shadow(0 0 280px rgba(56, 189, 248, 1)) 
-            drop-shadow(0 0 380px rgba(14, 165, 233, 1))
-            drop-shadow(0 0 490px rgba(255, 255, 255, 1))
-            drop-shadow(0 0 610px rgba(56, 189, 248, 1))
-            drop-shadow(0 0 730px rgba(254, 252, 232, 0.9))
-            drop-shadow(10px 10px 30px rgba(0, 0, 0, 1));
+    filter: drop-shadow(0 0 25px rgba(255, 255, 255, 1)) 
+            drop-shadow(0 0 50px rgba(56, 189, 248, 1)) 
+            drop-shadow(0 0 80px rgba(255, 255, 255, 1))
+            drop-shadow(0 0 120px rgba(56, 189, 248, 0.8));
   }
-  75% { 
-    filter: drop-shadow(0 0 160px rgba(255, 255, 255, 1)) 
-            drop-shadow(0 0 230px rgba(56, 189, 248, 1)) 
-            drop-shadow(0 0 310px rgba(14, 165, 233, 1))
-            drop-shadow(0 0 400px rgba(255, 255, 255, 1))
-            drop-shadow(0 0 500px rgba(56, 189, 248, 0.9))
-            drop-shadow(0 0 600px rgba(254, 252, 232, 0.7))
-            drop-shadow(10px 10px 30px rgba(0, 0, 0, 1));
+  100% { 
+    background-position: 300% 50%; 
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 1)) 
+            drop-shadow(0 0 30px rgba(56, 189, 248, 1)) 
+            drop-shadow(0 0 50px rgba(255, 255, 255, 0.8))
+            drop-shadow(0 0 80px rgba(56, 189, 248, 0.6));
   }
 }
 

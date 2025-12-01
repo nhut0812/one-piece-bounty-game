@@ -1,0 +1,989 @@
+/* =====================================================
+   USER PAGE STYLES
+   ===================================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 100vh;
+  color: #ecf0f1;
+}
+
+.user-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header */
+.user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  margin-bottom: 30px;
+  border: 2px solid rgba(231, 76, 60, 0.3);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.back-link {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.back-link:hover {
+  color: #e74c3c;
+}
+
+.user-header h1 {
+  font-size: 24px;
+  background: linear-gradient(135deg, #f39c12, #e74c3c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.logout-btn {
+  padding: 12px 25px;
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4);
+}
+
+/* Profile Section */
+.profile-section {
+  margin-bottom: 30px;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 40px;
+  background: linear-gradient(135deg, rgba(52, 73, 94, 0.8), rgba(44, 62, 80, 0.8));
+  border-radius: 25px;
+  border: 4px solid rgba(243, 156, 18, 0.4);
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.7s;
+}
+
+.profile-card:hover::before {
+  transform: translateX(100%);
+}
+
+.profile-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  z-index: 10;
+}
+
+/* Profile Card - Rank Colors */
+.profile-card.rookie {
+  border: 4px solid #95a5a6;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+}
+
+.profile-card.pirate {
+  border: 4px solid #3498db;
+  background: linear-gradient(135deg, #0d2636 0%, #133347 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(52, 152, 219, 0.5);
+}
+
+.profile-card.rising {
+  border: 4px solid #5dade2;
+  background: linear-gradient(135deg, #0d2636 0%, #133347 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(93, 173, 226, 0.6);
+}
+
+.profile-card.supernova {
+  border: 4px solid #ffd93d;
+  background: linear-gradient(135deg, #3a2608 0%, #4d3210 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 217, 61, 0.7);
+}
+
+.profile-card.warlord {
+  border: 4px solid #d8b4fe;
+  background: linear-gradient(135deg, #261835 0%, #352145 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 35px rgba(216, 180, 254, 0.7);
+}
+
+.profile-card.general {
+  border: 4px solid #6ee7b7;
+  background: linear-gradient(135deg, #0d3d34 0%, #145a4d 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 40px rgba(110, 231, 183, 0.7);
+}
+
+.profile-card.commander {
+  border: 4px solid #fbbf24;
+  background: linear-gradient(135deg, #3a2008 0%, #4d2b10 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 45px rgba(251, 191, 36, 0.7);
+}
+
+.profile-card.admiral {
+  border: 4px solid #fb923c;
+  background: linear-gradient(135deg, #3d1a00 0%, #5a2700 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 50px rgba(251, 146, 60, 0.8);
+  animation: profileAdmiralGlow 4s ease-in-out infinite;
+}
+
+.profile-card.yonko {
+  border: 5px solid #ef4444;
+  background: linear-gradient(135deg, #2c0a0a 0%, #3d0d0d 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 60px rgba(239, 68, 68, 0.9);
+  animation: profileYonkoGlow 4s ease-in-out infinite;
+}
+
+.profile-card.emperor {
+  border: 5px solid #fde047;
+  background: linear-gradient(135deg, #3d2a00 0%, #5a3e00 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 70px rgba(253, 224, 71, 0.9);
+  animation: profileEmperorGlow 4s ease-in-out infinite;
+}
+
+.profile-card.legend {
+  border: 5px solid #60a5fa;
+  background: linear-gradient(135deg, #0a1f2e 0%, #0d2636 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 60px rgba(96, 165, 250, 0.9);
+  animation: profileLegendGlow 5s ease-in-out infinite;
+}
+
+.profile-card.mythic {
+  border: 5px solid #f87171;
+  background: linear-gradient(135deg, #2e0a0a 0%, #4a0e0e 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 70px rgba(248, 113, 113, 0.9);
+  animation: profileMythicGlow 5s ease-in-out infinite;
+}
+
+.profile-card.divine {
+  border: 6px solid #c084fc;
+  background: linear-gradient(135deg, #1a0a2e 0%, #2d1248 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 80px rgba(192, 132, 252, 0.9);
+  animation: profileDivineGlow 6s ease-in-out infinite;
+}
+
+.profile-card.demigod {
+  border: 6px solid #fef3c7;
+  background: linear-gradient(135deg, #2d1f3a 0%, #4a335a 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 90px rgba(254, 243, 199, 0.9);
+  animation: profileDemigodGlow 6s ease-in-out infinite;
+}
+
+.profile-card.supreme {
+  border: 8px solid #ffffff;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 100px rgba(255, 255, 255, 0.9);
+  animation: profileSupremeGlow 6s ease-in-out infinite;
+}
+
+/* Profile Card Glow Animations */
+@keyframes profileAdmiralGlow {
+  0%, 100% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 50px rgba(251, 146, 60, 0.8); }
+  50% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 70px rgba(251, 146, 60, 1); }
+}
+
+@keyframes profileYonkoGlow {
+  0%, 100% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 60px rgba(239, 68, 68, 0.9); }
+  50% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 85px rgba(239, 68, 68, 1); }
+}
+
+@keyframes profileEmperorGlow {
+  0%, 100% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 70px rgba(253, 224, 71, 0.9); }
+  50% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 100px rgba(253, 224, 71, 1); }
+}
+
+@keyframes profileLegendGlow {
+  0%, 100% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 60px rgba(96, 165, 250, 0.9); }
+  50% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 90px rgba(96, 165, 250, 1); }
+}
+
+@keyframes profileMythicGlow {
+  0%, 100% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 70px rgba(248, 113, 113, 0.9); }
+  50% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 100px rgba(248, 113, 113, 1); }
+}
+
+@keyframes profileDivineGlow {
+  0%, 100% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 80px rgba(192, 132, 252, 0.9); }
+  50% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 110px rgba(192, 132, 252, 1); }
+}
+
+@keyframes profileDemigodGlow {
+  0%, 100% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 90px rgba(254, 243, 199, 0.9); }
+  50% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 120px rgba(254, 243, 199, 1); }
+}
+
+@keyframes profileSupremeGlow {
+  0%, 100% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 100px rgba(255, 255, 255, 0.9); }
+  50% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 140px rgba(255, 255, 255, 1); }
+}
+
+.profile-avatar-wrapper {
+  position: relative;
+}
+
+.profile-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f39c12, #e74c3c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 70px;
+  border: 4px solid #f39c12;
+  overflow: hidden;
+}
+
+.change-avatar-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  border: 3px solid white;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.change-avatar-btn:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 15px rgba(52, 152, 219, 0.5);
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-info h2 {
+  font-size: 42px;
+  margin-bottom: 10px;
+  color: #f39c12;
+  font-weight: 700;
+}
+
+/* Username styles by rank */
+.profile-info h2.rookie {
+  color: #ecf0f1;
+  text-shadow: 0 0 8px rgba(236, 240, 241, 0.6), 3px 3px 8px rgba(0, 0, 0, 0.9);
+}
+
+.profile-info h2.pirate {
+  color: #5dade2;
+  text-shadow: 0 0 15px rgba(93, 173, 226, 1), 0 0 25px rgba(52, 152, 219, 0.7), 3px 3px 10px rgba(0, 0, 0, 0.9);
+}
+
+.profile-info h2.rising {
+  color: #6dd5fa;
+  text-shadow: 0 0 20px rgba(109, 213, 250, 1), 0 0 35px rgba(93, 173, 226, 0.8), 3px 3px 12px rgba(0, 0, 0, 0.9);
+  animation: userRisingGlow 2s ease-in-out infinite;
+}
+
+@keyframes userRisingGlow {
+  0%, 100% { text-shadow: 0 0 20px rgba(109, 213, 250, 1), 0 0 35px rgba(93, 173, 226, 0.8), 3px 3px 12px rgba(0, 0, 0, 0.9); }
+  50% { text-shadow: 0 0 35px rgba(109, 213, 250, 1), 0 0 55px rgba(93, 173, 226, 1), 3px 3px 12px rgba(0, 0, 0, 0.9); }
+}
+
+.profile-info h2.supernova {
+  color: #ffd93d;
+  text-shadow: 0 0 25px rgba(255, 217, 61, 1), 0 0 40px rgba(255, 165, 0, 0.8), 3px 3px 12px rgba(0, 0, 0, 0.9);
+  animation: userSupernovaGlow 2s ease-in-out infinite;
+}
+
+@keyframes userSupernovaGlow {
+  0%, 100% { text-shadow: 0 0 25px rgba(255, 217, 61, 1), 0 0 40px rgba(255, 165, 0, 0.8), 3px 3px 12px rgba(0, 0, 0, 0.9); }
+  50% { text-shadow: 0 0 40px rgba(255, 217, 61, 1), 0 0 60px rgba(255, 165, 0, 1), 3px 3px 12px rgba(0, 0, 0, 0.9); }
+}
+
+.profile-info h2.warlord {
+  color: #d8b4fe;
+  text-shadow: 0 0 30px rgba(216, 180, 254, 1), 0 0 45px rgba(155, 89, 182, 1), 4px 4px 12px rgba(0, 0, 0, 0.9);
+  animation: userWarlordGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes userWarlordGlow {
+  0%, 100% { text-shadow: 0 0 30px rgba(216, 180, 254, 1), 0 0 45px rgba(155, 89, 182, 1), 4px 4px 12px rgba(0, 0, 0, 0.9); }
+  50% { text-shadow: 0 0 45px rgba(216, 180, 254, 1), 0 0 70px rgba(155, 89, 182, 1), 4px 4px 12px rgba(0, 0, 0, 0.9); }
+}
+
+.profile-info h2.general {
+  color: #6ee7b7;
+  text-shadow: 0 0 30px rgba(110, 231, 183, 1), 0 0 50px rgba(22, 160, 133, 1), 4px 4px 14px rgba(0, 0, 0, 0.9);
+}
+
+.profile-info h2.commander {
+  color: #fbbf24;
+  text-shadow: 0 0 35px rgba(251, 191, 36, 1), 0 0 55px rgba(230, 126, 34, 1), 4px 4px 14px rgba(0, 0, 0, 0.9);
+  animation: userCommanderGlow 3s ease-in-out infinite;
+}
+
+@keyframes userCommanderGlow {
+  0%, 100% { text-shadow: 0 0 35px rgba(251, 191, 36, 1), 0 0 55px rgba(230, 126, 34, 1), 4px 4px 14px rgba(0, 0, 0, 0.9); }
+  50% { text-shadow: 0 0 50px rgba(251, 191, 36, 1), 0 0 75px rgba(230, 126, 34, 1), 4px 4px 14px rgba(0, 0, 0, 0.9); }
+}
+
+.profile-info h2.admiral {
+  background: linear-gradient(90deg, #fb923c 0%, #f97316 20%, #fbbf24 40%, #fde047 50%, #fbbf24 60%, #f97316 80%, #fb923c 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(251, 146, 60, 1)) drop-shadow(0 0 35px rgba(249, 115, 22, 0.8));
+  animation: userAdmiralShine 3s linear infinite;
+}
+
+@keyframes userAdmiralShine {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+.profile-info h2.yonko {
+  background: linear-gradient(45deg, #dc2626 0%, #ef4444 20%, #f97316 40%, #fbbf24 50%, #f97316 60%, #ef4444 80%, #dc2626 100%);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 25px rgba(239, 68, 68, 1)) drop-shadow(0 0 40px rgba(220, 38, 38, 0.9));
+  animation: userYonkoWave 4s ease-in-out infinite;
+}
+
+@keyframes userYonkoWave {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.profile-info h2.emperor {
+  background: linear-gradient(90deg, #fde047 0%, #facc15 20%, #fff 40%, #fef9e7 50%, #fff 60%, #facc15 80%, #fde047 100%);
+  background-size: 400% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(253, 224, 71, 1)) drop-shadow(0 0 50px rgba(250, 204, 21, 1));
+  animation: userEmperorGlitter 3s linear infinite;
+}
+
+@keyframes userEmperorGlitter {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 400% 50%; }
+}
+
+.profile-info h2.legend {
+  background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 15%, #fde68a 30%, #fef9e7 45%, #fff 50%, #fef9e7 55%, #fde68a 70%, #fbbf24 85%, #f59e0b 100%);
+  background-size: 500% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 35px rgba(245, 158, 11, 1)) drop-shadow(0 0 55px rgba(251, 191, 36, 1));
+  animation: userLegendShimmer 4s linear infinite;
+}
+
+@keyframes userLegendShimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 500% 50%; }
+}
+
+.profile-info h2.mythic {
+  background: linear-gradient(90deg, #a855f7 0%, #c084fc 15%, #e879f9 30%, #f0abfc 45%, #fae8ff 50%, #f0abfc 55%, #e879f9 70%, #c084fc 85%, #a855f7 100%);
+  background-size: 500% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 40px rgba(168, 85, 247, 1)) drop-shadow(0 0 60px rgba(192, 132, 252, 1));
+  animation: userMythicPulse 5s linear infinite;
+}
+
+@keyframes userMythicPulse {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 500% 50%; }
+}
+
+.profile-info h2.divine {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 15%, #c084fc 30%, #e879f9 45%, #fae8ff 50%, #e879f9 55%, #c084fc 70%, #a78bfa 85%, #8b5cf6 100%);
+  background-size: 500% 500%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 45px rgba(139, 92, 246, 1)) drop-shadow(0 0 70px rgba(192, 132, 252, 1));
+  animation: userDivineCosmic 6s ease-in-out infinite;
+}
+
+@keyframes userDivineCosmic {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.profile-info h2.demigod {
+  background: linear-gradient(90deg, #fef3c7 0%, #fde68a 15%, #fbbf24 30%, #f59e0b 45%, #fff 50%, #f59e0b 55%, #fbbf24 70%, #fde68a 85%, #fef3c7 100%);
+  background-size: 600% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 50px rgba(254, 243, 199, 1)) drop-shadow(0 0 80px rgba(251, 191, 36, 1));
+  animation: userDemigodHoly 7s linear infinite;
+}
+
+@keyframes userDemigodHoly {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 600% 50%; }
+}
+
+.profile-info h2.supreme {
+  background: linear-gradient(90deg, #ffffff 0%, #bfdbfe 15%, #38bdf8 30%, #0ea5e9 45%, #ffffff 50%, #0ea5e9 55%, #38bdf8 70%, #bfdbfe 85%, #ffffff 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1)) drop-shadow(0 0 40px rgba(56, 189, 248, 1)) drop-shadow(0 0 60px rgba(255, 255, 255, 0.8));
+  animation: userSupremeCelestial 3s linear infinite;
+  transform: scale(1.05);
+}
+
+@keyframes userSupremeCelestial {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+.user-email {
+  color: #bdc3c7;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.user-badges {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.badge {
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.badge-role {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+}
+
+.badge-role.admin {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.badge-status {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+}
+
+.user-joined {
+  color: #95a5a6;
+  font-size: 14px;
+}
+
+/* Pirate Section */
+.pirate-section {
+  margin-bottom: 30px;
+}
+
+.pirate-section h3 {
+  font-size: 22px;
+  color: #f39c12;
+  margin-bottom: 20px;
+  padding-left: 10px;
+  border-left: 4px solid #e74c3c;
+}
+
+.linked-pirate {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  padding: 25px;
+  border: 2px solid rgba(231, 76, 60, 0.3);
+}
+
+.pirate-card {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(192, 57, 43, 0.2));
+  border-radius: 15px;
+  border: 2px solid rgba(231, 76, 60, 0.5);
+}
+
+.pirate-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  border: 3px solid #e74c3c;
+  overflow: hidden;
+}
+
+.pirate-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pirate-info h4 {
+  font-size: 24px;
+  color: #ecf0f1;
+  margin-bottom: 8px;
+}
+
+.pirate-crew {
+  color: #3498db;
+  margin-bottom: 5px;
+}
+
+.pirate-bounty {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.pirate-rank {
+  color: #f39c12;
+  font-weight: 600;
+}
+
+.no-pirate-card {
+  text-align: center;
+  padding: 40px;
+}
+
+.no-pirate-icon {
+  font-size: 60px;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.no-pirate-card p {
+  color: #bdc3c7;
+  margin-bottom: 10px;
+}
+
+.no-pirate-card small {
+  color: #7f8c8d;
+}
+
+/* Stats Section */
+.stats-section {
+  margin-bottom: 30px;
+}
+
+.stats-section h3 {
+  font-size: 22px;
+  color: #f39c12;
+  margin-bottom: 20px;
+  padding-left: 10px;
+  border-left: 4px solid #3498db;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.stat-item {
+  background: linear-gradient(135deg, rgba(52, 73, 94, 0.8), rgba(44, 62, 80, 0.8));
+  padding: 25px 15px;
+  border-radius: 15px;
+  text-align: center;
+  border: 2px solid rgba(52, 152, 219, 0.3);
+  transition: all 0.3s;
+}
+
+.stat-item:hover {
+  transform: translateY(-5px);
+  border-color: #3498db;
+}
+
+.stat-icon {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #3498db;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #95a5a6;
+  text-transform: uppercase;
+}
+
+/* Actions Section */
+.actions-section {
+  margin-bottom: 30px;
+}
+
+.actions-section h3 {
+  font-size: 22px;
+  color: #f39c12;
+  margin-bottom: 20px;
+  padding-left: 10px;
+  border-left: 4px solid #2ecc71;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 25px;
+  background: linear-gradient(135deg, rgba(52, 73, 94, 0.8), rgba(44, 62, 80, 0.8));
+  border: 2px solid rgba(46, 204, 113, 0.3);
+  border-radius: 15px;
+  color: #ecf0f1;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.action-btn:hover {
+  transform: translateY(-5px);
+  border-color: #2ecc71;
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(39, 174, 96, 0.2));
+}
+
+.action-icon {
+  font-size: 35px;
+}
+
+.action-text {
+  font-size: 14px;
+}
+
+/* Footer */
+.user-footer {
+  text-align: center;
+  padding: 20px;
+  color: #7f8c8d;
+  font-size: 14px;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  border-radius: 20px;
+  width: 90%;
+  max-width: 400px;
+  border: 3px solid #f39c12;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 2px solid rgba(243, 156, 18, 0.3);
+}
+
+.modal-header h3 {
+  color: #f39c12;
+  font-size: 20px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #ecf0f1;
+  font-size: 28px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close-btn:hover {
+  color: #e74c3c;
+}
+
+.modal-body {
+  padding: 25px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #f39c12;
+  font-weight: 600;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid #34495e;
+  border-radius: 10px;
+  color: #ecf0f1;
+  font-size: 15px;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #f39c12;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-bottom: 15px;
+  min-height: 20px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.btn-cancel, .btn-save {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-cancel {
+  background: #7f8c8d;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background: #95a5a6;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: white;
+}
+
+.btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+}
+
+/* Toast */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2000;
+}
+
+.toast {
+  padding: 15px 25px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  animation: slideIn 0.3s ease;
+}
+
+.toast-success {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: white;
+}
+
+.toast-error {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Avatar Modal */
+.avatar-modal {
+  max-width: 450px;
+}
+
+.avatar-preview-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.avatar-preview {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #34495e, #2c3e50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 70px;
+  border: 4px solid #f39c12;
+  overflow: hidden;
+}
+
+.avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.avatar-option-group h4 {
+  color: #f39c12;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.avatar-upload-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.avatar-upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+}
+
+.avatar-option-group input[type="text"] {
+  width: 100%;
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: white;
+  font-size: 14px;
+}
+
+.avatar-option-group input[type="text"]:focus {
+  outline: none;
+  border-color: #f39c12;
+}
+
+.avatar-option-group input[type="text"]::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profile-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .profile-avatar-wrapper {
+    margin: 0 auto;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .actions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .user-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+}

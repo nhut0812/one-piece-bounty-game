@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>👤 Trang Cá Nhân - One Piece Bounty</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/user.css">
+</head>
+<body>
+  <div class="user-container">
+    <!-- Header -->
+    <header class="user-header">
+      <div class="header-left">
+        <a href="index.html" class="back-link">← Quay lại</a>
+        <h1>👤 TRANG CÁ NHÂN</h1>
+      </div>
+      <div class="header-right">
+        <button class="logout-btn" onclick="logout()">🚪 Đăng Xuất</button>
+      </div>
+    </header>
+
+    <!-- User Info Section -->
+    <main class="user-main">
+      <!-- Profile Card -->
+      <section class="profile-section">
+        <div class="profile-card">
+          <div class="profile-avatar-wrapper">
+            <div class="profile-avatar" id="userAvatar">
+              👤
+            </div>
+            <button class="change-avatar-btn" onclick="openAvatarModal()" title="Đổi Avatar">
+              📷
+            </button>
+          </div>
+          <div class="profile-info">
+            <h2 id="userName">Đang tải...</h2>
+            <p class="user-email" id="userEmail">...</p>
+            <div class="user-badges">
+              <span class="badge badge-role" id="userRole">User</span>
+              <span class="badge badge-status" id="userStatus">Active</span>
+            </div>
+            <p class="user-joined">📅 Tham gia: <span id="userJoined">...</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Linked Pirate Section -->
+      <section class="pirate-section">
+        <h3>🏴‍☠️ Hải Tặc Của Bạn</h3>
+        <div class="linked-pirate" id="linkedPirate">
+          <p class="no-pirate">Đang tải thông tin...</p>
+        </div>
+      </section>
+
+      <!-- Stats Section -->
+      <section class="stats-section" id="pirateStats" style="display: none;">
+        <h3>📊 Thống Kê</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-icon">💰</div>
+            <div class="stat-value" id="statBounty">0฿</div>
+            <div class="stat-label">Tiền Truy Nã</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-value" id="statRank">-</div>
+            <div class="stat-label">Cấp Độ</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">⚔️</div>
+            <div class="stat-value" id="statCrew">-</div>
+            <div class="stat-label">Băng Nhóm</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">📈</div>
+            <div class="stat-value" id="statRanking">-</div>
+            <div class="stat-label">Xếp Hạng</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Actions -->
+      <section class="actions-section">
+        <h3>⚡ Hành Động Nhanh</h3>
+        <div class="actions-grid">
+          <a href="index.html" class="action-btn">
+            <span class="action-icon">🏠</span>
+            <span class="action-text">Trang Chủ</span>
+          </a>
+          <button class="action-btn" onclick="viewLeaderboard()">
+            <span class="action-icon">🏅</span>
+            <span class="action-text">Bảng Xếp Hạng</span>
+          </button>
+          <button class="action-btn" onclick="changePassword()">
+            <span class="action-icon">🔑</span>
+            <span class="action-text">Đổi Mật Khẩu</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="user-footer">
+      <p>⚓ One Piece Bounty System</p>
+    </footer>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div class="modal-overlay" id="changePasswordModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>🔑 Đổi Mật Khẩu</h3>
+        <button class="close-btn" onclick="closeModal('changePasswordModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="changePasswordForm" onsubmit="handleChangePassword(event)">
+          <div class="form-group">
+            <label>Mật khẩu hiện tại</label>
+            <input type="password" id="currentPassword" required>
+          </div>
+          <div class="form-group">
+            <label>Mật khẩu mới</label>
+            <input type="password" id="newPassword" required minlength="4">
+          </div>
+          <div class="form-group">
+            <label>Xác nhận mật khẩu mới</label>
+            <input type="password" id="confirmPassword" required>
+          </div>
+          <p class="error-message" id="passwordError"></p>
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal('changePasswordModal')">Hủy</button>
+            <button type="submit" class="btn-save">Đổi Mật Khẩu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Avatar Modal -->
+  <div class="modal-overlay" id="changeAvatarModal">
+    <div class="modal avatar-modal">
+      <div class="modal-header">
+        <h3>📷 Đổi Avatar</h3>
+        <button class="close-btn" onclick="closeModal('changeAvatarModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="avatar-preview-container">
+          <div class="avatar-preview" id="avatarPreview">👤</div>
+        </div>
+        
+        <div class="avatar-options">
+          <div class="avatar-option-group">
+            <h4>📤 Tải ảnh lên</h4>
+            <input type="file" id="avatarFileInput" accept="image/*" onchange="previewAvatar(event)" style="display: none;">
+            <button class="avatar-upload-btn" onclick="document.getElementById('avatarFileInput').click()">
+              Chọn ảnh từ máy
+            </button>
+          </div>
+          
+          <div class="avatar-option-group">
+            <h4>🔗 Hoặc nhập URL</h4>
+            <input type="text" id="avatarUrlInput" placeholder="https://example.com/avatar.jpg" onchange="previewAvatarUrl()">
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" onclick="closeModal('changeAvatarModal')">Hủy</button>
+          <button type="button" class="btn-save" onclick="saveAvatar()">Lưu Avatar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  
+  <script src="js/pirates.js"></script>
+  <script src="js/firebase-sync.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // Kiểm tra đăng nhập
+    document.addEventListener('DOMContentLoaded', function() {
+      const user = getCurrentUser();
+      
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      loadUserProfile(user);
+    });
+
+    // Load thông tin user
+    function loadUserProfile(user) {
+      // Lấy thông tin rank từ pirate liên kết
+      const pirates = JSON.parse(localStorage.getItem('onePiecePirates') || '[]');
+      const linkedPirate = pirates.find(p => p.name === user.pirateId);
+      let rankColor = '#f39c12'; // Màu mặc định
+      let rankType = ''; // Class rank
+      
+      if (linkedPirate) {
+        const rank = getRankByBounty(linkedPirate.bounty);
+        rankColor = rank.color;
+        rankType = rank.type;
+      }
+      
+      // Thông tin cơ bản
+      const userNameEl = document.getElementById('userName');
+      userNameEl.textContent = user.username;
+      userNameEl.className = rankType; // Thêm class rank cho gradient animation
+      // Chỉ set màu nếu không có rank (fallback)
+      if (!rankType) {
+        userNameEl.style.color = rankColor;
+        userNameEl.style.textShadow = `0 0 10px ${rankColor}40`;
+      }
+      
+      document.getElementById('userEmail').textContent = user.email || 'Chưa có email';
+      document.getElementById('userRole').textContent = user.role === 'admin' ? '👑 Admin' : '🏴‍☠️ User';
+      document.getElementById('userRole').className = 'badge badge-role ' + user.role;
+      document.getElementById('userStatus').textContent = user.status === 'active' ? '✅ Hoạt động' : '⏸️ ' + user.status;
+      document.getElementById('userJoined').textContent = user.createdAt || 'Không rõ';
+
+      // Hiển thị avatar - ưu tiên lấy từ pirate liên kết
+      const avatarEl = document.getElementById('userAvatar');
+      if (linkedPirate && linkedPirate.image) {
+        avatarEl.innerHTML = `<img src="${linkedPirate.image}" alt="Avatar">`;
+      } else if (user.avatar) {
+        avatarEl.innerHTML = `<img src="${user.avatar}" alt="Avatar">`;
+      } else {
+        avatarEl.textContent = user.role === 'admin' ? '👑' : '👤';
+      }
+
+      // Load thông tin hải tặc liên kết
+      loadLinkedPirate(user);
+    }
+
+    // Load hải tặc liên kết
+    function loadLinkedPirate(user) {
+      const pirateContainer = document.getElementById('linkedPirate');
+      const statsSection = document.getElementById('pirateStats');
+      const profileCard = document.querySelector('.profile-card');
+      
+      // Load pirates từ localStorage
+      const savedPirates = localStorage.getItem('onePiecePirates');
+      const pirates = savedPirates ? JSON.parse(savedPirates) : [];
+      
+      // Tìm hải tặc liên kết
+      const pirate = pirates.find(p => p.name === user.pirateId);
+      
+      if (pirate) {
+        const rank = getRankByBounty(pirate.bounty);
+        const ranking = pirates.sort((a, b) => b.bounty - a.bounty).findIndex(p => p.name === pirate.name) + 1;
+        
+        // Thêm rank class vào profile card
+        if (profileCard) {
+          profileCard.className = 'profile-card ' + rank.type;
+        }
+        
+        // Hiển thị thông tin hải tặc
+        pirateContainer.innerHTML = `
+          <div class="pirate-card ${rank.type}">
+            <div class="pirate-avatar" id="pirateAvatarDisplay">
+              ${pirate.image ? `<img src="${pirate.image}" alt="${pirate.name}">` : rank.icon}
+            </div>
+            <div class="pirate-info">
+              <h4>${pirate.name}</h4>
+              <p class="pirate-crew">⚔️ ${pirate.crew}</p>
+              <p class="pirate-bounty">💰 ${formatBounty(pirate.bounty)}฿</p>
+              <p class="pirate-rank">${rank.icon} ${rank.name}</p>
+            </div>
+          </div>
+        `;
+        
+        // Hiển thị stats
+        statsSection.style.display = 'block';
+        document.getElementById('statBounty').textContent = formatBounty(pirate.bounty) + '฿';
+        document.getElementById('statRank').textContent = rank.name;
+        document.getElementById('statCrew').textContent = pirate.crew;
+        document.getElementById('statRanking').textContent = '#' + ranking + '/' + pirates.length;
+      } else {
+        pirateContainer.innerHTML = `
+          <div class="no-pirate-card">
+            <div class="no-pirate-icon">🏴‍☠️</div>
+            <p>Bạn chưa được liên kết với hải tặc nào</p>
+            <small>Liên hệ Admin để được gán hải tặc</small>
+          </div>
+        `;
+      }
+    }
+
+    // Format bounty
+    function formatBounty(bounty) {
+      if (bounty >= 1000000) return (bounty / 1000000).toFixed(1) + 'M';
+      if (bounty >= 1000) return (bounty / 1000).toFixed(1) + 'K';
+      return bounty.toString();
+    }
+
+    // Modal functions
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+    }
+    
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    // Đổi mật khẩu
+    function changePassword() {
+      openModal('changePasswordModal');
+    }
+
+    function handleChangePassword(event) {
+      event.preventDefault();
+      
+      const currentPass = document.getElementById('currentPassword').value;
+      const newPass = document.getElementById('newPassword').value;
+      const confirmPass = document.getElementById('confirmPassword').value;
+      const errorEl = document.getElementById('passwordError');
+      
+      const user = getCurrentUser();
+      
+      if (currentPass !== user.password) {
+        errorEl.textContent = 'Mật khẩu hiện tại không đúng!';
+        return;
+      }
+      
+      if (newPass !== confirmPass) {
+        errorEl.textContent = 'Mật khẩu mới không khớp!';
+        return;
+      }
+      
+      if (newPass.length < 4) {
+        errorEl.textContent = 'Mật khẩu mới phải có ít nhất 4 ký tự!';
+        return;
+      }
+      
+      // Cập nhật mật khẩu
+      const accounts = JSON.parse(localStorage.getItem('onePieceAccounts') || '[]');
+      const accountIndex = accounts.findIndex(a => a.username === user.username);
+      
+      if (accountIndex !== -1) {
+        accounts[accountIndex].password = newPass;
+        localStorage.setItem('onePieceAccounts', JSON.stringify(accounts));
+        
+        // Cập nhật current user
+        user.password = newPass;
+        setCurrentUser(user);
+        
+        closeModal('changePasswordModal');
+        showToast('success', '✅ Đổi mật khẩu thành công!');
+        document.getElementById('changePasswordForm').reset();
+      }
+    }
+
+    // Xem bảng xếp hạng
+    function viewLeaderboard() {
+      window.location.href = 'index.html';
+    }
+
+    // ==================== AVATAR FUNCTIONS ====================
+    
+    let tempAvatarData = null;
+    
+    // Mở modal đổi avatar
+    function openAvatarModal() {
+      const user = getCurrentUser();
+      const preview = document.getElementById('avatarPreview');
+      
+      // Hiển thị avatar hiện tại
+      if (user.avatar) {
+        preview.innerHTML = `<img src="${user.avatar}" alt="Avatar">`;
+      } else {
+        preview.textContent = '👤';
+      }
+      
+      tempAvatarData = null;
+      document.getElementById('avatarUrlInput').value = '';
+      openModal('changeAvatarModal');
+    }
+    
+    // Preview avatar từ file
+    function previewAvatar(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      // Kiểm tra kích thước file (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('error', '❌ Ảnh quá lớn! Tối đa 2MB');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        tempAvatarData = e.target.result;
+        document.getElementById('avatarPreview').innerHTML = `<img src="${tempAvatarData}" alt="Preview">`;
+        document.getElementById('avatarUrlInput').value = '';
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    // Preview avatar từ URL
+    function previewAvatarUrl() {
+      const url = document.getElementById('avatarUrlInput').value.trim();
+      if (!url) return;
+      
+      // Test xem URL có hợp lệ không
+      const img = new Image();
+      img.onload = function() {
+        tempAvatarData = url;
+        document.getElementById('avatarPreview').innerHTML = `<img src="${url}" alt="Preview">`;
+      };
+      img.onerror = function() {
+        showToast('error', '❌ Không thể tải ảnh từ URL này!');
+      };
+      img.src = url;
+    }
+    
+    // Lưu avatar
+    function saveAvatar() {
+      if (!tempAvatarData) {
+        showToast('error', '❌ Vui lòng chọn ảnh trước!');
+        return;
+      }
+      
+      // Lấy user hiện tại từ localStorage trực tiếp
+      const currentUserData = JSON.parse(localStorage.getItem('onePieceCurrentUser') || '{}');
+      currentUserData.avatar = tempAvatarData;
+      
+      // Cập nhật trong accounts
+      const accounts = JSON.parse(localStorage.getItem('onePieceAccounts') || '[]');
+      const accountIndex = accounts.findIndex(a => a.username === currentUserData.username);
+      
+      if (accountIndex !== -1) {
+        accounts[accountIndex].avatar = tempAvatarData;
+        localStorage.setItem('onePieceAccounts', JSON.stringify(accounts));
+      }
+      
+      // Cập nhật current user trong localStorage
+      localStorage.setItem('onePieceCurrentUser', JSON.stringify(currentUserData));
+      
+      // ===== ĐỒNG BỘ AVATAR CHO PIRATE LIÊN KẾT =====
+      if (currentUserData.pirateId) {
+        const piratesData = JSON.parse(localStorage.getItem('onePiecePirates') || '[]');
+        const pirateIndex = piratesData.findIndex(p => p.name === currentUserData.pirateId);
+        
+        if (pirateIndex !== -1) {
+          piratesData[pirateIndex].image = tempAvatarData;
+          localStorage.setItem('onePiecePirates', JSON.stringify(piratesData));
+          
+          // Cập nhật timestamp để không bị Firebase ghi đè
+          localStorage.setItem('lastLocalUpdate', Date.now().toString());
+          
+          // Cập nhật biến pirates global (dùng trong firebase-sync.js)
+          if (typeof pirates !== 'undefined') {
+            pirates = piratesData;
+          }
+          
+          // Sync lên Firebase nếu đang bật
+          if (typeof syncToFirebase === 'function' && typeof syncEnabled !== 'undefined' && syncEnabled) {
+            syncToFirebase();
+            showToast('success', '✅ Đổi avatar và đồng bộ lên cloud thành công!');
+          } else {
+            showToast('success', '✅ Đổi avatar thành công!');
+          }
+          
+          // Cập nhật UI phần hải tặc
+          const pirateAvatarEl = document.getElementById('pirateAvatarDisplay');
+          if (pirateAvatarEl) {
+            pirateAvatarEl.innerHTML = `<img src="${tempAvatarData}" alt="Pirate Avatar">`;
+          }
+        }
+      }
+      
+      // Cập nhật UI avatar profile
+      document.getElementById('userAvatar').innerHTML = `<img src="${tempAvatarData}" alt="Avatar">`;
+      
+      closeModal('changeAvatarModal');
+    }
+
+    // Toast notification
+    function showToast(type, message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      
+      setTimeout(() => toast.remove(), 3000);
+    }
+  </script>
+</body>
+</html>
