@@ -98,6 +98,51 @@
           </button>
         </div>
       </section>
+
+      <!-- Quest Filter Section -->
+      <section class="quest-filter-section">
+        <h3>📚 Chọn Nhiệm Vụ</h3>
+        <div class="filter-container">
+          <div class="filter-group">
+            <label>🎓 Chọn Lớp:</label>
+            <select id="gradeFilter" class="filter-select">
+              <option value="">-- Chọn lớp --</option>
+              <option value="3">Lớp 3</option>
+              <option value="4">Lớp 4</option>
+              <option value="5">Lớp 5</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>📖 Chọn Môn:</label>
+            <select id="subjectFilter" class="filter-select">
+              <option value="">-- Chọn môn --</option>
+              <option value="tin-hoc">Tin học</option>
+              <option value="cong-nghe">Công nghệ</option>
+            </select>
+          </div>
+          <button class="btn-filter" onclick="loadQuestsByFilter()">🔍 Xem Nhiệm Vụ</button>
+        </div>
+      </section>
+
+      <!-- Regular Quests Section -->
+      <section class="regular-quests-section" style="display: none;">
+        <h3>📝 Nhiệm Vụ Thường (3 lần/ngày)</h3>
+        <div class="quests-list" id="regularQuestsList"></div>
+      </section>
+
+      <!-- Special Quests Section -->
+      <section class="special-quests-section" style="display: none;">
+        <h3>📸 Nhiệm Vụ Đặc Biệt (1 lần/tháng)</h3>
+        <div class="quests-list" id="specialQuestsList"></div>
+      </section>
+
+      <!-- My Submissions Section -->
+      <section class="my-submissions-section">
+        <h3>📋 Bài Nộp Của Tôi</h3>
+        <div class="submissions-list" id="mySubmissionsList">
+          <p class="loading">Đang tải bài nộp...</p>
+        </div>
+      </section>
     </main>
 
     <!-- Footer -->
@@ -131,6 +176,78 @@
           <div class="form-actions">
             <button type="button" class="btn-cancel" onclick="closeModal('changePasswordModal')">Hủy</button>
             <button type="submit" class="btn-save">Đổi Mật Khẩu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Do Quiz Modal -->
+  <div class="modal-overlay" id="doQuizModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3 id="quizModalTitle">📝 Làm Nhiệm Vụ</h3>
+        <button class="close-btn" onclick="closeModal('doQuizModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="doQuizForm" onsubmit="handleSubmitQuiz(event)">
+          <input type="hidden" id="quizQuestIndex">
+          <input type="hidden" id="quizQuestTitle">
+          
+          <div class="quiz-info" style="background: rgba(52, 73, 94, 0.3); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+            <p><strong>📝 Nhiệm vụ:</strong> <span id="quizQuestTitleDisplay"></span></p>
+            <p style="margin-top: 5px;"><strong>📚 Số câu hỏi:</strong> <span id="quizQuestionCount"></span></p>
+            <p style="margin-top: 5px; color: #f39c12;"><strong>💰 Điểm:</strong> +<span id="quizRewardPerQuestion"></span>฿/đúng | -<span id="quizPenaltyPerQuestion"></span>฿/sai</p>
+          </div>
+          
+          <div id="quizQuestionsContainer">
+            <!-- Questions will be loaded here -->
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal('doQuizModal')">Hủy</button>
+            <button type="submit" class="btn-save">✅ Nộp Bài</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit Quest Modal -->
+  <div class="modal-overlay" id="submitQuestModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>📸 Nộp Bài</h3>
+        <button class="close-btn" onclick="closeModal('submitQuestModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="submitQuestForm" onsubmit="handleSubmitQuest(event)">
+          <input type="hidden" id="submitQuestId">
+          <input type="hidden" id="submitQuestTitle">
+          
+          <div class="form-group">
+            <label>📝 Nhiệm vụ</label>
+            <p id="submitQuestTitleDisplay" style="font-weight: 600; color: #3498db;"></p>
+          </div>
+          
+          <div class="form-group">
+            <label>📋 Yêu cầu</label>
+            <p id="submitQuestRequirements" style="white-space: pre-wrap; background: rgba(52, 73, 94, 0.3); padding: 10px; border-radius: 5px;"></p>
+          </div>
+          
+          <div class="form-group">
+            <label>🖼️ Upload hình ảnh bài làm</label>
+            <input type="file" id="submitQuestImages" accept="image/*" multiple required>
+            <small style="color: #95a5a6; display: block; margin-top: 5px;">Có thể chọn nhiều ảnh</small>
+          </div>
+          
+          <div id="imagePreviewContainer" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+            <!-- Preview images will appear here -->
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal('submitQuestModal')">Hủy</button>
+            <button type="submit" class="btn-save">📤 Nộp Bài</button>
           </div>
         </form>
       </div>
@@ -178,10 +295,11 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  
+
   <script src="js/pirates.js"></script>
   <script src="js/firebase-sync.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/user-quests.js"></script>
   <script>
     // Kiểm tra đăng nhập
     document.addEventListener('DOMContentLoaded', function() {
@@ -237,7 +355,29 @@
 
       // Load thông tin hải tặc liên kết
       loadLinkedPirate(user);
+      
+      // Load pirates và attempts từ Firebase trước
+      if (typeof loadPiratesFromFirebase === 'function') {
+        loadPiratesFromFirebase().then(() => {
+          // Reload profile với dữ liệu mới
+          loadLinkedPirate(user);
+        });
+      }
+      if (typeof loadAttemptsFromFirebase === 'function') {
+        loadAttemptsFromFirebase();
+      }
+      
+      // Không tự động load - người dùng phải chọn lớp/môn trước
     }
+    
+    // Load bài nộp sau khi trang load xong hoàn toàn
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        if (typeof loadMySubmissions === 'function') {
+          loadMySubmissions();
+        }
+      }, 1500);
+    });
 
     // Load hải tặc liên kết
     function loadLinkedPirate(user) {

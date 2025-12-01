@@ -31,6 +31,14 @@
           <span class="nav-icon">👥</span>
           <span class="nav-text">Quản lý Tài Khoản</span>
         </button>
+        <button class="nav-item" data-tab="quests">
+          <span class="nav-icon">📝</span>
+          <span class="nav-text">Quản lý Nhiệm Vụ</span>
+        </button>
+        <button class="nav-item" data-tab="submissions">
+          <span class="nav-icon">📸</span>
+          <span class="nav-text">Duyệt Bài Nộp</span>
+        </button>
       </nav>
       <div class="sidebar-footer">
         <a href="index.html" class="back-btn">
@@ -217,6 +225,122 @@
           </table>
         </div>
       </section>
+
+      <!-- Tab Content: Quests -->
+      <section id="quests-tab" class="tab-content">
+        <div class="tab-header">
+          <div class="search-box">
+            <input type="text" id="questSearch" placeholder="🔍 Tìm kiếm nhiệm vụ..." oninput="searchQuests(this.value)">
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="add-btn" onclick="openAddQuizQuestModal()">
+              <span>📝</span> Thêm Nhiệm Vụ Trắc Nghiệm
+            </button>
+            <button class="add-btn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);" onclick="openAddSpecialQuestModal()">
+              <span>📸</span> Thêm Nhiệm Vụ Đặc Biệt
+            </button>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-icon">📝</span>
+            <div class="stat-info">
+              <span class="stat-value" id="totalQuests">0</span>
+              <span class="stat-label">Tổng Nhiệm Vụ</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">📚</span>
+            <div class="stat-info">
+              <span class="stat-value" id="totalQuestions">0</span>
+              <span class="stat-label">Tổng Câu Hỏi</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🎓</span>
+            <div class="stat-info">
+              <span class="stat-value" id="avgQuestionsPerQuest">0</span>
+              <span class="stat-label">TB Câu Hỏi/Bộ</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Filter by grade and subject -->
+        <div class="quest-filters" style="margin: 20px 0; display: flex; gap: 15px;">
+          <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 5px; color: #ecf0f1; font-weight: 600;">🎓 Khối lớp:</label>
+            <select id="gradeFilter" onchange="filterQuests()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #34495e; background: rgba(52, 73, 94, 0.3); color: white;">
+              <option value="">Tất cả</option>
+              <option value="3">Khối 3</option>
+              <option value="4">Khối 4</option>
+              <option value="5">Khối 5</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 5px; color: #ecf0f1; font-weight: 600;">📖 Môn học:</label>
+            <select id="subjectFilter" onchange="filterQuests()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #34495e; background: rgba(52, 73, 94, 0.3); color: white;">
+              <option value="">Tất cả</option>
+              <option value="tin-hoc">Tin học</option>
+              <option value="cong-nghe">Công nghệ</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="quests-grid" id="questsGrid">
+          <!-- Quests will be loaded here -->
+        </div>
+      </section>
+
+      <!-- Tab Content: Submissions -->
+      <section id="submissions-tab" class="tab-content">
+        <div class="tab-header">
+          <div class="search-box">
+            <input type="text" id="submissionSearch" placeholder="🔍 Tìm kiếm bài nộp..." oninput="searchSubmissions(this.value)">
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <select id="submissionStatusFilter" onchange="filterSubmissions()" style="padding: 10px 20px; border-radius: 8px; border: 1px solid #34495e; background: rgba(52, 73, 94, 0.5); color: white; font-weight: 600;">
+              <option value="">Tất cả trạng thái</option>
+              <option value="pending">⏳ Chờ duyệt</option>
+              <option value="approved">✅ Đã duyệt</option>
+              <option value="rejected">❌ Từ chối</option>
+            </select>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-icon">📸</span>
+            <div class="stat-info">
+              <span class="stat-value" id="totalSubmissions">0</span>
+              <span class="stat-label">Tổng Bài Nộp</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">⏳</span>
+            <div class="stat-info">
+              <span class="stat-value" id="pendingSubmissions">0</span>
+              <span class="stat-label">Chờ Duyệt</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">✅</span>
+            <div class="stat-info">
+              <span class="stat-value" id="approvedSubmissions">0</span>
+              <span class="stat-label">Đã Duyệt</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">❌</span>
+            <div class="stat-info">
+              <span class="stat-value" id="rejectedSubmissions">0</span>
+              <span class="stat-label">Từ Chối</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="submissions-grid" id="submissionsGrid">
+          <!-- Submissions will be loaded here -->
+        </div>
+      </section>
     </main>
   </div>
 
@@ -391,6 +515,165 @@
           <div class="form-actions">
             <button type="button" class="btn-cancel" onclick="closeModal('accountModal')">Hủy</button>
             <button type="submit" class="btn-save">Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add/Edit Quest -->
+  <div class="modal-overlay" id="questModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3 id="questModalTitle">➕ Thêm Nhiệm Vụ</h3>
+        <button class="close-btn" onclick="closeModal('questModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="questForm" onsubmit="saveQuest(event)">
+          <input type="hidden" id="questIndex" value="-1">
+          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+              <label>📝 Tên Nhiệm Vụ</label>
+              <input type="text" id="questTitle" required placeholder="Ví dụ: Kiến thức cơ bản về máy tính">
+            </div>
+            <div class="form-group">
+              <label>🎓 Khối lớp</label>
+              <select id="questGrade" required>
+                <option value="">-- Chọn khối --</option>
+                <option value="3">Khối 3</option>
+                <option value="4">Khối 4</option>
+                <option value="5">Khối 5</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+            <div class="form-group">
+              <label>📖 Môn học</label>
+              <select id="questSubject" required>
+                <option value="">-- Chọn môn --</option>
+                <option value="tin-hoc">Tin học</option>
+                <option value="cong-nghe">Công nghệ</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>📄 Mô tả</label>
+            <textarea id="questDescription" rows="2" placeholder="Mô tả ngắn về nhiệm vụ..."></textarea>
+          </div>
+          
+          <!-- Hidden type field -->
+          <input type="hidden" id="questType" value="quiz">
+          
+          <hr style="margin: 20px 0; border: none; border-top: 1px solid rgba(255,255,255,0.1);">
+          
+          <!-- Quiz Type -->
+          <div id="quizTypeContainer">
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+              <div class="form-group">
+                <label>💰 Điểm cộng/câu đúng</label>
+                <input type="number" id="questRewardPerQuestion" min="1" placeholder="Bounty khi đúng" value="100">
+              </div>
+              <div class="form-group">
+                <label>❌ Điểm trừ/câu sai</label>
+                <input type="number" id="questPenaltyPerQuestion" min="0" placeholder="Bounty bị trừ khi sai" value="50">
+              </div>
+            </div>
+            <div class="form-group">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <label style="margin: 0;">📚 Danh sách Câu Hỏi</label>
+                <button type="button" class="add-btn" onclick="addQuestionField()" style="padding: 5px 15px; font-size: 14px;">
+                  <span>➕</span> Thêm Câu Hỏi
+                </button>
+              </div>
+              <div id="questionsContainer">
+                <!-- Questions will be added here -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- Special Type -->
+          <div id="specialTypeContainer" style="display: none;">
+            <div class="form-group">
+              <label>💰 Điểm tối đa</label>
+              <input type="number" id="questMaxScore" min="1" placeholder="Điểm tối đa có thể đạt được" value="1000">
+            </div>
+            <div class="form-group">
+              <label>📋 Yêu cầu bài nộp (không bắt buộc)</label>
+              <textarea id="questRequirements" rows="4" placeholder="Mô tả yêu cầu bài nộp của học sinh...&#10;Ví dụ: Chụp ảnh bài làm trên vở, hoàn thành bài tập thực hành, v.v."></textarea>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal('questModal')">Hủy</button>
+            <button type="submit" class="btn-save">Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Review Submission -->
+  <div class="modal-overlay" id="reviewSubmissionModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <h3>📸 Duyệt Bài Nộp</h3>
+        <button class="close-btn" onclick="closeModal('reviewSubmissionModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="reviewSubmissionForm" onsubmit="saveSubmissionReview(event)">
+          <input type="hidden" id="submissionId" value="">
+          
+          <div class="submission-info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; padding: 15px; background: rgba(52, 73, 94, 0.3); border-radius: 10px;">
+            <div>
+              <strong style="color: #3498db;">👤 Học sinh:</strong>
+              <span id="submissionStudentName"></span>
+            </div>
+            <div>
+              <strong style="color: #3498db;">⚔️ Băng nhóm:</strong>
+              <span id="submissionCrewName"></span>
+            </div>
+            <div>
+              <strong style="color: #3498db;">📝 Nhiệm vụ:</strong>
+              <span id="submissionQuestTitle"></span>
+            </div>
+            <div>
+              <strong style="color: #3498db;">📅 Ngày nộp:</strong>
+              <span id="submissionDate"></span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>🖼️ Hình ảnh bài nộp</label>
+            <div id="submissionImagesContainer" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+              <!-- Images will be loaded here -->
+            </div>
+          </div>
+          
+          <hr style="margin: 20px 0; border: none; border-top: 1px solid rgba(255,255,255,0.1);">
+          
+          <div class="form-row" style="display: grid; grid-template-columns: 1fr 2fr; gap: 15px;">
+            <div class="form-group">
+              <label>📊 Trạng thái</label>
+              <select id="submissionStatus" required onchange="toggleScoreField()">
+                <option value="pending">⏳ Chờ duyệt</option>
+                <option value="approved">✅ Đã duyệt</option>
+                <option value="rejected">❌ Từ chối</option>
+              </select>
+            </div>
+            <div class="form-group" id="scoreFieldContainer">
+              <label>💰 Điểm (Bounty)</label>
+              <input type="number" id="submissionScore" min="0" placeholder="Nhập điểm cho bài nộp">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>💬 Nhận xét</label>
+            <textarea id="submissionFeedback" rows="3" placeholder="Nhận xét của giáo viên..."></textarea>
+          </div>
+          
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal('reviewSubmissionModal')">Đóng</button>
+            <button type="submit" class="btn-save">Lưu đánh giá</button>
           </div>
         </form>
       </div>

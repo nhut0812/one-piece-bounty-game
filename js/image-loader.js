@@ -1,38 +1,38 @@
 // Auto-detect và load ảnh từ thư mục img/
 const rankImageFiles = {
-  rookie: ['rookie', 'tan-binh', 'newbie', 'beginner'],
-  pirate: ['pirate', 'hai-tac', 'buccaneer'],
-  rising: ['rising', 'tan-tinh', 'rising-star'],
-  supernova: ['supernova', 'sieu-tan-tinh', 'nova', 'rookie-11'],
-  warlord: ['warlord', 'that-vu-hai', 'shichibukai'],
-  general: ['general', 'dai-tuong', 'commander'],
-  commander: ['commander', 'tu-lenh', 'captain'],
-  admiral: ['admiral', 'do-doc', 'fleet-admiral'],
-  yonko: ['yonko', 'tu-hoang', 'four-emperors'],
-  emperor: ['emperor', 'de-vuong', 'king', 'sovereign'],
-  legend: ['legend', 'truyen-thuyet', 'legendary'],
-  mythic: ['mythic', 'huyen-thoai', 'myth'],
-  divine: ['divine', 'than-thoai', 'deity'],
-  demigod: ['demigod', 'ban-than', 'semi-god'],
-  supreme: ['supreme', 'chi-ton', 'ultimate', 'god-king']
+  rookie: ['rookie'],
+  pirate: ['pirate'],
+  rising: ['rising'],
+  supernova: ['supernova'],
+  warlord: ['warlord'],
+  general: ['general'],
+  commander: ['commander'],
+  admiral: ['admiral'],
+  yonko: ['yonko'],
+  emperor: ['emperor'],
+  legend: ['legend'],
+  mythic: ['mythic'],
+  divine: ['divine'],
+  demigod: ['demigod'],
+  supreme: ['supreme']
 };
 
-const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+// Chỉ thử các extension phổ biến nhất
+const imageExtensions = ['png', 'jpg', 'webp'];
 
-// Thử load ảnh với nhiều tên file và extension khác nhau
+// Thử load ảnh với timeout ngắn
 async function tryLoadImage(rankType, fileName, extension) {
   return new Promise((resolve) => {
     const img = new Image();
     const path = `img/${fileName}.${extension}`;
     
-    // Timeout nhanh hơn để không chặn lâu
+    // Timeout rất ngắn để load nhanh
     const timeout = setTimeout(() => {
       resolve(null);
-    }, 300);
+    }, 100);
     
     img.onload = function() {
       clearTimeout(timeout);
-      console.log(`✅ Loaded: ${path} for rank ${rankType}`);
       resolve(path);
     };
     
@@ -61,8 +61,15 @@ async function autoDetectRankImage(rankType) {
   return null;
 }
 
-// Load tất cả ảnh rank khi khởi động
+// Load tất cả ảnh rank khi khởi động (chỉ nếu chưa có trong localStorage)
 async function loadAllRankImages() {
+  // Kiểm tra xem đã load chưa
+  const alreadyLoaded = localStorage.getItem('rankImagesLoaded');
+  if (alreadyLoaded && Object.keys(rankImages).length > 0) {
+    console.log('✅ Rank images already cached');
+    return;
+  }
+  
   console.log('🔍 Auto-detecting rank images...');
   
   for (const rankType of Object.keys(rankImageFiles)) {
@@ -70,26 +77,31 @@ async function loadAllRankImages() {
     
     if (imagePath) {
       // Convert sang base64 để lưu vào localStorage
-      const response = await fetch(imagePath);
-      const blob = await response.blob();
-      
-      const reader = new FileReader();
-      reader.onloadend = function() {
-        rankImages[rankType] = reader.result;
+      try {
+        const response = await fetch(imagePath);
+        const blob = await response.blob();
         
-        // Update preview trong settings modal
-        const previewElement = document.getElementById(`rank-${rankType}-preview`);
-        if (previewElement) {
-          previewElement.innerHTML = 
-            `<img src="${reader.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-        }
-        
-        saveToLocalStorage();
-        renderPirates();
-      };
-      reader.readAsDataURL(blob);
+        const reader = new FileReader();
+        reader.onloadend = function() {
+          rankImages[rankType] = reader.result;
+          
+          // Update preview trong settings modal
+          const previewElement = document.getElementById(`rank-${rankType}-preview`);
+          if (previewElement) {
+            previewElement.innerHTML = 
+              `<img src="${reader.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+          }
+          
+          saveToLocalStorage();
+          renderPirates();
+        };
+        reader.readAsDataURL(blob);
+      } catch (error) {
+        console.warn(`Failed to load ${imagePath}:`, error);
+      }
     }
   }
   
+  localStorage.setItem('rankImagesLoaded', 'true');
   console.log('✅ Rank image detection complete!');
 }

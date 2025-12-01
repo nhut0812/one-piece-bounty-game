@@ -25,9 +25,13 @@ function initFirebase() {
       return false;
     }
     
-    firebase.initializeApp(firebaseConfig);
+    // Kiểm tra nếu Firebase đã được khởi tạo
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    
     database = firebase.database();
-    console.log('✅ Firebase initialized');
+    console.log('✅ Firebase initialized successfully');
     return true;
   } catch (error) {
     console.error('❌ Firebase init error:', error);
@@ -67,19 +71,27 @@ async function syncToFirebase() {
       localStorage.setItem('onePieceAccounts', JSON.stringify(accounts));
     }
     
+    // Lấy quests, submissions và questAttempts từ localStorage
+    const quests = JSON.parse(localStorage.getItem('onePieceQuests') || '[]');
+    const submissions = JSON.parse(localStorage.getItem('onePieceSubmissions') || '[]');
+    const questAttempts = JSON.parse(localStorage.getItem('onePieceQuestAttempts') || '{}');
+    
     const data = {
       pirates: pirates,
       crews: crews,
       accounts: accounts,
       rankImages: rankImages,
       crewImages: crewImages,
+      quests: quests,
+      submissions: submissions,
+      questAttempts: questAttempts,
       lastUpdate: Date.now(),
       lastUserId: userId
     };
     
     await database.ref('sharedData').set(data);
-    console.log('☁️ Synced to Firebase:', pirates.length, 'pirates,', accounts.length, 'accounts');
-    showSyncNotification(`✅ Đã đồng bộ ${pirates.length} hải tặc và ${accounts.length} tài khoản lên cloud`);
+    console.log('☁️ Synced to Firebase:', pirates.length, 'pirates,', accounts.length, 'accounts,', quests.length, 'quests');
+    showSyncNotification(`✅ Đã đồng bộ ${pirates.length} hải tặc, ${accounts.length} tài khoản, ${quests.length} nhiệm vụ lên cloud`);
   } catch (error) {
     console.error('❌ Sync error:', error);
     showSyncNotification('⚠️ Lỗi đồng bộ');
@@ -127,9 +139,29 @@ async function loadFromFirebase(forceLoad = false) {
         localStorage.setItem('onePieceRankImages', JSON.stringify(rankImages));
         localStorage.setItem('onePieceCrewImages', JSON.stringify(crewImages));
         if (data.crews) localStorage.setItem('onePieceCrews', JSON.stringify(crews));
+        if (data.quests) localStorage.setItem('onePieceQuests', JSON.stringify(data.quests));
+        if (data.submissions) localStorage.setItem('onePieceSubmissions', JSON.stringify(data.submissions));
+        if (data.questAttempts) localStorage.setItem('onePieceQuestAttempts', JSON.stringify(data.questAttempts));
         renderPirates();
-        console.log('☁️ Loaded from Firebase:', pirates.length, 'pirates,', (data.accounts || []).length, 'accounts');
-        showSyncNotification(`📥 Đã tải ${pirates.length} hải tặc từ cloud`);
+        
+        // Reload submissions in admin panel if available
+        if (typeof submissions !== 'undefined' && data.submissions) {
+          submissions = data.submissions;
+          if (typeof renderSubmissions === 'function') {
+            renderSubmissions();
+          }
+        }
+        
+        // Reload quests in admin panel if available
+        if (typeof quests !== 'undefined' && data.quests) {
+          quests = data.quests;
+          if (typeof renderQuests === 'function') {
+            renderQuests();
+          }
+        }
+        
+        console.log('☁️ Loaded from Firebase:', pirates.length, 'pirates,', (data.accounts || []).length, 'accounts,', (data.quests || []).length, 'quests,', (data.submissions || []).length, 'submissions');
+        showSyncNotification(`📥 Đã tải ${pirates.length} hải tặc, ${(data.quests || []).length} nhiệm vụ, ${(data.submissions || []).length} bài nộp từ cloud`);
         return true;
       }
     }
@@ -180,7 +212,27 @@ function listenToFirebase() {
         localStorage.setItem('onePieceRankImages', JSON.stringify(rankImages));
         localStorage.setItem('onePieceCrewImages', JSON.stringify(crewImages));
         if (data.crews) localStorage.setItem('onePieceCrews', JSON.stringify(crews));
+        if (data.quests) localStorage.setItem('onePieceQuests', JSON.stringify(data.quests));
+        if (data.submissions) localStorage.setItem('onePieceSubmissions', JSON.stringify(data.submissions));
+        if (data.questAttempts) localStorage.setItem('onePieceQuestAttempts', JSON.stringify(data.questAttempts));
         renderPirates();
+        
+        // Reload submissions in admin panel if available
+        if (typeof submissions !== 'undefined' && data.submissions) {
+          submissions = data.submissions;
+          if (typeof renderSubmissions === 'function') {
+            renderSubmissions();
+          }
+        }
+        
+        // Reload quests in admin panel if available
+        if (typeof quests !== 'undefined' && data.quests) {
+          quests = data.quests;
+          if (typeof renderQuests === 'function') {
+            renderQuests();
+          }
+        }
+        
         console.log('🔄 Realtime update from Firebase');
         showSyncNotification('🔄 Dữ liệu đã cập nhật');
       }
@@ -194,35 +246,66 @@ function toggleFirebaseSync() {
   localStorage.setItem('firebaseSyncEnabled', syncEnabled);
   
   if (syncEnabled) {
-    if (!database && !initFirebase()) {
-      syncEnabled = false;
-      alert('❌ Không thể kết nối Firebase. Vui lòng refresh trang.');
-      return;
+    // Thử khởi tạo Firebase nếu chưa có
+    if (!database) {
+      const initialized = initFirebase();
+      if (!initialized) {
+        // Chờ 1 giây rồi thử lại
+        setTimeout(() => {
+          if (!initFirebase()) {
+            syncEnabled = false;
+            localStorage.setItem('firebaseSyncEnabled', false);
+            alert('❌ Không thể kết nối Firebase. Vui lòng kiểm tra kết nối internet và refresh trang.');
+            updateSyncButton();
+            return;
+          }
+          // Nếu init thành công sau retry
+          proceedWithSync();
+        }, 1000);
+        return;
+      }
     }
     
-    // Luôn load từ cloud trước khi bật sync
-    loadFromFirebase(true).then((loaded) => {
-      if (!loaded) {
-        // Chỉ upload khi cloud thực sự trống
-        console.log('📤 Cloud trống, upload dữ liệu local lên...');
-        if (pirates.length > 0) {
-          syncToFirebase();
-        }
-      } else {
-        console.log('✅ Đã load dữ liệu từ cloud');
-      }
-      listenToFirebase();
-    });
-    
-    showSyncNotification('✅ Đã bật đồng bộ cloud');
+    proceedWithSync();
   } else {
     // Tắt listener khi disable sync
     if (database) {
       database.ref('sharedData').off();
     }
     showSyncNotification('❌ Đã tắt đồng bộ cloud');
+    updateSyncButton();
+  }
+}
+
+function proceedWithSync() {
+  if (!database) {
+    console.error('❌ Database không tồn tại trong proceedWithSync');
+    syncEnabled = false;
+    updateSyncButton();
+    return;
   }
   
+  console.log('✅ Bắt đầu đồng bộ...');
+  
+  // Luôn load từ cloud trước khi bật sync
+  loadFromFirebase(true).then((loaded) => {
+    if (!loaded) {
+      // Chỉ upload khi cloud thực sự trống
+      console.log('📤 Cloud trống, upload dữ liệu local lên...');
+      if (pirates.length > 0) {
+        syncToFirebase();
+      }
+    } else {
+      console.log('✅ Đã load dữ liệu từ cloud');
+    }
+    listenToFirebase();
+  }).catch((error) => {
+    console.error('❌ Lỗi khi load từ Firebase:', error);
+    // Không tắt sync, chỉ thông báo lỗi
+    showSyncNotification('⚠️ Lỗi khi tải dữ liệu từ cloud');
+  });
+  
+  showSyncNotification('✅ Đã bật đồng bộ cloud');
   updateSyncButton();
 }
 
@@ -340,27 +423,36 @@ function closeSyncPrompt() {
 
 // Khởi tạo khi load trang
 window.addEventListener('load', () => {
+  // Khôi phục trạng thái sync từ localStorage trước
+  const savedSyncState = localStorage.getItem('firebaseSyncEnabled');
+  syncEnabled = savedSyncState === 'true';
+  
+  // Cập nhật button ngay lập tức
+  updateSyncButton();
+  
   // Đợi Firebase SDK load xong
   setTimeout(() => {
-    if (initFirebase()) {
-      syncEnabled = localStorage.getItem('firebaseSyncEnabled') === 'true';
-      if (syncEnabled) {
-        // Khi mở trang, nếu sync đang bật, load từ cloud ngay
-        console.log('🔄 Sync đang bật, đang load dữ liệu từ cloud...');
-        loadFromFirebase(true).then((loaded) => {
-          if (loaded) {
-            console.log('✅ Đã load dữ liệu từ cloud khi khởi động');
-          }
-          listenToFirebase();
-        });
-      } else {
-        // Kiểm tra xem đã hiển thị prompt chưa
-        const promptShown = localStorage.getItem('syncPromptShown');
-        if (!promptShown) {
-          // Hiển thị prompt lần đầu
-          setTimeout(() => showFirstTimeSyncPrompt(), 500);
+    const initialized = initFirebase();
+    
+    if (initialized && syncEnabled) {
+      // Khi mở trang, nếu sync đang bật, load từ cloud ngay
+      console.log('🔄 Sync đang bật, đang load dữ liệu từ cloud...');
+      loadFromFirebase(true).then((loaded) => {
+        if (loaded) {
+          console.log('✅ Đã load dữ liệu từ cloud khi khởi động');
         }
+        listenToFirebase();
+      });
+    } else if (initialized && !syncEnabled) {
+      // Kiểm tra xem đã hiển thị prompt chưa
+      const promptShown = localStorage.getItem('syncPromptShown');
+      if (!promptShown) {
+        // Hiển thị prompt lần đầu
+        setTimeout(() => showFirstTimeSyncPrompt(), 500);
       }
+    } else if (!initialized) {
+      console.log('⚠️ Firebase chưa khởi tạo được, sync tạm thời tắt');
+      syncEnabled = false;
       updateSyncButton();
     }
   }, 1000);
