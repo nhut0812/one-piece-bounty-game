@@ -23,7 +23,17 @@ function setCurrentUser(user) {
 // Lấy danh sách tài khoản
 function getAccounts() {
   const saved = localStorage.getItem(ACCOUNTS_KEY);
-  return saved ? JSON.parse(saved) : [];
+  let accounts = saved ? JSON.parse(saved) : [];
+  
+  // Khởi tạo tài khoản admin mặc định nếu chưa có
+  if (accounts.length === 0) {
+    accounts = [
+      { username: 'admin', email: 'admin@onepiece.com', password: 'admin123', role: 'admin', status: 'active', createdAt: '2025-01-01' }
+    ];
+    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+  }
+  
+  return accounts;
 }
 
 // Đăng nhập

@@ -1,26 +1,5 @@
 // DANH SÁCH HẢI TẶC
-let pirates = [
-  { name: "Gol D. Roger", bounty: 55648, image: null, type: "god", crew: "Roger Pirates" },
-  { name: "Whitebeard", bounty: 50464, image: null, type: "god", crew: "Whitebeard Pirates" },
-  { name: "Monkey D. Luffy", bounty: 30000, image: null, type: "mythic", crew: "Straw Hat Pirates" },
-  { name: "Blackbeard", bounty: 22470, image: null, type: "mythic", crew: "Blackbeard Pirates" },
-  { name: "Roronoa Zoro", bounty: 11110, image: null, type: "legend", crew: "Straw Hat Pirates" },
-  { name: "Trafalgar Law", bounty: 10500, image: null, type: "legend", crew: "Heart Pirates" },
-  { name: "Kaido", bounty: 4611, image: null, type: "yonko", crew: "Beast Pirates" },
-  { name: "Big Mom", bounty: 4388, image: null, type: "yonko", crew: "Big Mom Pirates" },
-  { name: "Shanks", bounty: 4048, image: null, type: "yonko", crew: "Red Hair Pirates" },
-  { name: "Mihawk", bounty: 3590, image: null, type: "yonko", crew: "No Crew" },
-  { name: "Sanji", bounty: 1032, image: null, type: "commander", crew: "Straw Hat Pirates" },
-  { name: "Jinbe", bounty: 1100, image: null, type: "commander", crew: "Straw Hat Pirates" },
-  { name: "Boa Hancock", bounty: 659, image: null, type: "warlord", crew: "Kuja Pirates" },
-  { name: "Eustass Kid", bounty: 470, image: null, type: "supernova", crew: "Kid Pirates" },
-  { name: "Nami", bounty: 366, image: null, type: "supernova", crew: "Straw Hat Pirates" },
-  { name: "Nico Robin", bounty: 130, image: null, type: "pirate", crew: "Straw Hat Pirates" },
-  { name: "Franky", bounty: 94, image: null, type: "pirate", crew: "Straw Hat Pirates" },
-  { name: "Brook", bounty: 83, image: null, type: "pirate", crew: "Straw Hat Pirates" },
-  { name: "Chopper", bounty: 10, image: null, type: "rookie", crew: "Straw Hat Pirates" },
-  { name: "Bepo", bounty: 5, image: null, type: "rookie", crew: "Heart Pirates" }
-];
+let pirates = [];
 
 // DANH SÁCH BĂNG NHÓM (18 băng thực tế theo One Piece)
 let crews = [
@@ -509,6 +488,9 @@ function loadFromLocalStorage() {
   
   if (saved) {
     pirates = JSON.parse(saved);
+  } else {
+    // Lần đầu chạy - lưu dữ liệu mẫu vào localStorage
+    saveToLocalStorage();
   }
   if (savedRanks) {
     rankImages = JSON.parse(savedRanks);
@@ -553,5 +535,8 @@ function loadFromLocalStorage() {
       ].find(d => d.name === loadedCrew.name);
       return { ...loadedCrew, nameVi: loadedCrew.nameVi || (defaultCrew ? defaultCrew.nameVi : loadedCrew.name) };
     });
+  } else {
+    // Lần đầu chạy - lưu dữ liệu crews mặc định
+    saveToLocalStorage();
   }
 }

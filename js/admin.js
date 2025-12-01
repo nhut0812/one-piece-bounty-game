@@ -182,6 +182,7 @@ function renderPirates() {
     
     const row = document.createElement('tr');
     row.innerHTML = `
+      <td><input type="checkbox" class="pirate-checkbox" data-index="${realIndex}" onchange="updateBulkActions()"></td>
       <td>${index + 1}</td>
       <td>
         <div class="avatar-cell">
@@ -544,6 +545,87 @@ function deletePirate(index) {
   });
 }
 
+// Chọn/bỏ chọn tất cả checkbox
+function toggleSelectAllPirates(checked) {
+  const checkboxes = document.querySelectorAll('.pirate-checkbox');
+  checkboxes.forEach(cb => cb.checked = checked);
+  updateBulkActions();
+}
+
+// Cập nhật hiển thị nút bulk actions
+function updateBulkActions() {
+  const checkboxes = document.querySelectorAll('.pirate-checkbox:checked');
+  const bulkActions = document.getElementById('bulkActions');
+  const selectedCount = document.getElementById('selectedCount');
+  const selectAll = document.getElementById('selectAllPirates');
+  
+  if (checkboxes.length > 0) {
+    bulkActions.style.display = 'flex';
+    selectedCount.textContent = checkboxes.length;
+  } else {
+    bulkActions.style.display = 'none';
+  }
+  
+  // Update select all checkbox state
+  const allCheckboxes = document.querySelectorAll('.pirate-checkbox');
+  selectAll.checked = allCheckboxes.length > 0 && checkboxes.length === allCheckboxes.length;
+  selectAll.indeterminate = checkboxes.length > 0 && checkboxes.length < allCheckboxes.length;
+}
+
+// Xóa các hải tặc đã chọn
+function deleteSelectedPirates() {
+  const checkboxes = document.querySelectorAll('.pirate-checkbox:checked');
+  if (checkboxes.length === 0) {
+    showToast('warning', '⚠️ Vui lòng chọn ít nhất một hải tặc!');
+    return;
+  }
+  
+  showConfirm(`Bạn có chắc muốn xóa ${checkboxes.length} hải tặc đã chọn?\nTài khoản liên kết cũng sẽ bị xóa.`, () => {
+    const indicesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index)).sort((a, b) => b - a);
+    
+    indicesToDelete.forEach(index => {
+      // Xóa tài khoản liên kết
+      const pirateName = pirates[index].name;
+      const username = removeVietnameseTones(pirateName);
+      const accountIndex = accounts.findIndex(a => a.username === username);
+      if (accountIndex !== -1) {
+        accounts.splice(accountIndex, 1);
+      }
+      
+      pirates.splice(index, 1);
+    });
+    
+    saveData();
+    renderPirates();
+    renderAccounts();
+    updateStats();
+    updateBulkActions();
+    showToast('success', `✅ Đã xóa ${indicesToDelete.length} hải tặc và tài khoản liên kết!`);
+  });
+}
+
+// Xóa tất cả hải tặc
+function deleteAllPirates() {
+  if (pirates.length === 0) {
+    showToast('warning', '⚠️ Không có hải tặc nào để xóa!');
+    return;
+  }
+  
+  showConfirm(`⚠️ BẠN CÓ CHẮC CHẮN?\n\nXóa tất cả ${pirates.length} hải tặc?\nTất cả tài khoản liên kết cũng sẽ bị xóa.\n\nHành động này KHÔNG THỂ HOÀN TÁC!`, () => {
+    // Xóa tất cả tài khoản liên kết (trừ admin)
+    accounts = accounts.filter(a => a.role === 'admin');
+    
+    // Xóa tất cả hải tặc
+    pirates = [];
+    
+    saveData();
+    renderPirates();
+    renderAccounts();
+    updateStats();
+    showToast('success', '✅ Đã xóa tất cả hải tặc và tài khoản liên kết!');
+  });
+}
+
 function searchPirates(query) {
   pirateSearchQuery = query;
   renderPirates();
@@ -858,15 +940,41 @@ function importData(event) {
     try {
       const data = JSON.parse(e.target.result);
       
-      if (data.pirates) pirates = data.pirates;
+      let newAccountsCreated = 0;
+      
+      if (data.pirates) {
+        const oldPirateCount = pirates.length;
+        pirates = data.pirates;
+        
+        // Tạo tài khoản cho tất cả hải tặc mới import
+        pirates.forEach(pirate => {
+          const account = createAccountForPirate(pirate.name);
+          if (account) {
+            newAccountsCreated++;
+          }
+        });
+      }
+      
       if (data.crews) crews = data.crews;
       if (data.ranks) ranks = data.ranks;
-      if (data.accounts) accounts = data.accounts;
       if (data.rankImages) rankImages = data.rankImages;
+      
+      // Chỉ import accounts nếu có trong file và merge với accounts hiện tại
+      if (data.accounts) {
+        // Giữ lại admin account
+        const adminAccounts = accounts.filter(a => a.role === 'admin');
+        const importedAccounts = data.accounts.filter(a => a.role !== 'admin');
+        accounts = [...adminAccounts, ...importedAccounts];
+      }
       
       saveData();
       renderAll();
-      showToast('success', '📥 Đã nhập dữ liệu thành công!');
+      
+      if (newAccountsCreated > 0) {
+        showToast('success', `📥 Đã nhập dữ liệu và tạo ${newAccountsCreated} tài khoản mới!`);
+      } else {
+        showToast('success', '📥 Đã nhập dữ liệu thành công!');
+      }
     } catch (error) {
       showToast('error', '❌ File không hợp lệ!');
     }
@@ -892,6 +1000,7 @@ async function syncToCloud() {
     const data = {
       pirates: pirates,
       crews: crews,
+      accounts: accounts,
       rankImages: rankImages,
       crewImages: crewImages,
       lastUpdate: Date.now(),
@@ -900,7 +1009,7 @@ async function syncToCloud() {
     
     await database.ref('sharedData').set(data);
     localStorage.setItem('lastLocalUpdate', Date.now().toString());
-    showToast('success', `☁️ Đã đồng bộ ${pirates.length} hải tặc, ${crews.length} băng nhóm và hình ảnh lên cloud!`);
+    showToast('success', `☁️ Đã đồng bộ ${pirates.length} hải tặc, ${crews.length} băng nhóm, ${accounts.length} tài khoản và hình ảnh lên cloud!`);
   } catch (error) {
     console.error('Sync error:', error);
     showToast('error', '❌ Lỗi đồng bộ: ' + error.message);

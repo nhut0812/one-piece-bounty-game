@@ -94,7 +94,7 @@ function addPirate(event) {
       });
       
       // Tự động tạo tài khoản
-      createAccountForPirate(name);
+      const account = createAccountForPirate(name);
       
       renderPirates();
       saveToLocalStorage();
@@ -102,6 +102,18 @@ function addPirate(event) {
       document.getElementById('pirateName').value = '';
       document.getElementById('pirateCrew').value = '';
       document.getElementById('avatarPreview').innerHTML = '📷';
+      
+      // Thông báo
+      const notification = document.createElement('div');
+      notification.className = 'rank-up-notification show';
+      notification.innerHTML = account ? 
+        `✅ Đã thêm hải tặc "${name}"!<br>👤 Tài khoản: ${account.username} (mật khẩu: 123456)` :
+        `✅ Đã thêm hải tặc "${name}"!<br>⚠️ Tài khoản đã tồn tại`;
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 500);
+      }, 4000);
     };
     reader.readAsDataURL(imageFile);
   } else {
@@ -114,13 +126,25 @@ function addPirate(event) {
     });
     
     // Tự động tạo tài khoản
-    createAccountForPirate(name);
+    const account = createAccountForPirate(name);
     
     renderPirates();
     saveToLocalStorage();
     closeModal('addPirateModal');
     document.getElementById('pirateName').value = '';
     document.getElementById('pirateCrew').value = '';
+    
+    // Thông báo
+    const notification = document.createElement('div');
+    notification.className = 'rank-up-notification show';
+    notification.innerHTML = account ? 
+      `✅ Đã thêm hải tặc "${name}"!<br>👤 Tài khoản: ${account.username} (mật khẩu: 123456)` :
+      `✅ Đã thêm hải tặc "${name}"!<br>⚠️ Tài khoản đã tồn tại`;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+      notification.classList.remove('show');
+      setTimeout(() => notification.remove(), 500);
+    }, 4000);
   }
 }
 
@@ -167,7 +191,11 @@ function addBulkPirates() {
   // Hiệu ứng thông báo
   const notification = document.createElement('div');
   notification.className = 'rank-up-notification show';
-  notification.innerHTML = `🎉 Đã thêm ${addedCount} hải tặc và ${accountsCreated} tài khoản! 🏴‍☠️`;
+  notification.innerHTML = `
+    🎉 Đã thêm ${addedCount} hải tặc! 🏴‍☠️<br>
+    👤 Đã tạo ${accountsCreated} tài khoản (mật khẩu: 123456)<br>
+    ${accountsCreated < addedCount ? `⚠️ ${addedCount - accountsCreated} tài khoản đã tồn tại` : ''}
+  `;
   document.body.appendChild(notification);
   
   setTimeout(() => {

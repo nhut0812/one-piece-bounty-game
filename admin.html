@@ -64,6 +64,14 @@
           <div class="search-box">
             <input type="text" id="pirateSearch" placeholder="🔍 Tìm kiếm hải tặc..." oninput="searchPirates(this.value)">
           </div>
+          <div class="bulk-actions" id="bulkActions" style="display: none;">
+            <button class="action-btn delete" onclick="deleteSelectedPirates()">
+              <span>🗑️</span> Xóa đã chọn (<span id="selectedCount">0</span>)
+            </button>
+          </div>
+          <button class="action-btn danger" onclick="deleteAllPirates()" style="margin-left: 10px;">
+            <span>🗑️</span> Xóa Tất Cả
+          </button>
           <button class="add-btn" onclick="openAddPirateModal()">
             <span>➕</span> Thêm Hải Tặc
           </button>
@@ -95,6 +103,7 @@
           <table class="data-table" id="piratesTable">
             <thead>
               <tr>
+                <th><input type="checkbox" id="selectAllPirates" onchange="toggleSelectAllPirates(this.checked)"></th>
                 <th>STT</th>
                 <th>Avatar</th>
                 <th>Tên</th>

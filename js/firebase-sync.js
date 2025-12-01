@@ -52,9 +52,14 @@ async function syncToFirebase() {
   isSyncing = true;
   try {
     const userId = getUserId();
+    
+    // Load accounts từ localStorage
+    const accounts = JSON.parse(localStorage.getItem('onePieceAccounts') || '[]');
+    
     const data = {
       pirates: pirates,
       crews: crews,
+      accounts: accounts,
       rankImages: rankImages,
       crewImages: crewImages,
       lastUpdate: Date.now(),
@@ -62,8 +67,8 @@ async function syncToFirebase() {
     };
     
     await database.ref('sharedData').set(data);
-    console.log('☁️ Synced to Firebase:', pirates.length, 'pirates');
-    showSyncNotification(`✅ Đã đồng bộ ${pirates.length} hải tặc lên cloud`);
+    console.log('☁️ Synced to Firebase:', pirates.length, 'pirates,', accounts.length, 'accounts');
+    showSyncNotification(`✅ Đã đồng bộ ${pirates.length} hải tặc và ${accounts.length} tài khoản lên cloud`);
   } catch (error) {
     console.error('❌ Sync error:', error);
     showSyncNotification('⚠️ Lỗi đồng bộ');
@@ -91,13 +96,17 @@ async function loadFromFirebase(forceLoad = false) {
         rankImages = data.rankImages || {};
         crewImages = data.crewImages || {};
         if (data.crews) crews = data.crews;
+        if (data.accounts) {
+          // Lưu accounts từ cloud
+          localStorage.setItem('onePieceAccounts', JSON.stringify(data.accounts));
+        }
         localStorage.setItem('lastLocalUpdate', cloudLastUpdate);
         localStorage.setItem('onePiecePirates', JSON.stringify(pirates));
         localStorage.setItem('onePieceRankImages', JSON.stringify(rankImages));
         localStorage.setItem('onePieceCrewImages', JSON.stringify(crewImages));
         if (data.crews) localStorage.setItem('onePieceCrews', JSON.stringify(crews));
         renderPirates();
-        console.log('☁️ Loaded from Firebase:', pirates.length, 'pirates');
+        console.log('☁️ Loaded from Firebase:', pirates.length, 'pirates,', (data.accounts || []).length, 'accounts');
         showSyncNotification(`📥 Đã tải ${pirates.length} hải tặc từ cloud`);
         return true;
       }
@@ -130,6 +139,9 @@ function listenToFirebase() {
         rankImages = data.rankImages || {};
         crewImages = data.crewImages || {};
         if (data.crews) crews = data.crews;
+        if (data.accounts) {
+          localStorage.setItem('onePieceAccounts', JSON.stringify(data.accounts));
+        }
         localStorage.setItem('lastLocalUpdate', cloudLastUpdate);
         localStorage.setItem('onePiecePirates', JSON.stringify(pirates));
         localStorage.setItem('onePieceRankImages', JSON.stringify(rankImages));
@@ -232,6 +244,67 @@ saveToLocalStorage = function() {
   }
 };
 
+// Hiển thị modal hỏi đồng bộ lần đầu
+function showFirstTimeSyncPrompt() {
+  const modal = document.createElement('div');
+  modal.className = 'modal active';
+  modal.id = 'syncPromptModal';
+  modal.innerHTML = `
+    <div class="modal-content" style="max-width: 500px; text-align: center;">
+      <h2 style="color: #f39c12; margin-bottom: 20px;">☁️ Đồng Bộ Dữ Liệu</h2>
+      <p style="font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
+        🏴‍☠️ Bạn có muốn <strong>bật đồng bộ cloud</strong> để tải dữ liệu hải tặc từ hệ thống về không?
+      </p>
+      <p style="font-size: 14px; color: #95a5a6; margin-bottom: 30px;">
+        💡 Dữ liệu sẽ được đồng bộ tự động giữa các thiết bị
+      </p>
+      <div style="display: flex; gap: 15px; justify-content: center;">
+        <button onclick="enableSyncFromPrompt()" style="
+          background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+          color: white;
+          border: none;
+          padding: 15px 30px;
+          border-radius: 10px;
+          font-size: 16px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.3s;
+        ">
+          ✅ Bật Đồng Bộ
+        </button>
+        <button onclick="closeSyncPrompt()" style="
+          background: linear-gradient(135deg, #7f8c8d 0%, #95a5a6 100%);
+          color: white;
+          border: none;
+          padding: 15px 30px;
+          border-radius: 10px;
+          font-size: 16px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.3s;
+        ">
+          ❌ Để sau
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+// Bật sync từ prompt
+function enableSyncFromPrompt() {
+  localStorage.setItem('syncPromptShown', 'true');
+  closeSyncPrompt();
+  toggleFirebaseSync();
+}
+
+// Đóng prompt
+function closeSyncPrompt() {
+  localStorage.setItem('syncPromptShown', 'true');
+  const modal = document.getElementById('syncPromptModal');
+  if (modal) modal.remove();
+}
+
 // Khởi tạo khi load trang
 window.addEventListener('load', () => {
   // Đợi Firebase SDK load xong
@@ -247,6 +320,13 @@ window.addEventListener('load', () => {
           }
           listenToFirebase();
         });
+      } else {
+        // Kiểm tra xem đã hiển thị prompt chưa
+        const promptShown = localStorage.getItem('syncPromptShown');
+        if (!promptShown) {
+          // Hiển thị prompt lần đầu
+          setTimeout(() => showFirstTimeSyncPrompt(), 500);
+        }
       }
       updateSyncButton();
     }
