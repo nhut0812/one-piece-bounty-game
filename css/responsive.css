@@ -213,6 +213,40 @@
     border-radius: 20px;
   }
   
+  /* Header Auth - Mobile Specific */
+  .header-auth {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .auth-btn {
+    padding: 10px 20px;
+    font-size: 12px;
+  }
+  
+  .user-info {
+    gap: 8px;
+  }
+  
+  .user-avatar-small {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+  }
+  
+  .user-name {
+    font-size: 13px;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .logout-small {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+  
   /* Top Controls */
   .top-controls {
     padding: 8px 12px;
@@ -634,5 +668,204 @@
   
   .wanted-bounty-value {
     font-size: 32px;
+  }
+}
+
+/* ==================== ADMIN & USER PAGE RESPONSIVE ==================== */
+
+/* Tablet (max-width: 768px) */
+@media (max-width: 768px) {
+  /* Admin Sidebar */
+  .admin-sidebar {
+    width: 100%;
+    position: relative;
+    height: auto;
+  }
+  
+  .admin-content {
+    margin-left: 0;
+    padding: 15px;
+  }
+  
+  .sidebar-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 10px;
+  }
+  
+  .nav-item {
+    white-space: nowrap;
+  }
+  
+  /* Stats Cards */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 15px;
+  }
+  
+  .stat-card {
+    padding: 15px;
+  }
+  
+  /* Tables */
+  .admin-table-container {
+    overflow-x: auto;
+  }
+  
+  .admin-table {
+    font-size: 13px;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 10px;
+  }
+  
+  /* User Quest Cards */
+  .quest-card {
+    padding: 15px;
+  }
+  
+  .quest-card-header h4 {
+    font-size: 16px;
+  }
+  
+  /* Submission Cards */
+  .submission-card {
+    padding: 15px;
+  }
+}
+
+/* Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+  /* Admin Sidebar */
+  .sidebar-nav {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .nav-item {
+    font-size: 13px;
+    padding: 10px 15px;
+  }
+  
+  /* Stats Grid */
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+  
+  .stat-card {
+    padding: 12px;
+  }
+  
+  .stat-value {
+    font-size: 28px;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+  }
+  
+  /* Admin Tables */
+  .admin-table {
+    font-size: 11px;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 8px 5px;
+  }
+  
+  .btn-edit,
+  .btn-delete {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+  
+  /* Quest Cards */
+  .quest-card {
+    padding: 12px;
+  }
+  
+  .quest-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .quest-card-header h4 {
+    font-size: 15px;
+  }
+  
+  .badge {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+  
+  .btn-do-quest,
+  .btn-submit-quest {
+    width: 100%;
+    padding: 12px;
+    font-size: 13px;
+  }
+  
+  /* Quiz Questions */
+  .quiz-question {
+    padding: 12px;
+  }
+  
+  .quiz-question-header {
+    font-size: 14px;
+  }
+  
+  .quiz-option {
+    padding: 10px;
+    font-size: 13px;
+  }
+  
+  /* Submission Images */
+  .submission-images {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  
+  .submission-image {
+    height: 120px;
+  }
+  
+  /* Filter Dropdowns */
+  .filter-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .filter-group select {
+    width: 100%;
+    font-size: 13px;
+  }
+  
+  /* Search Input */
+  #searchInput {
+    font-size: 13px;
+    padding: 10px 15px;
+  }
+  
+  /* Profile Cards */
+  .profile-card {
+    padding: 15px;
+  }
+  
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .profile-name {
+    font-size: 20px;
+  }
+  
+  .profile-info p {
+    font-size: 13px;
   }
 }

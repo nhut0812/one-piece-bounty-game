@@ -229,14 +229,18 @@ function renderPirates(filter = 'all') {
       `<img src="${p.image}" alt="${p.name}">` : 
       (rankImages[rank.type] ? `<img src="${rankImages[rank.type]}" alt="${rank.name}">` : rank.icon);
 
+    // Kiểm tra xem user hiện tại có phải admin không
+    const currentUser = getCurrentUser();
+    const isAdmin = currentUser && currentUser.role === 'admin';
+
     const card = document.createElement("div");
     card.className = "card " + rank.type;
     const crewInfo = crews.find(c => c.name === p.crew) || crews[crews.length - 1];
     
     card.innerHTML = `
       <div class="card-icon">${rank.icon}</div>
-      <div class="avatar" onclick="changeAvatar(${realIndex})" style="cursor: pointer;" title="Nhấn để đổi ảnh đại diện">${avatarContent}</div>
-      <input type="file" id="avatar-input-${realIndex}" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event, ${realIndex})">
+      <div class="avatar" ${isAdmin ? `onclick="changeAvatar(${realIndex})" style="cursor: pointer;" title="Nhấn để đổi ảnh đại diện"` : ''}>${avatarContent}</div>
+      ${isAdmin ? `<input type="file" id="avatar-input-${realIndex}" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event, ${realIndex})">` : ''}
       <div class="name">${p.name}</div>
       <div style="text-align: center;">
         <div class="crew-badge" style="background: ${crewInfo.color}; color: white; padding: 5px 12px; border-radius: 12px; font-size: 13px; font-weight: 900; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
@@ -247,6 +251,7 @@ function renderPirates(filter = 'all') {
       <div class="bounty">
         <span id="bounty-${realIndex}">${formatBounty(p.bounty)}</span>฿
       </div>
+      ${isAdmin ? `
       <div class="actions">
         <button class="btn btn-plus" onclick="changeBounty(${realIndex}, 10)">+10</button>
         <button class="btn btn-plus" onclick="changeBounty(${realIndex}, 50)">+50</button>
@@ -255,6 +260,7 @@ function renderPirates(filter = 'all') {
         <button class="btn btn-minus" onclick="changeBounty(${realIndex}, -50)">-50</button>
         <button class="btn btn-delete" onclick="deletePirate(${realIndex})">🗑️</button>
       </div>
+      ` : ''}
     `;
     grid.appendChild(card);
   });

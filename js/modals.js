@@ -39,7 +39,7 @@ function removeVietnameseTones(str) {
 
 // Tạo tài khoản tự động cho hải tặc mới
 function createAccountForPirate(pirateName) {
-  const username = removeVietnameseTones(pirateName);
+  let username = removeVietnameseTones(pirateName);
   
   // Load accounts từ localStorage
   let accounts = JSON.parse(localStorage.getItem('onePieceAccounts') || '[]');
@@ -47,16 +47,22 @@ function createAccountForPirate(pirateName) {
   console.log('Tạo tài khoản cho:', pirateName, '-> username:', username);
   console.log('Accounts hiện tại:', accounts.length);
   
-  // Kiểm tra xem tài khoản đã tồn tại chưa
-  const existingAccount = accounts.find(a => a.username === username);
-  if (existingAccount) {
-    console.log('Tài khoản đã tồn tại:', username);
-    return null; // Tài khoản đã tồn tại
+  // Kiểm tra xem tài khoản đã tồn tại chưa, nếu có thì tự động thêm số
+  let finalUsername = username;
+  let counter = 1;
+  
+  while (accounts.find(a => a.username === finalUsername)) {
+    finalUsername = username + counter;
+    counter++;
+  }
+  
+  if (finalUsername !== username) {
+    console.log('Tên trùng lặp, đổi thành:', finalUsername);
   }
   
   const newAccount = {
-    username: username,
-    email: username + '@onepiece.com',
+    username: finalUsername,
+    email: finalUsername + '@onepiece.com',
     password: '123456',
     role: 'user',
     status: 'active',

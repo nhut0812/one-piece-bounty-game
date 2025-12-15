@@ -46,38 +46,63 @@ async function canDoQuest(questTitle, questType) {
   // Luôn load attempts từ Firebase trước để tránh gian lận
   await loadAttemptsFromFirebase();
   
-  const attempts = JSON.parse(localStorage.getItem(QUEST_ATTEMPTS_KEY) || '{}');
-  const userAttempts = attempts[user.username] || {};
-  const questAttempts = userAttempts[questTitle] || [];
+  const pirates = JSON.parse(localStorage.getItem(PIRATES_KEY) || '[]');
+  const userPirate = pirates.find(p => p.name === user.pirateId);
+  if (!userPirate) return { can: false, reason: 'Bạn chưa có hải tặc liên kết' };
   
-  const now = new Date();
+  const studentName = userPirate.name;
   
   if (questType === 'special') {
-    // Check if done this month
-    const thisMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    const doneThisMonth = questAttempts.some(attempt => {
-      const attemptDate = new Date(attempt.date);
-      const attemptMonth = `${attemptDate.getFullYear()}-${String(attemptDate.getMonth() + 1).padStart(2, '0')}`;
-      return attemptMonth === thisMonth;
-    });
-    
-    if (doneThisMonth) {
-      return { can: false, reason: 'Bạn đã làm nhiệm vụ này trong tháng này' };
+    // Kiểm tra xem có bài nào đang chờ duyệt không
+    if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+      try {
+        const db = firebase.database();
+        const snapshot = await db.ref('submissions').once('value');
+        const submissionsData = snapshot.val();
+        
+        if (submissionsData) {
+          const allSubmissions = Object.keys(submissionsData).map(key => ({
+            id: key,
+            ...submissionsData[key]
+          }));
+          
+          // Tìm bài đang chờ duyệt của học sinh này cho quest này
+          const pendingSubmission = allSubmissions.find(sub => 
+            sub.studentName === studentName && 
+            sub.questTitle === questTitle && 
+            sub.status === 'pending'
+          );
+          
+          if (pendingSubmission) {
+            return { can: false, reason: 'Bạn có bài đang chờ giáo viên duyệt. Vui lòng đợi kết quả trước khi nộp lại.' };
+          }
+        }
+      } catch (error) {
+        console.error('Error checking submissions:', error);
+      }
     }
+    
+    // Không giới hạn lượt cho special quest
+    return { can: true };
   } else {
-    // Check if done 3 times today
+    // Quiz: vẫn giới hạn 3 lần/ngày
+    const attempts = JSON.parse(localStorage.getItem(QUEST_ATTEMPTS_KEY) || '{}');
+    const userAttempts = attempts[studentName] || {};
+    const questAttemptData = userAttempts[questTitle] || { count: 0, dates: [] };
+    
+    const now = new Date();
     const today = now.toISOString().split('T')[0];
-    const doneToday = questAttempts.filter(attempt => {
-      const attemptDate = attempt.date.split('T')[0];
+    const doneToday = questAttemptData.dates.filter(dateStr => {
+      const attemptDate = dateStr.split('T')[0];
       return attemptDate === today;
     }).length;
     
     if (doneToday >= 3) {
       return { can: false, reason: `Bạn đã làm nhiệm vụ này ${doneToday}/3 lần hôm nay` };
     }
+    
+    return { can: true };
   }
-  
-  return { can: true };
 }
 
 // Record quest attempt
@@ -139,13 +164,8 @@ function getRemainingAttempts(questTitle, questType) {
   const now = new Date();
   
   if (questType === 'special') {
-    const thisMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    const doneThisMonth = questAttemptData.dates.some(dateStr => {
-      const attemptDate = new Date(dateStr);
-      const attemptMonth = `${attemptDate.getFullYear()}-${String(attemptDate.getMonth() + 1).padStart(2, '0')}`;
-      return attemptMonth === thisMonth;
-    });
-    return doneThisMonth ? 0 : 1;
+    // Không giới hạn lượt cho special quest nữa, chỉ check pending trong canDoQuest
+    return 1;
   } else {
     const today = now.toISOString().split('T')[0];
     const doneToday = questAttemptData.dates.filter(dateStr => {
@@ -284,9 +304,6 @@ function loadSpecialQuests(filterGrade = null, filterSubject = null) {
             ${subjectText ? `<span class="badge" style="background: #3498db;">📖 ${subjectText}</span>` : ''}
           </div>
         </div>
-        <span class="badge" style="background: ${remaining > 0 ? '#27ae60' : '#e74c3c'};">
-          ${remaining > 0 ? 'Còn lượt' : 'Hết lượt'}
-        </span>
       </div>
       <div class="quest-card-body">
         <p style="color: #ecf0f1; margin-bottom: 10px;">${quest.description || ''}</p>
@@ -294,8 +311,8 @@ function loadSpecialQuests(filterGrade = null, filterSubject = null) {
         <p style="color: #f39c12; font-weight: 600; margin-top: 10px;">💰 Điểm tối đa: ${maxScore}฿</p>
       </div>
       <div class="quest-card-actions">
-        <button class="btn-submit-quest" onclick="openSubmitQuestModal('${quest.title}', ${index})" ${remaining <= 0 ? 'disabled' : ''}>
-          ${remaining > 0 ? '📤 Nộp Bài' : '🚫 Đã nộp tháng này'}
+        <button class="btn-submit-quest" onclick="openSubmitQuestModal('${quest.title}', ${index})">
+          📤 Nộp Bài
         </button>
       </div>
     `;

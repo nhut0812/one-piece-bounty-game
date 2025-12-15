@@ -157,6 +157,7 @@ function updateAuthUI() {
   const userInfo = document.getElementById('userInfo');
   const headerAvatar = document.getElementById('headerAvatar');
   const headerUserName = document.getElementById('headerUserName');
+  const adminOnlyButtons = document.querySelectorAll('.admin-only');
   
   if (!loginBtn) return;
   
@@ -187,10 +188,22 @@ function updateAuthUI() {
         }
       }
     }
+    
+    // Hiển thị nút admin-only nếu là admin
+    if (adminOnlyButtons) {
+      adminOnlyButtons.forEach(btn => {
+        btn.style.display = user.role === 'admin' ? 'inline-flex' : 'none';
+      });
+    }
   } else {
-    // Chưa đăng nhập - hiện nút login, ẩn user info
+    // Chưa đăng nhập - hiện nút login, ẩn user info và admin buttons
     loginBtn.style.display = 'inline-flex';
     if (userInfo) userInfo.style.display = 'none';
+    if (adminOnlyButtons) {
+      adminOnlyButtons.forEach(btn => {
+        btn.style.display = 'none';
+      });
+    }
   }
 }
 

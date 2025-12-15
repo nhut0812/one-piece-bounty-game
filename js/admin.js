@@ -467,17 +467,20 @@ function removeVietnameseTones(str) {
 
 // Tạo tài khoản tự động cho hải tặc mới
 function createAccountForPirate(pirateName) {
-  const username = removeVietnameseTones(pirateName);
+  let username = removeVietnameseTones(pirateName);
   
-  // Kiểm tra xem tài khoản đã tồn tại chưa
-  const existingAccount = accounts.find(a => a.username === username);
-  if (existingAccount) {
-    return null; // Tài khoản đã tồn tại
+  // Kiểm tra xem tài khoản đã tồn tại chưa, nếu có thì tự động thêm số
+  let finalUsername = username;
+  let counter = 1;
+  
+  while (accounts.find(a => a.username === finalUsername)) {
+    finalUsername = username + counter;
+    counter++;
   }
   
   const newAccount = {
-    username: username,
-    email: username + '@onepiece.com',
+    username: finalUsername,
+    email: finalUsername + '@onepiece.com',
     password: '123456',
     role: 'user',
     status: 'active',
@@ -592,19 +595,35 @@ function savePirate(event) {
     // Cập nhật username nếu đổi tên hải tặc
     const oldName = pirates[index].name;
     const oldUsername = removeVietnameseTones(oldName);
-    const newUsername = removeVietnameseTones(pirateData.name);
+    let newUsername = removeVietnameseTones(pirateData.name);
     
     if (oldUsername !== newUsername) {
       const accountIndex = accounts.findIndex(a => a.username === oldUsername);
       if (accountIndex !== -1) {
-        accounts[accountIndex].username = newUsername;
-        accounts[accountIndex].email = newUsername + '@onepiece.com';
+        // Kiểm tra trùng lặp username mới và tự động thêm số
+        let finalUsername = newUsername;
+        let counter = 1;
+        
+        while (accounts.find((a, idx) => idx !== accountIndex && a.username === finalUsername)) {
+          finalUsername = newUsername + counter;
+          counter++;
+        }
+        
+        accounts[accountIndex].username = finalUsername;
+        accounts[accountIndex].email = finalUsername + '@onepiece.com';
         accounts[accountIndex].pirateId = pirateData.name;
+        
+        if (finalUsername !== newUsername) {
+          showToast('success', `✅ Đã cập nhật hải tặc! Username đổi thành "${finalUsername}" (tránh trùng)`);
+        } else {
+          showToast('success', '✅ Đã cập nhật hải tặc!');
+        }
       }
+    } else {
+      showToast('success', '✅ Đã cập nhật hải tặc!');
     }
     
     pirates[index] = pirateData;
-    showToast('success', '✅ Đã cập nhật hải tặc!');
   }
   
   saveData();
@@ -616,20 +635,48 @@ function savePirate(event) {
 
 function deletePirate(index) {
   const pirateName = pirates[index].name;
-  showConfirm(`Bạn có chắc muốn xóa hải tặc "${pirateName}"?\nTài khoản liên kết cũng sẽ bị xóa.`, () => {
-    // Xóa tài khoản liên kết
-    const username = removeVietnameseTones(pirateName);
-    const accountIndex = accounts.findIndex(a => a.username === username);
+  showConfirm(`Bạn có chắc muốn xóa hải tặc "${pirateName}"?\nTài khoản liên kết và TẤT CẢ dữ liệu của người này sẽ bị xóa vĩnh viễn.`, () => {
+    // Xóa tài khoản liên kết - tìm theo pirateId để tránh xóa nhầm khi trùng tên
+    const accountIndex = accounts.findIndex(a => a.pirateId === pirateName);
     if (accountIndex !== -1) {
       accounts.splice(accountIndex, 1);
+    }
+    
+    // Xóa quest attempts của hải tặc này
+    const questAttempts = JSON.parse(localStorage.getItem('onePieceQuestAttempts') || '{}');
+    if (questAttempts[pirateName]) {
+      delete questAttempts[pirateName];
+      localStorage.setItem('onePieceQuestAttempts', JSON.stringify(questAttempts));
+      
+      // Sync lên Firebase
+      if (typeof database !== 'undefined' && database) {
+        database.ref('sharedData/questAttempts').set(questAttempts);
+      }
+    }
+    
+    // Xóa submissions của hải tặc này
+    submissions = submissions.filter(sub => sub.studentName !== pirateName);
+    localStorage.setItem('onePieceSubmissions', JSON.stringify(submissions));
+    
+    // Xóa submissions trên Firebase
+    if (typeof database !== 'undefined' && database) {
+      database.ref('submissions').once('value').then(snapshot => {
+        const firebaseSubmissions = snapshot.val() || {};
+        Object.keys(firebaseSubmissions).forEach(key => {
+          if (firebaseSubmissions[key].studentName === pirateName) {
+            database.ref('submissions/' + key).remove();
+          }
+        });
+      });
     }
     
     pirates.splice(index, 1);
     saveData();
     renderPirates();
     renderAccounts();
+    renderSubmissions();
     updateStats();
-    showToast('success', '✅ Đã xóa hải tặc và tài khoản liên kết!');
+    showToast('success', '✅ Đã xóa vĩnh viễn hải tặc và toàn bộ dữ liệu!');
   });
 }
 
@@ -982,11 +1029,41 @@ function saveAccount(event) {
 
 function deleteAccount(index) {
   const account = accounts[index];
-  showConfirm(`Bạn có chắc muốn xóa tài khoản "${account.username}"?\nHải tặc liên kết cũng sẽ bị xóa.`, () => {
+  showConfirm(`Bạn có chắc muốn xóa tài khoản "${account.username}"?\nHải tặc liên kết và TẤT CẢ dữ liệu sẽ bị xóa vĩnh viễn.`, () => {
     // Xóa hải tặc liên kết nếu có
     if (account.pirateId) {
       const pirateIndex = pirates.findIndex(p => p.name === account.pirateId);
       if (pirateIndex !== -1) {
+        const pirateName = pirates[pirateIndex].name;
+        
+        // Xóa quest attempts của hải tặc này
+        const questAttempts = JSON.parse(localStorage.getItem('onePieceQuestAttempts') || '{}');
+        if (questAttempts[pirateName]) {
+          delete questAttempts[pirateName];
+          localStorage.setItem('onePieceQuestAttempts', JSON.stringify(questAttempts));
+          
+          // Sync lên Firebase
+          if (typeof database !== 'undefined' && database) {
+            database.ref('sharedData/questAttempts').set(questAttempts);
+          }
+        }
+        
+        // Xóa submissions của hải tặc này
+        submissions = submissions.filter(sub => sub.studentName !== pirateName);
+        localStorage.setItem('onePieceSubmissions', JSON.stringify(submissions));
+        
+        // Xóa submissions trên Firebase
+        if (typeof database !== 'undefined' && database) {
+          database.ref('submissions').once('value').then(snapshot => {
+            const firebaseSubmissions = snapshot.val() || {};
+            Object.keys(firebaseSubmissions).forEach(key => {
+              if (firebaseSubmissions[key].studentName === pirateName) {
+                database.ref('submissions/' + key).remove();
+              }
+            });
+          });
+        }
+        
         pirates.splice(pirateIndex, 1);
       }
     }
@@ -995,8 +1072,9 @@ function deleteAccount(index) {
     saveData();
     renderAccounts();
     renderPirates();
+    renderSubmissions();
     updateStats();
-    showToast('success', '✅ Đã xóa tài khoản và hải tặc liên kết!');
+    showToast('success', '✅ Đã xóa vĩnh viễn tài khoản và toàn bộ dữ liệu!');
   });
 }
 
