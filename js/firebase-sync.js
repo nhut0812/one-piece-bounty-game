@@ -1,19 +1,7 @@
 // Firebase Sync cho One Piece Bounty Game
 // Tự động đồng bộ dữ liệu giữa các trình duyệt/thiết bị
 
-// Firebase Configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCMow1S51XanUxwyLbwt714Wgqjue7-2Mk",
-  authDomain: "one-piece-bounty-game.firebaseapp.com",
-  databaseURL: "https://one-piece-bounty-game-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "one-piece-bounty-game",
-  storageBucket: "one-piece-bounty-game.firebasestorage.app",
-  messagingSenderId: "410745987244",
-  appId: "1:410745987244:web:b1053716c882ebae77bf09"
-};
-
-// Initialize Firebase
-let database = null;
+// Firebase sẽ được khởi tạo bởi firebase-config.js
 let syncEnabled = false;
 let isSyncing = false;
 
@@ -25,13 +13,13 @@ function initFirebase() {
       return false;
     }
     
-    // Kiểm tra nếu Firebase đã được khởi tạo
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
+    // Firebase đã được khởi tạo bởi firebase-config.js
+    if (!database) {
+      console.error('❌ Database chưa được khởi tạo');
+      return false;
     }
     
-    database = firebase.database();
-    console.log('✅ Firebase initialized successfully');
+    console.log('✅ Firebase sync ready');
     return true;
   } catch (error) {
     console.error('❌ Firebase init error:', error);
@@ -142,7 +130,11 @@ async function loadFromFirebase(forceLoad = false) {
         if (data.quests) localStorage.setItem('onePieceQuests', JSON.stringify(data.quests));
         if (data.submissions) localStorage.setItem('onePieceSubmissions', JSON.stringify(data.submissions));
         if (data.questAttempts) localStorage.setItem('onePieceQuestAttempts', JSON.stringify(data.questAttempts));
-        renderPirates();
+        
+        // Chỉ gọi renderPirates nếu hàm tồn tại (không có trong battle.html)
+        if (typeof renderPirates === 'function') {
+          renderPirates();
+        }
         
         // Reload submissions in admin panel if available
         if (typeof submissions !== 'undefined' && data.submissions) {
@@ -215,7 +207,11 @@ function listenToFirebase() {
         if (data.quests) localStorage.setItem('onePieceQuests', JSON.stringify(data.quests));
         if (data.submissions) localStorage.setItem('onePieceSubmissions', JSON.stringify(data.submissions));
         if (data.questAttempts) localStorage.setItem('onePieceQuestAttempts', JSON.stringify(data.questAttempts));
-        renderPirates();
+        
+        // Chỉ gọi renderPirates nếu hàm tồn tại (không có trong battle.html)
+        if (typeof renderPirates === 'function') {
+          renderPirates();
+        }
         
         // Reload submissions in admin panel if available
         if (typeof submissions !== 'undefined' && data.submissions) {

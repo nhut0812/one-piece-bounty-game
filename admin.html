@@ -701,23 +701,14 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/utils.js"></script>
   <script>
-    // Firebase config - same as firebase-sync.js
-    const firebaseConfig = {
-      apiKey: "AIzaSyCMow1S51XanUxwyLbwt714Wgqjue7-2Mk",
-      authDomain: "one-piece-bounty-game.firebaseapp.com",
-      databaseURL: "https://one-piece-bounty-game-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "one-piece-bounty-game",
-      storageBucket: "one-piece-bounty-game.firebasestorage.app",
-      messagingSenderId: "410745987244",
-      appId: "1:410745987244:web:b1053716c882ebae77bf09"
-    };
-    
-    // Initialize Firebase if not already
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
+    // Firebase đã được khởi tạo bởi firebase-config.js
+    if (!database) {
+      console.error('Database chưa khởi tạo');
     }
   </script>
   <script src="js/admin.js"></script>

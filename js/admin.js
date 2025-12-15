@@ -11,8 +11,7 @@ const CREW_IMAGES_KEY = 'onePieceCrewImages';
 const QUESTS_KEY = 'onePieceQuests';
 const SUBMISSIONS_KEY = 'onePieceSubmissions';
 
-// Firebase Database reference
-let database = null;
+// Firebase Database được khởi tạo bởi firebase-config.js
 
 // Default Data
 let pirates = [];
@@ -80,10 +79,11 @@ let submissionStatusFilter = '';
 // INITIALIZATION
 // =====================================================
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize Firebase database reference
-  if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
-    database = firebase.database();
-    console.log('✅ Admin Firebase database initialized');
+  // Database đã được khởi tạo bởi firebase-config.js
+  if (database) {
+    console.log('✅ Admin Firebase database ready');
+  } else {
+    console.error('❌ Admin Firebase database not initialized');
   }
   
   loadData();
@@ -1167,14 +1167,13 @@ function importData(event) {
 // SYNC TO CLOUD (Firebase)
 // =====================================================
 async function syncToCloud() {
-  // Load Firebase config nếu chưa có
-  if (typeof firebase === 'undefined') {
+  // Database đã được khởi tạo bởi firebase-config.js
+  if (!database) {
     showToast('warning', '⚠️ Firebase chưa được cấu hình!');
     return;
   }
   
   try {
-    const database = firebase.database();
     const userId = localStorage.getItem('onePieceUserId') || 'admin_' + Date.now();
     
     // Đảm bảo admin luôn có trong danh sách

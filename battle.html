@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚔️ Chiến Trường Boss - One Piece Bounty</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/user.css">
+  <link rel="stylesheet" href="css/battle.css">
+</head>
+<body>
+  <div class="user-container">
+    <!-- Header -->
+    <header class="battle-page-header">
+      <div class="battle-header-content">
+        <a href="user.html" class="back-link-battle">
+          <span class="back-icon">←</span>
+          <span>Quay lại</span>
+        </a>
+        <h1 class="battle-page-title">
+          <span class="title-icon">⚔️</span>
+          CHIẾN TRƯỜNG BOSS
+        </h1>
+        <div class="header-actions">
+          <a href="index.html" class="btn-home-battle">
+            <span>🏠</span>
+            <span class="btn-text">Trang Chủ</span>
+          </a>
+          <button class="btn-logout-battle" onclick="logout()">
+            <span>🚪</span>
+            <span class="btn-text">Đăng Xuất</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Battle Content -->
+    <main class="user-main">
+      <div id="battleContainer"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="user-footer">
+      <p>&copy; 2024 One Piece Bounty System. Made with ❤️</p>
+    </footer>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <!-- Scripts -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/pirates.js"></script>
+  <script src="js/firebase-sync.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/battle.js"></script>
+  
+  <script>
+    // Kiểm tra đăng nhập
+    document.addEventListener('DOMContentLoaded', function() {
+      const user = getCurrentUser();
+      
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      // Load battle
+      renderBattle();
+    });
+  </script>
+</body>
+</html>

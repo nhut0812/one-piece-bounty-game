@@ -20,8 +20,12 @@ const rankImageFiles = {
 // Chỉ thử các extension phổ biến nhất
 const imageExtensions = ['png', 'jpg', 'webp'];
 
-// Thử load ảnh với timeout ngắn
+// Thử load ảnh với timeout ngắn - TẮT để tránh spam 404
 async function tryLoadImage(rankType, fileName, extension) {
+  // TẮT auto-detect để tránh spam GET request 404
+  return Promise.resolve(null);
+  
+  /* Code cũ bị comment
   return new Promise((resolve) => {
     const img = new Image();
     const path = `img/${fileName}.${extension}`;
@@ -43,6 +47,7 @@ async function tryLoadImage(rankType, fileName, extension) {
     
     img.src = path;
   });
+  */
 }
 
 // Auto-detect ảnh cho một rank cụ thể
