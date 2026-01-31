@@ -6,6 +6,8 @@
   <title>👤 Trang Cá Nhân - One Piece Bounty</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/user.css">
+  <link rel="stylesheet" href="css/user-rewards-display.css">
+  <link rel="stylesheet" href="css/user-weapons-enhanced.css">
 </head>
 <body>
   <div class="user-container">
@@ -80,6 +82,34 @@
         </div>
       </section>
 
+      <!-- Reward Exchange Section -->
+      <section class="rewards-section" id="rewardsSection" style="display: none;">
+        <h3>🎁 Đổi Phần Thưởng</h3>
+        <div class="rewards-info">
+          <p>Sử dụng Bounty của bạn để đổi các phần thưởng đặc biệt!</p>
+          <p class="current-bounty">💰 Bounty hiện tại: <strong id="currentBountyForReward">0฿</strong></p>
+        </div>
+        <div class="rewards-grid" id="rewardsGrid">
+          <p style="text-align: center; grid-column: 1/-1;">Đang tải phần thưởng...</p>
+        </div>
+      </section>
+
+      <!-- Exchange History Section -->
+      <section class="history-section" id="historySection" style="display: none;">
+        <h3>📜 Lịch Sử Đổi Thưởng</h3>
+        <div class="history-list" id="historyList">
+          <p style="text-align: center;">Chưa có lịch sử đổi thưởng</p>
+        </div>
+      </section>
+
+      <!-- Weapons Inventory -->
+      <section class="inventory-section">
+        <h3>⚔️ Kho Vũ Khí</h3>
+        <div class="weapons-grid" id="weaponsGrid">
+          <p style="text-align: center; color: #95a5a6;">Chưa có vũ khí nào</p>
+        </div>
+      </section>
+
       <!-- Quick Actions -->
       <section class="actions-section">
         <h3>⚡ Hành Động Nhanh</h3>
@@ -95,6 +125,10 @@
           <button class="action-btn" onclick="viewLeaderboard()">
             <span class="action-icon">🏅</span>
             <span class="action-text">Bảng Xếp Hạng</span>
+          </button>
+          <button class="action-btn" onclick="viewRewards()">
+            <span class="action-icon">🎁</span>
+            <span class="action-text">Đổi Thưởng</span>
           </button>
           <button class="action-btn" onclick="changePassword()">
             <span class="action-icon">🔑</span>
@@ -408,6 +442,20 @@
         }
         
         // Hiển thị thông tin hải tặc
+        // Get completed rewards
+        const exchanges = JSON.parse(localStorage.getItem('onePieceExchanges') || '[]');
+        const completedExchanges = exchanges.filter(e => e.status === 'completed' && e.pirateName === pirate.name);
+        const rewards = JSON.parse(localStorage.getItem('onePieceRewards') || '[]');
+        
+        let rewardsHTML = '';
+        if (completedExchanges.length > 0) {
+          const rewardsList = completedExchanges.map(exchange => {
+            const reward = rewards.find(r => r.id === exchange.rewardId);
+            return reward ? `<span class="mini-reward" title="${reward.name}">${reward.icon}</span>` : '';
+          }).join('');
+          rewardsHTML = `<div class="pirate-rewards">${rewardsList}</div>`;
+        }
+        
         pirateContainer.innerHTML = `
           <div class="pirate-card ${rank.type}">
             <div class="pirate-avatar" id="pirateAvatarDisplay">
@@ -418,6 +466,7 @@
               <p class="pirate-crew">⚔️ ${pirate.crew}</p>
               <p class="pirate-bounty">💰 ${formatBounty(pirate.bounty)}฿</p>
               <p class="pirate-rank">${rank.icon} ${rank.name}</p>
+              ${rewardsHTML}
             </div>
           </div>
         `;
@@ -638,6 +687,317 @@
       
       setTimeout(() => toast.remove(), 3000);
     }
+
+    // ===== REWARD EXCHANGE FUNCTIONS =====
+    
+    function viewRewards() {
+      const rewardsSection = document.getElementById('rewardsSection');
+      const historySection = document.getElementById('historySection');
+      
+      if (rewardsSection.style.display === 'none') {
+        rewardsSection.style.display = 'block';
+        historySection.style.display = 'block';
+        loadRewards();
+        loadExchangeHistory();
+        rewardsSection.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        rewardsSection.style.display = 'none';
+        historySection.style.display = 'none';
+      }
+    }
+
+    async function loadRewards() {
+      const user = getCurrentUser();
+      if (!user || !user.pirateId) {
+        showToast('warning', '⚠️ Bạn chưa có hải tặc liên kết!');
+        return;
+      }
+
+      const piratesData = JSON.parse(localStorage.getItem('onePiecePirates') || '[]');
+      const pirate = piratesData.find(p => p.name === user.pirateId);
+      
+      if (!pirate) {
+        showToast('error', '❌ Không tìm thấy hải tặc!');
+        return;
+      }
+
+      // Update current bounty display
+      document.getElementById('currentBountyForReward').textContent = pirate.bounty.toLocaleString() + '฿';
+
+      // Load rewards from storage
+      const rewards = JSON.parse(localStorage.getItem('onePieceRewards') || '[]');
+      const activeRewards = rewards.filter(r => r.status === 'active');
+
+      const rewardsGrid = document.getElementById('rewardsGrid');
+      
+      if (activeRewards.length === 0) {
+        rewardsGrid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Hiện chưa có phần thưởng nào</p>';
+        return;
+      }
+
+      rewardsGrid.innerHTML = activeRewards.map(reward => {
+        const canAfford = pirate.bounty >= reward.points;
+        const typeColors = {
+          normal: '#95a5a6',
+          rare: '#3498db',
+          epic: '#9b59b6',
+          legendary: '#f39c12',
+          secret: '#e74c3c'
+        };
+        
+        const typeLabels = {
+          normal: 'Thường',
+          rare: 'Hiếm',
+          epic: 'Sử Thi',
+          legendary: 'Huyền Thoại',
+          secret: 'Bí Mật'
+        };
+
+        return `
+          <div class="reward-card ${!canAfford ? 'disabled' : ''}" style="border-color: ${typeColors[reward.type]}">
+            <div class="reward-icon">${reward.icon || '🎁'}</div>
+            <div class="reward-type" style="background: ${typeColors[reward.type]}">${typeLabels[reward.type]}</div>
+            <h4 class="reward-name">${reward.name}</h4>
+            <p class="reward-description">${reward.description || 'Phần thưởng đặc biệt'}</p>
+            <div class="reward-points">💰 ${reward.points.toLocaleString()}฿</div>
+            <button class="reward-btn ${!canAfford ? 'disabled' : ''}" 
+                    onclick="exchangeReward('${reward.id}')"
+                    ${!canAfford ? 'disabled' : ''}>
+              ${canAfford ? '🎁 Đổi Ngay' : '🔒 Chưa Đủ Điểm'}
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function exchangeReward(rewardId) {
+      const user = getCurrentUser();
+      if (!user || !user.pirateId) {
+        showToast('warning', '⚠️ Bạn chưa có hải tặc liên kết!');
+        return;
+      }
+
+      const piratesData = JSON.parse(localStorage.getItem('onePiecePirates') || '[]');
+      const pirateIndex = piratesData.findIndex(p => p.name === user.pirateId);
+      
+      if (pirateIndex === -1) {
+        showToast('error', '❌ Không tìm thấy hải tặc!');
+        return;
+      }
+
+      const pirate = piratesData[pirateIndex];
+      const rewards = JSON.parse(localStorage.getItem('onePieceRewards') || '[]');
+      const reward = rewards.find(r => r.id === rewardId);
+
+      if (!reward) {
+        showToast('error', '❌ Không tìm thấy phần thưởng!');
+        return;
+      }
+
+      if (pirate.bounty < reward.points) {
+        showToast('warning', '⚠️ Bạn không đủ Bounty!');
+        return;
+      }
+
+      if (!confirm(`Xác nhận đổi "${reward.name}" với ${reward.points.toLocaleString()}฿?`)) {
+        return;
+      }
+
+      // Deduct points
+      piratesData[pirateIndex].bounty -= reward.points;
+      localStorage.setItem('onePiecePirates', JSON.stringify(piratesData));
+
+      // Create exchange record
+      const exchanges = JSON.parse(localStorage.getItem('onePieceExchanges') || '[]');
+      const newExchange = {
+        id: Date.now().toString(),
+        rewardId: reward.id,
+        pirateName: pirate.name,
+        points: reward.points,
+        timestamp: new Date().toISOString(),
+        status: 'pending'
+      };
+      exchanges.push(newExchange);
+      localStorage.setItem('onePieceExchanges', JSON.stringify(exchanges));
+
+      // Sync to Firebase
+      if (typeof database !== 'undefined' && database) {
+        try {
+          await database.ref('sharedData/pirates').set(piratesData);
+          await database.ref('sharedData/exchanges').set(exchanges);
+        } catch (error) {
+          console.error('Sync error:', error);
+        }
+      }
+
+      showToast('success', '✅ Đổi thưởng thành công! Chờ admin duyệt.');
+      loadRewards();
+      loadExchangeHistory();
+      
+      // Refresh pirate info
+      loadPirateInfo();
+    }
+
+    async function loadExchangeHistory() {
+      const user = getCurrentUser();
+      if (!user || !user.pirateId) return;
+
+      const exchanges = JSON.parse(localStorage.getItem('onePieceExchanges') || '[]');
+      const rewards = JSON.parse(localStorage.getItem('onePieceRewards') || '[]');
+      
+      const myExchanges = exchanges.filter(e => e.pirateName === user.pirateId)
+                                   .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+      const historyList = document.getElementById('historyList');
+      
+      if (myExchanges.length === 0) {
+        historyList.innerHTML = '<p style="text-align: center;">Bạn chưa có lịch sử đổi thưởng</p>';
+        return;
+      }
+
+      historyList.innerHTML = myExchanges.map(ex => {
+        const reward = rewards.find(r => r.id === ex.rewardId);
+        const date = new Date(ex.timestamp);
+        const formattedDate = date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
+        
+        const statusInfo = {
+          pending: { text: 'Chờ Duyệt', color: '#f39c12', icon: '⏳' },
+          completed: { text: 'Hoàn Thành', color: '#27ae60', icon: '✅' },
+          cancelled: { text: 'Đã Hủy', color: '#e74c3c', icon: '❌' }
+        };
+        
+        const status = statusInfo[ex.status] || statusInfo.pending;
+
+        return `
+          <div class="history-item">
+            <div class="history-header">
+              <span class="history-reward">${reward?.icon || '🎁'} ${reward?.name || 'N/A'}</span>
+              <span class="history-status" style="color: ${status.color}">${status.icon} ${status.text}</span>
+            </div>
+            <div class="history-details">
+              <span>💰 ${ex.points.toLocaleString()}฿</span>
+              <span>📅 ${formattedDate}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ===== WEAPONS INVENTORY FUNCTIONS =====
+    
+    async function loadWeaponsInventory() {
+      const user = getCurrentUser();
+      if (!user || !user.pirateId) return;
+
+      const userWeapons = JSON.parse(localStorage.getItem('onePieceUserWeapons') || '{}');
+      const myWeapons = userWeapons[user.pirateId] || [];
+      
+      const container = document.getElementById('weaponsGrid');
+      
+      if (myWeapons.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #95a5a6; padding: 40px; font-size: 16px;">🗡️ Chưa có vũ khí nào. Hãy đánh boss để nhận vũ khí!</p>';
+        return;
+      }
+
+      // Mapping tiếng Việt
+      const typeNames = {
+        'sword': '⚔️ Kiếm',
+        'gun': '🔫 Súng',
+        'bow': '🏹 Cung',
+        'staff': '🔮 Gậy',
+        'hammer': '🔨 Búa',
+        'spear': '🗡️ Thương',
+        'axe': '🪓 Rìu'
+      };
+
+      const rarityNames = {
+        'common': 'Thường',
+        'uncommon': 'Khá',
+        'rare': 'Hiếm',
+        'epic': 'Sử Thi',
+        'legendary': 'Huyền Thoại',
+        'mythic': 'Thần Thoại'
+      };
+
+      container.innerHTML = myWeapons.map(weapon => {
+        const stats = [];
+        if (weapon.atk > 0) stats.push(`<div class="weapon-stat"><span class="stat-icon">💪</span> <span class="stat-label">ATK:</span> <strong>+${weapon.atk}%</strong></div>`);
+        if (weapon.def > 0) stats.push(`<div class="weapon-stat"><span class="stat-icon">🛡️</span> <span class="stat-label">DEF:</span> <strong>+${weapon.def}</strong></div>`);
+        if (weapon.hp > 0) stats.push(`<div class="weapon-stat"><span class="stat-icon">❤️</span> <span class="stat-label">HP:</span> <strong>+${weapon.hp}</strong></div>`);
+        if (weapon.crit > 0) stats.push(`<div class="weapon-stat"><span class="stat-icon">⚡</span> <span class="stat-label">Crit:</span> <strong>+${weapon.crit}%</strong></div>`);
+
+        const weaponLevel = weapon.level || 1;
+        const levelBadge = weaponLevel > 1 ? `<div class="level-badge">⭐ Level ${weaponLevel}</div>` : '';
+
+        return `
+          <div class="weapon-card ${weapon.rarity} ${weapon.equipped ? 'equipped' : ''}" onclick="toggleEquipWeapon('${weapon.instanceId}')">
+            ${weapon.equipped ? '<div class="equipped-badge">✅ Đang Dùng</div>' : ''}
+            ${levelBadge}
+            <div class="weapon-header">
+              <div class="weapon-icon">${weapon.icon}</div>
+              <div class="weapon-info">
+                <div class="weapon-name">${weapon.name}</div>
+                <div class="weapon-type">${typeNames[weapon.type] || weapon.type}</div>
+              </div>
+            </div>
+            <div class="weapon-rarity ${weapon.rarity}">${rarityNames[weapon.rarity] || weapon.rarity}</div>
+            <div class="weapon-stats">
+              ${stats.join('')}
+            </div>
+            <div class="weapon-actions" onclick="event.stopPropagation()">
+              ${weapon.equipped 
+                ? `<button class="weapon-btn unequip-btn" onclick="toggleEquipWeapon('${weapon.instanceId}')">❌ Gỡ Xuống</button>`
+                : `<button class="weapon-btn equip-btn" onclick="toggleEquipWeapon('${weapon.instanceId}')">⚔️ Trang Bị</button>`
+              }
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function toggleEquipWeapon(instanceId) {
+      const user = getCurrentUser();
+      if (!user || !user.pirateId) return;
+
+      let userWeapons = JSON.parse(localStorage.getItem('onePieceUserWeapons') || '{}');
+      const myWeapons = userWeapons[user.pirateId] || [];
+      
+      const weaponIndex = myWeapons.findIndex(w => w.instanceId === instanceId);
+      if (weaponIndex === -1) return;
+
+      const weapon = myWeapons[weaponIndex];
+      
+      if (weapon.equipped) {
+        // Unequip
+        weapon.equipped = false;
+        showToast('info', `❌ Đã gỡ ${weapon.name}`);
+      } else {
+        // Unequip all other weapons first
+        myWeapons.forEach(w => w.equipped = false);
+        // Equip this weapon
+        weapon.equipped = true;
+        showToast('success', `✅ Đã trang bị ${weapon.name}!`);
+      }
+
+      userWeapons[user.pirateId] = myWeapons;
+      localStorage.setItem('onePieceUserWeapons', JSON.stringify(userWeapons));
+      
+      // Sync to Firebase
+      if (typeof database !== 'undefined' && database) {
+        try {
+          await database.ref('sharedData/userWeapons').set(userWeapons);
+        } catch (error) {
+          console.error('Sync error:', error);
+        }
+      }
+
+      loadWeaponsInventory();
+    }
+
+    // Load weapons on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadWeaponsInventory();
+    });
   </script>
 </body>
 </html>

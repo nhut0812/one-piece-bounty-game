@@ -1,0 +1,41 @@
+/* Pirate Rewards Display - Ultra Optimized */
+.pirate-rewards {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 2px solid rgba(241, 196, 15, 0.3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+
+.mini-reward {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8em;
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, rgba(241, 196, 15, 0.2), rgba(230, 126, 34, 0.2));
+  border: 2px solid rgba(241, 196, 15, 0.5);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.mini-reward:hover {
+  border-color: rgba(241, 196, 15, 0.8);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .mini-reward {
+    font-size: 1.5em;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .pirate-rewards {
+    gap: 6px;
+  }
+}

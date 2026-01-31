@@ -1,0 +1,345 @@
+﻿/* =====================================================
+   ENHANCED WEAPONS INVENTORY STYLES
+   ===================================================== */
+
+.inventory-section {
+  background: linear-gradient(135deg, rgba(52, 73, 94, 0.5), rgba(44, 62, 80, 0.5));
+  padding: 30px;
+  border-radius: 20px;
+  border: 3px solid rgba(231, 76, 60, 0.4);
+  margin-bottom: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.inventory-section h3 {
+  font-size: 1.8em;
+  margin-bottom: 25px;
+  color: #f1c40f;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 20px rgba(241, 196, 15, 0.6);
+  font-weight: 900;
+}
+
+.weapons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.weapon-card {
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8));
+  padding: 20px;
+  border-radius: 15px;
+  border: 3px solid rgba(149, 165, 166, 0.4);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.weapon-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, transparent, rgba(241, 196, 15, 0.8), transparent);
+  z-index: 1;
+}
+
+.weapon-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+.weapon-card.equipped {
+  border-color: #2ecc71;
+  box-shadow: 0 5px 30px rgba(46, 204, 113, 0.6);
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(39, 174, 96, 0.1));
+}
+
+.weapon-card.equipped::before {
+  background: linear-gradient(90deg, transparent, #2ecc71, transparent);
+}
+
+/* Rarity colors for borders and glow */
+.weapon-card.common { border-color: #95a5a6; }
+.weapon-card.common::before { background: linear-gradient(90deg, transparent, #95a5a6, transparent); }
+
+.weapon-card.uncommon { border-color: #2ecc71; }
+.weapon-card.uncommon::before { background: linear-gradient(90deg, transparent, #2ecc71, transparent); }
+
+.weapon-card.rare { border-color: #3498db; box-shadow: 0 5px 25px rgba(52, 152, 219, 0.4); }
+.weapon-card.rare::before { background: linear-gradient(90deg, transparent, #3498db, transparent); }
+
+.weapon-card.epic { border-color: #9b59b6; box-shadow: 0 5px 25px rgba(155, 89, 182, 0.4); }
+.weapon-card.epic::before { background: linear-gradient(90deg, transparent, #9b59b6, transparent); }
+
+.weapon-card.legendary { border-color: #f1c40f; box-shadow: 0 5px 30px rgba(241, 196, 15, 0.5); animation: legendary-pulse 2s ease-in-out infinite; }
+.weapon-card.legendary::before { background: linear-gradient(90deg, transparent, #f1c40f, transparent); }
+
+.weapon-card.mythic { border-color: #e74c3c; box-shadow: 0 5px 35px rgba(231, 76, 60, 0.6); animation: mythic-pulse 2s ease-in-out infinite; }
+.weapon-card.mythic::before { background: linear-gradient(90deg, transparent, #e74c3c, transparent); }
+
+@keyframes legendary-pulse {
+  0%, 100% { box-shadow: 0 5px 30px rgba(241, 196, 15, 0.5); }
+  50% { box-shadow: 0 8px 40px rgba(241, 196, 15, 0.8); }
+}
+
+@keyframes mythic-pulse {
+  0%, 100% { box-shadow: 0 5px 35px rgba(231, 76, 60, 0.6); }
+  50% { box-shadow: 0 8px 45px rgba(231, 76, 60, 0.9); }
+}
+
+/* Weapon header with icon and info */
+.weapon-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(149, 165, 166, 0.2);
+}
+
+.weapon-icon {
+  font-size: 3.5em;
+  text-align: center;
+  filter: drop-shadow(0 5px 15px rgba(241, 196, 15, 0.6));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.weapon-info {
+  flex: 1;
+}
+
+.weapon-name {
+  font-size: 1.3em;
+  font-weight: 900;
+  color: white;
+  margin-bottom: 5px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  line-height: 1.2;
+}
+
+.weapon-type {
+  font-size: 0.9em;
+  color: #95a5a6;
+  font-weight: 600;
+}
+
+.weapon-rarity {
+  text-align: center;
+  font-size: 0.9em;
+  font-weight: 900;
+  margin-bottom: 15px;
+  padding: 8px 15px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid;
+}
+
+.weapon-rarity.common { color: #95a5a6; border-color: #95a5a6; }
+.weapon-rarity.uncommon { color: #2ecc71; border-color: #2ecc71; }
+.weapon-rarity.rare { color: #3498db; border-color: #3498db; }
+.weapon-rarity.epic { color: #9b59b6; border-color: #9b59b6; }
+.weapon-rarity.legendary { color: #f1c40f; border-color: #f1c40f; }
+.weapon-rarity.mythic { color: #e74c3c; border-color: #e74c3c; }
+
+.weapon-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  border: 1px solid rgba(149, 165, 166, 0.2);
+}
+
+.weapon-stat {
+  font-size: 0.9em;
+  color: #ecf0f1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px;
+  background: rgba(52, 73, 94, 0.3);
+  border-radius: 8px;
+}
+
+.weapon-stat .stat-icon {
+  font-size: 1.2em;
+}
+
+.weapon-stat .stat-label {
+  color: #95a5a6;
+  font-size: 0.85em;
+}
+
+.weapon-stat strong {
+  color: #2ecc71;
+  font-weight: 900;
+  margin-left: auto;
+  font-size: 1.1em;
+}
+
+.weapon-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.weapon-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 0.95em;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.weapon-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+}
+
+.equip-btn {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: white;
+}
+
+.equip-btn:hover {
+  background: linear-gradient(135deg, #27ae60, #229954);
+}
+
+.unequip-btn {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+}
+
+.unequip-btn:hover {
+  background: linear-gradient(135deg, #c0392b, #a93226);
+}
+
+.equipped-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75em;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 3px 15px rgba(46, 204, 113, 0.5);
+  z-index: 10;
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .weapons-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+  }
+  
+  .inventory-section {
+    padding: 20px;
+  }
+  
+  .weapon-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .weapon-icon {
+    font-size: 3em;
+  }
+  
+  .weapon-name {
+    font-size: 1.1em;
+  }
+  
+  .weapon-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .weapons-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Level Badge */
+.level-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75em;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 3px 15px rgba(52, 152, 219, 0.5);
+  z-index: 10;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.level-badge:before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(135deg, #5dade2, #3498db);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: level-glow 2s ease-in-out infinite;
+}
+
+@keyframes level-glow {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Pulse animation for victory modal */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}

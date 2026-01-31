@@ -3,23 +3,121 @@
 const BATTLE_KEY = 'onePieceBattle';
 const MAX_DAILY_ATTACKS = 5;
 
-// Danh sách Boss theo level
+// Danh sách Boss theo level - 100 cấp
 const BOSS_LIST = [
+  // Arc 1: East Blue (Level 1-10)
   { level: 1, name: 'Alvida', hp: 1000, reward: 100, emoji: '👩‍🦰' },
   { level: 2, name: 'Buggy', hp: 2000, reward: 200, emoji: '🤡' },
-  { level: 3, name: 'Don Krieg', hp: 4000, reward: 400, emoji: '⚙️' },
-  { level: 4, name: 'Arlong', hp: 8000, reward: 800, emoji: '🦈' },
-  { level: 5, name: 'Crocodile', hp: 16000, reward: 1600, emoji: '🐊' },
-  { level: 6, name: 'Enel', hp: 32000, reward: 3200, emoji: '⚡' },
-  { level: 7, name: 'Rob Lucci', hp: 64000, reward: 6400, emoji: '🐆' },
-  { level: 8, name: 'Gecko Moria', hp: 128000, reward: 12800, emoji: '🦇' },
-  { level: 9, name: 'Doflamingo', hp: 256000, reward: 25600, emoji: '🦩' },
-  { level: 10, name: 'Katakuri', hp: 512000, reward: 51200, emoji: '🍩' },
-  { level: 11, name: 'Kaido', hp: 1024000, reward: 102400, emoji: '🐉' },
-  { level: 12, name: 'Big Mom', hp: 2048000, reward: 204800, emoji: '🎂' },
-  { level: 13, name: 'Akainu', hp: 4096000, reward: 409600, emoji: '🌋' },
-  { level: 14, name: 'Blackbeard', hp: 8192000, reward: 819200, emoji: '💀' },
-  { level: 15, name: 'Imu-sama', hp: 16384000, reward: 1638400, emoji: '👁️' }
+  { level: 3, name: 'Kuro', hp: 3500, reward: 350, emoji: '🐱' },
+  { level: 4, name: 'Don Krieg', hp: 6000, reward: 600, emoji: '⚙️' },
+  { level: 5, name: 'Arlong', hp: 10000, reward: 1000, emoji: '🦈' },
+  { level: 6, name: 'Smoker', hp: 15000, reward: 1500, emoji: '💨' },
+  { level: 7, name: 'Mr. 3', hp: 22000, reward: 2200, emoji: '🕯️' },
+  { level: 8, name: 'Mr. 2 Bon Clay', hp: 32000, reward: 3200, emoji: '🦢' },
+  { level: 9, name: 'Mr. 1', hp: 45000, reward: 4500, emoji: '🔪' },
+  { level: 10, name: 'Crocodile', hp: 65000, reward: 6500, emoji: '🐊' },
+  
+  // Arc 2: Sky Island (Level 11-20)
+  { level: 11, name: 'Bellamy', hp: 90000, reward: 9000, emoji: '🦵' },
+  { level: 12, name: 'Satori', hp: 120000, reward: 12000, emoji: '🎈' },
+  { level: 13, name: 'Shura', hp: 160000, reward: 16000, emoji: '🦅' },
+  { level: 14, name: 'Ohm', hp: 210000, reward: 21000, emoji: '☁️' },
+  { level: 15, name: 'Gedatsu', hp: 280000, reward: 28000, emoji: '💭' },
+  { level: 16, name: 'Enel', hp: 370000, reward: 37000, emoji: '⚡' },
+  { level: 17, name: 'Foxy', hp: 480000, reward: 48000, emoji: '🦊' },
+  { level: 18, name: 'Aokiji', hp: 620000, reward: 62000, emoji: '🧊' },
+  { level: 19, name: 'Blueno', hp: 800000, reward: 80000, emoji: '🚪' },
+  { level: 20, name: 'Kalifa', hp: 1000000, reward: 100000, emoji: '🧼' },
+  
+  // Arc 3: Water 7 / Enies Lobby (Level 21-35)
+  { level: 21, name: 'Fukurou', hp: 1300000, reward: 130000, emoji: '🦉' },
+  { level: 22, name: 'Kumadori', hp: 1650000, reward: 165000, emoji: '🐻' },
+  { level: 23, name: 'Jabra', hp: 2100000, reward: 210000, emoji: '🐺' },
+  { level: 24, name: 'Kaku', hp: 2700000, reward: 270000, emoji: '🦒' },
+  { level: 25, name: 'Rob Lucci', hp: 3500000, reward: 350000, emoji: '🐆' },
+  { level: 26, name: 'Spandam', hp: 4500000, reward: 450000, emoji: '🐘' },
+  { level: 27, name: 'Gecko Moria', hp: 5800000, reward: 580000, emoji: '🦇' },
+  { level: 28, name: 'Perona', hp: 7400000, reward: 740000, emoji: '👻' },
+  { level: 29, name: 'Absalom', hp: 9500000, reward: 950000, emoji: '🦁' },
+  { level: 30, name: 'Ryuma', hp: 12000000, reward: 1200000, emoji: '⚔️' },
+  { level: 31, name: 'Oars', hp: 15000000, reward: 1500000, emoji: '👹' },
+  { level: 32, name: 'Kizaru', hp: 19000000, reward: 1900000, emoji: '✨' },
+  { level: 33, name: 'Sentomaru', hp: 24000000, reward: 2400000, emoji: '🪓' },
+  { level: 34, name: 'Pacifista', hp: 30000000, reward: 3000000, emoji: '🤖' },
+  { level: 35, name: 'Bartholomew Kuma', hp: 38000000, reward: 3800000, emoji: '🐻‍❄️' },
+  
+  // Arc 4: Impel Down / Marineford (Level 36-50)
+  { level: 36, name: 'Hannyabal', hp: 48000000, reward: 4800000, emoji: '😈' },
+  { level: 37, name: 'Magellan', hp: 60000000, reward: 6000000, emoji: '☠️' },
+  { level: 38, name: 'Shiryu', hp: 75000000, reward: 7500000, emoji: '🗡️' },
+  { level: 39, name: 'Ivankov', hp: 93000000, reward: 9300000, emoji: '💃' },
+  { level: 40, name: 'Jinbe', hp: 115000000, reward: 11500000, emoji: '🦈' },
+  { level: 41, name: 'Crocodile (Return)', hp: 142000000, reward: 14200000, emoji: '🐊' },
+  { level: 42, name: 'Doflamingo (Young)', hp: 175000000, reward: 17500000, emoji: '🦩' },
+  { level: 43, name: 'Mihawk', hp: 215000000, reward: 21500000, emoji: '🗡️' },
+  { level: 44, name: 'Jozu', hp: 265000000, reward: 26500000, emoji: '💎' },
+  { level: 45, name: 'Marco', hp: 325000000, reward: 32500000, emoji: '🔥' },
+  { level: 46, name: 'Akainu', hp: 400000000, reward: 40000000, emoji: '🌋' },
+  { level: 47, name: 'Aokiji (Serious)', hp: 490000000, reward: 49000000, emoji: '🧊' },
+  { level: 48, name: 'Kizaru (Serious)', hp: 600000000, reward: 60000000, emoji: '✨' },
+  { level: 49, name: 'Sengoku', hp: 735000000, reward: 73500000, emoji: '🐏' },
+  { level: 50, name: 'Whitebeard', hp: 900000000, reward: 90000000, emoji: '👴' },
+  
+  // Arc 5: Fishman Island / Punk Hazard (Level 51-65)
+  { level: 51, name: 'Hody Jones', hp: 1100000000, reward: 110000000, emoji: '🦈' },
+  { level: 52, name: 'Vander Decken', hp: 1350000000, reward: 135000000, emoji: '🎯' },
+  { level: 53, name: 'Caesar Clown', hp: 1650000000, reward: 165000000, emoji: '🧪' },
+  { level: 54, name: 'Monet', hp: 2000000000, reward: 200000000, emoji: '❄️' },
+  { level: 55, name: 'Vergo', hp: 2450000000, reward: 245000000, emoji: '🦴' },
+  { level: 56, name: 'Baby 5', hp: 3000000000, reward: 300000000, emoji: '🔫' },
+  { level: 57, name: 'Buffalo', hp: 3650000000, reward: 365000000, emoji: '🌪️' },
+  { level: 58, name: 'Pica', hp: 4450000000, reward: 445000000, emoji: '🗿' },
+  { level: 59, name: 'Diamante', hp: 5400000000, reward: 540000000, emoji: '🎭' },
+  { level: 60, name: 'Trebol', hp: 6550000000, reward: 655000000, emoji: '🍯' },
+  { level: 61, name: 'Doflamingo', hp: 7950000000, reward: 795000000, emoji: '🦩' },
+  { level: 62, name: 'Fujitora', hp: 9600000000, reward: 960000000, emoji: '🌠' },
+  { level: 63, name: 'Sabo', hp: 11600000000, reward: 1160000000, emoji: '🔥' },
+  { level: 64, name: 'Burgess', hp: 14000000000, reward: 1400000000, emoji: '💪' },
+  { level: 65, name: 'Blackbeard (Pre-TS)', hp: 17000000000, reward: 1700000000, emoji: '💀' },
+  
+  // Arc 6: Whole Cake Island (Level 66-80)
+  { level: 66, name: 'Baron Tamago', hp: 20500000000, reward: 2050000000, emoji: '🥚' },
+  { level: 67, name: 'Pekoms', hp: 24800000000, reward: 2480000000, emoji: '🦁' },
+  { level: 68, name: 'Oven', hp: 30000000000, reward: 3000000000, emoji: '🔥' },
+  { level: 69, name: 'Daifuku', hp: 36200000000, reward: 3620000000, emoji: '🧞' },
+  { level: 70, name: 'Perospero', hp: 43700000000, reward: 4370000000, emoji: '🍭' },
+  { level: 71, name: 'Compote', hp: 52700000000, reward: 5270000000, emoji: '🫐' },
+  { level: 72, name: 'Snack', hp: 63600000000, reward: 6360000000, emoji: '🍪' },
+  { level: 73, name: 'Cracker', hp: 76800000000, reward: 7680000000, emoji: '🍘' },
+  { level: 74, name: 'Smoothie', hp: 92700000000, reward: 9270000000, emoji: '🧃' },
+  { level: 75, name: 'Katakuri', hp: 112000000000, reward: 11200000000, emoji: '🍩' },
+  { level: 76, name: 'Big Mom', hp: 135000000000, reward: 13500000000, emoji: '🎂' },
+  { level: 77, name: 'Queen', hp: 163000000000, reward: 16300000000, emoji: '🦕' },
+  { level: 78, name: 'Jack', hp: 197000000000, reward: 19700000000, emoji: '🐘' },
+  { level: 79, name: 'King', hp: 238000000000, reward: 23800000000, emoji: '🔥' },
+  { level: 80, name: 'Kaido', hp: 287000000000, reward: 28700000000, emoji: '🐉' },
+  
+  // Arc 7: Wano / Final Saga (Level 81-100)
+  { level: 81, name: 'Orochi', hp: 347000000000, reward: 34700000000, emoji: '🐍' },
+  { level: 82, name: 'Kanjuro', hp: 419000000000, reward: 41900000000, emoji: '🖌️' },
+  { level: 83, name: 'Hawkins', hp: 506000000000, reward: 50600000000, emoji: '🎴' },
+  { level: 84, name: 'X Drake', hp: 611000000000, reward: 61100000000, emoji: '🦖' },
+  { level: 85, name: 'Apoo', hp: 738000000000, reward: 73800000000, emoji: '🎵' },
+  { level: 86, name: 'Who\'s Who', hp: 891000000000, reward: 89100000000, emoji: '🐯' },
+  { level: 87, name: 'Sasaki', hp: 1075000000000, reward: 107500000000, emoji: '🦏' },
+  { level: 88, name: 'Black Maria', hp: 1298000000000, reward: 129800000000, emoji: '🕷️' },
+  { level: 89, name: 'Ulti', hp: 1567000000000, reward: 156700000000, emoji: '🦕' },
+  { level: 90, name: 'Page One', hp: 1892000000000, reward: 189200000000, emoji: '🦖' },
+  { level: 91, name: 'Kaido (Awakened)', hp: 2284000000000, reward: 228400000000, emoji: '🐉' },
+  { level: 92, name: 'Big Mom (Awakened)', hp: 2757000000000, reward: 275700000000, emoji: '🎂' },
+  { level: 93, name: 'Greenbull', hp: 3328000000000, reward: 332800000000, emoji: '🌳' },
+  { level: 94, name: 'Kizaru (Admiral)', hp: 4017000000000, reward: 401700000000, emoji: '✨' },
+  { level: 95, name: 'Akainu (Fleet Admiral)', hp: 4848000000000, reward: 484800000000, emoji: '🌋' },
+  { level: 96, name: 'Shanks', hp: 5851000000000, reward: 585100000000, emoji: '💥' },
+  { level: 97, name: 'Blackbeard (Yonko)', hp: 7063000000000, reward: 706300000000, emoji: '💀' },
+  { level: 98, name: 'Dragon', hp: 8526000000000, reward: 852600000000, emoji: '🐲' },
+  { level: 99, name: 'Rocks D. Xebec', hp: 10293000000000, reward: 1029300000000, emoji: '☠️' },
+  { level: 100, name: 'Imu-sama', hp: 12425000000000, reward: 1242500000000, emoji: '👁️' }
 ];
 
 // Lấy dữ liệu battle từ localStorage
@@ -72,6 +170,77 @@ async function syncBattleToFirebase(data) {
       }
     }
   }
+}
+
+// Get equipped weapon buff
+function getEquippedWeaponBuff() {
+  const currentUser = JSON.parse(localStorage.getItem('onePieceCurrentUser'));
+  if (!currentUser || !currentUser.pirateId) {
+    return { atk: 0, def: 0, hp: 0, crit: 0 };
+  }
+
+  const userWeapons = JSON.parse(localStorage.getItem('onePieceUserWeapons') || '{}');
+  const myWeapons = userWeapons[currentUser.pirateId] || [];
+  const equippedWeapon = myWeapons.find(w => w.equipped);
+
+  if (!equippedWeapon) {
+    return { atk: 0, def: 0, hp: 0, crit: 0 };
+  }
+
+  return {
+    atk: equippedWeapon.atk || 0,
+    def: equippedWeapon.def || 0,
+    hp: equippedWeapon.hp || 0,
+    crit: equippedWeapon.crit || 0
+  };
+}
+
+// Display weapon buff
+function getWeaponBuffDisplay() {
+  const buff = getEquippedWeaponBuff();
+  if (buff.atk === 0) return '';
+  
+  return ` <span style="color: #2ecc71;">+${buff.atk}% ATK</span>`;
+}
+
+// Display equipped weapon info
+function getEquippedWeaponDisplay() {
+  const currentUser = JSON.parse(localStorage.getItem('onePieceCurrentUser'));
+  if (!currentUser || !currentUser.pirateId) return '';
+
+  const userWeapons = JSON.parse(localStorage.getItem('onePieceUserWeapons') || '{}');
+  const myWeapons = userWeapons[currentUser.pirateId] || [];
+  const equippedWeapon = myWeapons.find(w => w.equipped);
+
+  if (!equippedWeapon) {
+    return `<div class="stat-row" style="color: #95a5a6; font-style: italic;">
+      <span class="stat-label">⚔️ Vũ Khí:</span>
+      <span class="stat-value">Chưa trang bị</span>
+    </div>`;
+  }
+
+  const rarityColors = {
+    'common': '#95a5a6',
+    'uncommon': '#2ecc71',
+    'rare': '#3498db',
+    'epic': '#9b59b6',
+    'legendary': '#f1c40f',
+    'mythic': '#e74c3c'
+  };
+
+  return `<div class="stat-row">
+    <span class="stat-label">⚔️ Vũ Khí:</span>
+    <span class="stat-value" style="color: ${rarityColors[equippedWeapon.rarity]};">${equippedWeapon.icon} ${equippedWeapon.name}</span>
+  </div>
+  <div class="stat-row" style="font-size: 0.85em; color: #95a5a6;">
+    <span class="stat-label">📊 Stats:</span>
+    <span class="stat-value">
+      ${equippedWeapon.atk > 0 ? `💪${equippedWeapon.atk} ` : ''}
+      ${equippedWeapon.def > 0 ? `🛡️${equippedWeapon.def} ` : ''}
+      ${equippedWeapon.hp > 0 ? `❤️${equippedWeapon.hp} ` : ''}
+      ${equippedWeapon.crit > 0 ? `⚡${equippedWeapon.crit}% ` : ''}
+    </span>
+  </div>`;
 }
 
 // Load battle data từ Firebase
@@ -151,7 +320,7 @@ function resetDailyAttacksIfNeeded(battleData) {
 }
 
 // Render Battle UI
-async function renderBattle() {
+async function renderBattle(existingBattleData = null) {
   console.log('[BATTLE] Bắt đầu render...');
   
   const container = document.getElementById('battleContainer');
@@ -179,8 +348,8 @@ async function renderBattle() {
   console.log('[BATTLE] Đang load battle data...');
   
   try {
-    // QUAN TRỌNG: Luôn load từ Firebase trước
-    let battleData = await loadBattleDataFromFirebase();
+    // QUAN TRỌNG: Nếu có data truyền vào thì dùng luôn, không thì load từ Firebase
+    let battleData = existingBattleData || await loadBattleDataFromFirebase();
     
     console.log('[BATTLE] Battle data loaded:', battleData);
     
@@ -235,6 +404,10 @@ async function renderBattle() {
           </div>
           <div class="stat-row">
             <span class="stat-label">⚔️ Sát Thương/Đòn:</span>
+            <span class="stat-value">${userPirate.bounty.toLocaleString()}${getWeaponBuffDisplay()}</span>
+          </div>
+          ${getEquippedWeaponDisplay()}
+          <div class="stat-row">
             <span class="stat-value">${playerDamage.toLocaleString()} HP</span>
           </div>
           <div class="stat-row">
@@ -301,17 +474,27 @@ async function attackBoss() {
     return;
   }
   
-  const damage = userPirate.bounty;
+  // Get weapon buff
+  const weaponBuff = getEquippedWeaponBuff();
+  
+  // Calculate damage with weapon stats
+  const baseDamage = userPirate.bounty;
+  const damage = Math.floor(baseDamage * (1 + weaponBuff.atk / 100));
+  
+  // Check for critical hit
+  const isCrit = Math.random() * 100 < weaponBuff.crit;
+  const finalDamage = isCrit ? Math.floor(damage * 2) : damage;
+  
   const currentBoss = BOSS_LIST[battleData.currentBossIndex];
   
   // Trừ HP boss
-  battleData.currentBossHP -= damage;
+  battleData.currentBossHP -= finalDamage;
   battleData.dailyAttacks++;
   
   // Thêm log
   const logEntry = {
     type: 'damage',
-    message: `⚔️ Bạn tấn công ${currentBoss.name} gây ${damage.toLocaleString()} sát thương! (HP còn: ${Math.max(0, battleData.currentBossHP).toLocaleString()})`
+    message: `⚔️ Bạn tấn công ${currentBoss.name} gây ${finalDamage.toLocaleString()} sát thương!${isCrit ? ' 💥 CRITICAL!' : ''}${weaponBuff.atk > 0 ? ` (+${weaponBuff.atk}% ATK)` : ''} (HP còn: ${Math.max(0, battleData.currentBossHP).toLocaleString()})`
   };
   battleData.battleLog.unshift(logEntry);
   
@@ -367,30 +550,164 @@ async function attackBoss() {
     battleData.battleLog = battleData.battleLog.slice(0, 10);
   }
   
+  // Lưu dữ liệu - QUAN TRỌNG: phải lưu trước khi render
   saveBattleData(battleData);
-  renderBattle();
+  
+  // Đợi một chút để đảm bảo dữ liệu được lưu
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  // Render lại UI với battleData hiện tại (KHÔNG load lại từ Firebase)
+  await renderBattle(battleData);
   
   // Toast thông báo
   if (battleData.currentBossHP > 0) {
-    showToast('success', `⚔️ Gây ${damage.toLocaleString()} sát thương! (${MAX_DAILY_ATTACKS - battleData.dailyAttacks} lượt còn lại)`);
+    showToast('success', `⚔️ Gây ${finalDamage.toLocaleString()} sát thương! (${MAX_DAILY_ATTACKS - battleData.dailyAttacks} lượt còn lại)`);
   }
 }
 
 // Hiển thị thông báo chiến thắng
 function showVictoryMessage(boss) {
+  // Drop weapon (always drops one)
+  const dropResult = dropRandomWeapon();
+  
   const victoryDiv = document.createElement('div');
   victoryDiv.className = 'victory-modal';
+  
+  // Mapping tiếng Việt
+  const rarityNames = {
+    'common': 'Thường',
+    'uncommon': 'Khá',
+    'rare': 'Hiếm',
+    'epic': 'Sử Thi',
+    'legendary': 'Huyền Thoại',
+    'mythic': 'Thần Thoại'
+  };
+  
+  const typeNames = {
+    'sword': 'Kiếm',
+    'gun': 'Súng',
+    'bow': 'Cung',
+    'staff': 'Gậy',
+    'hammer': 'Búa',
+    'spear': 'Thương',
+    'axe': 'Rìu'
+  };
+  
   victoryDiv.innerHTML = `
     <h2>🎉 CHIẾN THẮNG! 🎉</h2>
     <p>Bạn đã hạ gục <strong>${boss.name}</strong>!</p>
     <p>Phần thưởng: <strong style="color: #f39c12;">+${boss.reward.toLocaleString()}฿</strong></p>
+    ${dropResult ? `
+      <div style="margin-top: 15px; padding: 20px; background: linear-gradient(135deg, rgba(241, 196, 15, 0.2), rgba(230, 126, 34, 0.2)); border: 3px solid rgba(241, 196, 15, 0.5); border-radius: 15px; box-shadow: 0 5px 20px rgba(241, 196, 15, 0.3);">
+        ${dropResult.isNew ? `
+          <p style="font-size: 1.3em; margin: 5px 0; color: #2ecc71;">⚔️ <strong>Nhận Vũ Khí Mới!</strong></p>
+          <p style="font-size: 3em; margin: 15px 0; filter: drop-shadow(0 0 10px rgba(241, 196, 15, 0.8));">${dropResult.weapon.icon}</p>
+          <p style="font-weight: 900; color: #f1c40f; font-size: 1.3em; margin: 5px 0;">${dropResult.weapon.name}</p>
+          <p style="font-size: 0.95em; color: #ecf0f1; margin: 5px 0;">${rarityNames[dropResult.weapon.rarity]} • ${typeNames[dropResult.weapon.type]}</p>
+          <p style="font-size: 0.85em; color: #3498db; font-weight: bold; margin-top: 10px;">⭐ Level 1</p>
+        ` : `
+          <p style="font-size: 1.3em; margin: 5px 0; color: #e74c3c;">⬆️ <strong>Nâng Cấp Vũ Khí!</strong></p>
+          <p style="font-size: 3em; margin: 15px 0; filter: drop-shadow(0 0 15px rgba(231, 76, 60, 0.8)); animation: pulse 1s ease-in-out infinite;">${dropResult.weapon.icon}</p>
+          <p style="font-weight: 900; color: #f1c40f; font-size: 1.3em; margin: 5px 0;">${dropResult.weapon.name}</p>
+          <p style="font-size: 0.95em; color: #ecf0f1; margin: 5px 0;">${rarityNames[dropResult.weapon.rarity]} • ${typeNames[dropResult.weapon.type]}</p>
+          <p style="font-size: 1.1em; color: #e74c3c; font-weight: 900; margin-top: 10px;">⭐ Level ${dropResult.level - 1} → Level ${dropResult.level}</p>
+          <p style="font-size: 0.9em; color: #2ecc71; margin-top: 5px;">💪 Stats tăng 10%!</p>
+        `}
+      </div>
+    ` : ''}
   `;
   
   document.body.appendChild(victoryDiv);
   
   setTimeout(() => {
     victoryDiv.remove();
-  }, 3000);
+  }, dropResult ? 5000 : 3000);
+}
+
+// Drop random weapon based on drop rate (always drop 1 weapon)
+function dropRandomWeapon() {
+  const weapons = JSON.parse(localStorage.getItem('onePieceWeapons') || '[]');
+  const activeWeapons = weapons.filter(w => w.status === 'active');
+  
+  if (activeWeapons.length === 0) return null;
+  
+  // Calculate cumulative drop rates
+  const totalDropRate = activeWeapons.reduce((sum, w) => sum + w.dropRate, 0);
+  const random = Math.random() * totalDropRate;
+  let cumulative = 0;
+  
+  // Pick weapon based on cumulative probability
+  for (const weapon of activeWeapons) {
+    cumulative += weapon.dropRate;
+    if (random <= cumulative) {
+      // Add weapon to user's inventory (or upgrade if duplicate)
+      const result = addWeaponToUser(weapon);
+      return { weapon, ...result };
+    }
+  }
+  
+  // Fallback: return random weapon if somehow nothing was picked
+  const randomWeapon = activeWeapons[Math.floor(Math.random() * activeWeapons.length)];
+  const result = addWeaponToUser(randomWeapon);
+  return { weapon: randomWeapon, ...result };
+}
+
+// Add weapon to user's inventory or upgrade if duplicate
+function addWeaponToUser(weapon) {
+  const currentUser = JSON.parse(localStorage.getItem('onePieceCurrentUser'));
+  if (!currentUser || !currentUser.pirateId) return { isNew: true };
+  
+  let userWeapons = JSON.parse(localStorage.getItem('onePieceUserWeapons') || '{}');
+  
+  if (!userWeapons[currentUser.pirateId]) {
+    userWeapons[currentUser.pirateId] = [];
+  }
+  
+  const userWeaponList = userWeapons[currentUser.pirateId];
+  
+  // Check if user already has this weapon (same weapon ID)
+  const existingWeapon = userWeaponList.find(w => w.id === weapon.id);
+  
+  if (existingWeapon) {
+    // Upgrade existing weapon
+    if (!existingWeapon.level) existingWeapon.level = 1;
+    existingWeapon.level++;
+    
+    // Increase stats by 10% per level
+    const bonusMultiplier = 0.1;
+    existingWeapon.atk = Math.round(weapon.atk * (1 + bonusMultiplier * existingWeapon.level));
+    existingWeapon.def = Math.round(weapon.def * (1 + bonusMultiplier * existingWeapon.level));
+    existingWeapon.hp = Math.round(weapon.hp * (1 + bonusMultiplier * existingWeapon.level));
+    existingWeapon.crit = Math.round(weapon.crit * (1 + bonusMultiplier * existingWeapon.level) * 10) / 10;
+    
+    localStorage.setItem('onePieceUserWeapons', JSON.stringify(userWeapons));
+    
+    // Sync to Firebase
+    if (typeof database !== 'undefined' && database) {
+      database.ref('sharedData/userWeapons').set(userWeapons);
+    }
+    
+    return { isNew: false, level: existingWeapon.level, upgraded: existingWeapon };
+  } else {
+    // Add new weapon with level 1
+    const newWeapon = {
+      ...weapon,
+      level: 1,
+      instanceId: Date.now() + Math.random().toString(36).substr(2, 9),
+      obtainedAt: new Date().toISOString(),
+      equipped: false
+    };
+    
+    userWeaponList.push(newWeapon);
+    localStorage.setItem('onePieceUserWeapons', JSON.stringify(userWeapons));
+    
+    // Sync to Firebase if available
+    if (typeof database !== 'undefined' && database) {
+      database.ref('sharedData/userWeapons').set(userWeapons).catch(console.error);
+    }
+    
+    return { isNew: true, level: 1 };
+  }
 }
 
 // Khởi tạo khi load trang

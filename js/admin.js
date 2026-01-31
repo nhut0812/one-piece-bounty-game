@@ -10,6 +10,10 @@ const RANK_IMAGES_KEY = 'onePieceRankImages';
 const CREW_IMAGES_KEY = 'onePieceCrewImages';
 const QUESTS_KEY = 'onePieceQuests';
 const SUBMISSIONS_KEY = 'onePieceSubmissions';
+const REWARDS_KEY = 'onePieceRewards';
+const EXCHANGES_KEY = 'onePieceExchanges';
+const WEAPONS_KEY = 'onePieceWeapons';
+const USER_WEAPONS_KEY = 'onePieceUserWeapons';
 
 // Firebase Database được khởi tạo bởi firebase-config.js
 
@@ -17,7 +21,18 @@ const SUBMISSIONS_KEY = 'onePieceSubmissions';
 let pirates = [];
 let quests = [];
 let submissions = [];
-let crews = [
+let accounts = [];
+let crews = [];
+let ranks = [];
+let rankImages = {};
+let crewImages = {};
+let rewards = [];
+let exchanges = [];
+let weapons = [];
+let userWeapons = {};
+
+// Default crews
+const defaultCrews = [
   { name: "Straw Hat Pirates", icon: "🏴‍☠️", color: "#e74c3c", captain: "Monkey D. Luffy" },
   { name: "Roger Pirates", icon: "👑", color: "#f1c40f", captain: "Gol D. Roger" },
   { name: "Whitebeard Pirates", icon: "⚔️", color: "#95a5a6", captain: "Edward Newgate" },
@@ -39,7 +54,7 @@ let crews = [
   { name: "No Crew", icon: "⚖️", color: "#7f8c8d", captain: "Independent" }
 ];
 
-let ranks = [
+const defaultRanks = [
   { type: 'supreme', name: 'Chí Tôn', icon: '🌟', color: '#ffffff', minBounty: 500000 },
   { type: 'demigod', name: 'Bán Thần', icon: '✨', color: '#e8daef', minBounty: 250000 },
   { type: 'divine', name: 'Thần Thoại', icon: '⚡', color: '#9b59b6', minBounty: 100000 },
@@ -58,12 +73,9 @@ let ranks = [
   { type: 'prisoner', name: 'Tù Nhân', icon: '⛓️', color: '#2c3e50', minBounty: -999999999 }
 ];
 
-let accounts = [
+const defaultAccounts = [
   { username: 'admin', email: 'admin@onepiece.com', password: 'admin123', role: 'admin', status: 'active', createdAt: '2025-01-01' }
 ];
-
-let rankImages = {};
-let crewImages = {};
 
 // Search queries
 let pirateSearchQuery = '';
@@ -78,7 +90,7 @@ let submissionStatusFilter = '';
 // =====================================================
 // INITIALIZATION
 // =====================================================
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
   // Database đã được khởi tạo bởi firebase-config.js
   if (database) {
     console.log('✅ Admin Firebase database ready');
@@ -86,12 +98,12 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error('❌ Admin Firebase database not initialized');
   }
   
-  loadData();
+  await loadData();
   initTabs();
   renderAll();
 });
 
-function loadData() {
+async function loadData() {
   // Load pirates
   const savedPirates = localStorage.getItem(PIRATES_KEY);
   if (savedPirates) {
@@ -102,6 +114,9 @@ function loadData() {
   const savedCrews = localStorage.getItem(CREWS_KEY);
   if (savedCrews) {
     crews = JSON.parse(savedCrews);
+  } else {
+    crews = [...defaultCrews];
+    localStorage.setItem(CREWS_KEY, JSON.stringify(crews));
   }
   
   // Load accounts
@@ -109,12 +124,12 @@ function loadData() {
   if (savedAccounts) {
     accounts = JSON.parse(savedAccounts);
   } else {
-    // Khởi tạo tài khoản admin mặc định nếu chưa có
-    accounts = [
-      { username: 'admin', email: 'admin@onepiece.com', password: 'admin123', role: 'admin', status: 'active', createdAt: '2025-01-01' }
-    ];
+    accounts = [...defaultAccounts];
     localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
   }
+  
+  // Initialize ranks from default (ranks are not stored separately)
+  ranks = [...defaultRanks];
   
   // Load rank images
   const savedRankImages = localStorage.getItem(RANK_IMAGES_KEY);
@@ -141,6 +156,150 @@ function loadData() {
   if (savedSubmissions) {
     submissions = JSON.parse(savedSubmissions);
   }
+  
+  // Load rewards từ Firebase trước, nếu không có hoặc < 20 thì push lên
+  try {
+    if (database) {
+      const snapshot = await database.ref('sharedData/rewards').once('value');
+      const firebaseRewards = snapshot.val();
+      
+      if (firebaseRewards && Array.isArray(firebaseRewards) && firebaseRewards.length >= 20) {
+        // Có đủ 20 rewards trên Firebase, load về
+        rewards = firebaseRewards;
+        localStorage.setItem(REWARDS_KEY, JSON.stringify(rewards));
+        console.log('✅ Loaded', rewards.length, 'rewards from Firebase');
+      } else {
+        // Chưa có hoặc < 20, tạo mới và push lên
+        console.log('⚠️ Rewards on Firebase < 20, updating to 20...');
+        rewards = [
+          { id: '1', name: 'Devil Fruit', description: 'Trái ác quỷ huyền thoại', points: 5000, icon: '🍎', type: 'legendary', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '2', name: 'Supreme Grade Sword', description: 'Kiếm hạng Tối Thượng', points: 4500, icon: '⚔️', type: 'legendary', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '3', name: 'Ancient Weapon', description: 'Vũ khí cổ đại', points: 4000, icon: '💥', type: 'legendary', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '4', name: 'Road Poneglyph', description: 'Hòn đá Poneglyph', points: 3500, icon: '🗿', type: 'epic', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '5', name: 'Wanted Poster', description: 'Tờ truy nã', points: 3000, icon: '📜', type: 'epic', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '6', name: 'Eternal Pose', description: 'La bàn vĩnh viễn', points: 2500, icon: '🧭', type: 'epic', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '7', name: 'Vivre Card', description: 'Mảnh giấy sự sống', points: 2000, icon: '🎴', type: 'rare', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '8', name: 'Pirate Flag', description: 'Cờ hải tặc', points: 1800, icon: '🏴‍☠️', type: 'rare', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '9', name: 'Treasure Chest', description: 'Rương kho báu', points: 1500, icon: '💎', type: 'rare', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '10', name: 'Den Den Mushi', description: 'Điện thoại ốc sên', points: 1200, icon: '📞', type: 'rare', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '11', name: 'Pirate Hat', description: 'Mũ hải tặc', points: 1000, icon: '🎩', type: 'normal', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '12', name: 'Pirate Coat', description: 'Áo khoác hải tặc', points: 900, icon: '🧥', type: 'normal', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '13', name: 'Sake Bottle', description: 'Chai rượu sake', points: 800, icon: '🍶', type: 'normal', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '14', name: 'Meat Feast', description: 'Tiệc thịt', points: 700, icon: '🍖', type: 'normal', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '15', name: 'Telescope', description: 'Ống nhòm', points: 600, icon: '🔭', type: 'normal', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '16', name: 'Compass', description: 'La bàn', points: 500, icon: '🧭', type: 'normal', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '17', name: 'Rope', description: 'Dây thừng', points: 300, icon: '🪢', type: 'common', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '18', name: 'Bandage', description: 'Băng bó', points: 200, icon: '🩹', type: 'common', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '19', name: 'Map', description: 'Bản đồ', points: 100, icon: '🗺️', type: 'common', status: 'active', limit: null, createdAt: new Date().toISOString() },
+          { id: '20', name: 'Coin Pouch', description: 'Túi tiền', points: 50, icon: '💰', type: 'common', status: 'active', limit: null, createdAt: new Date().toISOString() }
+        ];
+        await database.ref('sharedData/rewards').set(rewards);
+        localStorage.setItem(REWARDS_KEY, JSON.stringify(rewards));
+        console.log('✅ Pushed', rewards.length, 'rewards to Firebase');
+      }
+    } else {
+      // Firebase không có, dùng localStorage
+      const savedRewards = localStorage.getItem(REWARDS_KEY);
+      if (savedRewards) {
+        rewards = JSON.parse(savedRewards);
+      } else {
+        rewards = [];
+      }
+    }
+  } catch (error) {
+    console.error('❌ Error loading rewards:', error);
+    const savedRewards = localStorage.getItem(REWARDS_KEY);
+    rewards = savedRewards ? JSON.parse(savedRewards) : [];
+  }
+  
+  // Load exchanges
+  const savedExchanges = localStorage.getItem(EXCHANGES_KEY);
+  if (savedExchanges) {
+    exchanges = JSON.parse(savedExchanges);
+  }
+  
+  
+  // Load weapons từ Firebase trước, nếu không có hoặc < 30 thì push lên
+  try {
+    if (database) {
+      const snapshot = await database.ref('sharedData/weapons').once('value');
+      const firebaseWeapons = snapshot.val();
+      
+      if (firebaseWeapons && Array.isArray(firebaseWeapons) && firebaseWeapons.length >= 30) {
+        // Có đủ 30 weapons trên Firebase, load về
+        weapons = firebaseWeapons;
+        localStorage.setItem(WEAPONS_KEY, JSON.stringify(weapons));
+        console.log('✅ Loaded', weapons.length, 'weapons from Firebase');
+      } else {
+        // Chưa có hoặc < 30, tạo mới và push lên
+        console.log('⚠️ Weapons on Firebase < 30, updating to 30...');
+        weapons = [
+          // Mythic (1%) - 2 vũ khí
+          { id: '1', icon: '👑', name: 'Yoru - Kiếm Đen', type: 'sword', rarity: 'mythic', description: 'Kiếm hạng Tối Thượng của Mihawk', atk: 100, def: 20, hp: 200, crit: 30, dropRate: 1, status: 'active', createdAt: Date.now() },
+          { id: '2', icon: '🔱', name: 'Poseidon Trident', type: 'spear', rarity: 'mythic', description: 'Đinh ba của thần biển cả', atk: 95, def: 25, hp: 250, crit: 28, dropRate: 1, status: 'active', createdAt: Date.now() },
+          
+          // Legendary (2%) - 4 vũ khí
+          { id: '3', icon: '⚔️', name: 'Shusui', type: 'sword', rarity: 'legendary', description: 'Kiếm đen huyền thoại của Ryuma', atk: 80, def: 15, hp: 150, crit: 25, dropRate: 2, status: 'active', createdAt: Date.now() },
+          { id: '4', icon: '🗡️', name: 'Enma', type: 'sword', rarity: 'legendary', description: 'Kiếm thiêng có thể rút Haki', atk: 85, def: 10, hp: 100, crit: 30, dropRate: 2, status: 'active', createdAt: Date.now() },
+          { id: '5', icon: '🔫', name: 'Soul King Revolver', type: 'gun', rarity: 'legendary', description: 'Súng lục huyền thoại bắn đạn linh hồn', atk: 75, def: 5, hp: 80, crit: 35, dropRate: 2, status: 'active', createdAt: Date.now() },
+          { id: '6', icon: '🏹', name: 'Usopp Kabuto', type: 'bow', rarity: 'legendary', description: 'Cung huyền thoại của thần bắn tỉa', atk: 70, def: 0, hp: 50, crit: 40, dropRate: 2, status: 'active', createdAt: Date.now() },
+          
+          // Epic (5%) - 6 vũ khí
+          { id: '7', icon: '⚔️', name: 'Wado Ichimonji', type: 'sword', rarity: 'epic', description: 'Kiếm trắng với lịch sử vang dội', atk: 60, def: 12, hp: 120, crit: 20, dropRate: 5, status: 'active', createdAt: Date.now() },
+          { id: '8', icon: '🗡️', name: 'Kikoku', type: 'sword', rarity: 'epic', description: 'Đại kiếm của Trafalgar Law', atk: 58, def: 10, hp: 100, crit: 22, dropRate: 5, status: 'active', createdAt: Date.now() },
+          { id: '9', icon: '🔨', name: 'Mjolnir Hammer', type: 'hammer', rarity: 'epic', description: 'Búa thần sấm sét', atk: 55, def: 20, hp: 180, crit: 15, dropRate: 5, status: 'active', createdAt: Date.now() },
+          { id: '10', icon: '🪓', name: 'Executioner Axe', type: 'axe', rarity: 'epic', description: 'Rìu hành quyết khổng lồ', atk: 62, def: 15, hp: 150, crit: 18, dropRate: 5, status: 'active', createdAt: Date.now() },
+          { id: '11', icon: '🔫', name: 'Flintlock Pistol', type: 'gun', rarity: 'epic', description: 'Súng lục cổ điển uy lực', atk: 50, def: 5, hp: 60, crit: 28, dropRate: 5, status: 'active', createdAt: Date.now() },
+          { id: '12', icon: '🏹', name: 'Dragon Bow', type: 'bow', rarity: 'epic', description: 'Cung được chạm rồng', atk: 48, def: 0, hp: 40, crit: 32, dropRate: 5, status: 'active', createdAt: Date.now() },
+          
+          // Rare (10%) - 8 vũ khí
+          { id: '13', icon: '⚔️', name: 'Katana Nhật Bản', type: 'sword', rarity: 'rare', description: 'Katana sắc bén chất lượng cao', atk: 40, def: 8, hp: 80, crit: 15, dropRate: 10, status: 'active', createdAt: Date.now() },
+          { id: '14', icon: '🗡️', name: 'Rapier Pháp', type: 'sword', rarity: 'rare', description: 'Kiếm đâm tinh xảo', atk: 38, def: 5, hp: 60, crit: 18, dropRate: 10, status: 'active', createdAt: Date.now() },
+          { id: '15', icon: '🔨', name: 'War Hammer', type: 'hammer', rarity: 'rare', description: 'Búa chiến tranh nặng nề', atk: 42, def: 15, hp: 120, crit: 10, dropRate: 10, status: 'active', createdAt: Date.now() },
+          { id: '16', icon: '🪓', name: 'Battle Axe', type: 'axe', rarity: 'rare', description: 'Rìu chiến đấu hai tay', atk: 45, def: 12, hp: 100, crit: 12, dropRate: 10, status: 'active', createdAt: Date.now() },
+          { id: '17', icon: '🔫', name: 'Revolver Bạc', type: 'gun', rarity: 'rare', description: 'Súng quay 6 viên đạn', atk: 35, def: 3, hp: 40, crit: 22, dropRate: 10, status: 'active', createdAt: Date.now() },
+          { id: '18', icon: '🏹', name: 'Composite Bow', type: 'bow', rarity: 'rare', description: 'Cung tổng hợp mạnh mẽ', atk: 33, def: 0, hp: 30, crit: 25, dropRate: 10, status: 'active', createdAt: Date.now() },
+          { id: '19', icon: '🦯', name: 'Iron Staff', type: 'staff', rarity: 'rare', description: 'Gậy sắt chắc chắn', atk: 30, def: 10, hp: 90, crit: 8, dropRate: 10, status: 'active', createdAt: Date.now() },
+          { id: '20', icon: '🗡️', name: 'Dual Daggers', type: 'sword', rarity: 'rare', description: 'Cặp dao găm song kiếm', atk: 36, def: 4, hp: 50, crit: 20, dropRate: 10, status: 'active', createdAt: Date.now() },
+          
+          // Uncommon (20%) - 6 vũ khí
+          { id: '21', icon: '⚔️', name: 'Kiếm Sắt', type: 'sword', rarity: 'uncommon', description: 'Kiếm sắt cơ bản nhưng chắc chắn', atk: 25, def: 6, hp: 60, crit: 10, dropRate: 20, status: 'active', createdAt: Date.now() },
+          { id: '22', icon: '🔨', name: 'Búa Rèn', type: 'hammer', rarity: 'uncommon', description: 'Búa thợ rèn nặng nề', atk: 28, def: 10, hp: 80, crit: 8, dropRate: 20, status: 'active', createdAt: Date.now() },
+          { id: '23', icon: '🪓', name: 'Rìu Gỗ', type: 'axe', rarity: 'uncommon', description: 'Rìu chặt gỗ cải tiến', atk: 30, def: 8, hp: 70, crit: 9, dropRate: 20, status: 'active', createdAt: Date.now() },
+          { id: '24', icon: '🔫', name: 'Súng Ngắn', type: 'gun', rarity: 'uncommon', description: 'Súng ngắn cầm tay', atk: 22, def: 2, hp: 30, crit: 15, dropRate: 20, status: 'active', createdAt: Date.now() },
+          { id: '25', icon: '🏹', name: 'Cung Gỗ', type: 'bow', rarity: 'uncommon', description: 'Cung gỗ săn bắn', atk: 20, def: 0, hp: 20, crit: 18, dropRate: 20, status: 'active', createdAt: Date.now() },
+          { id: '26', icon: '🦯', name: 'Gậy Tre', type: 'staff', rarity: 'uncommon', description: 'Gậy tre nhẹ nhàng', atk: 18, def: 5, hp: 50, crit: 6, dropRate: 20, status: 'active', createdAt: Date.now() },
+          
+          // Common (40%) - 4 vũ khí
+          { id: '27', icon: '⚔️', name: 'Kiếm Gỗ', type: 'sword', rarity: 'common', description: 'Kiếm tập luyện bằng gỗ', atk: 12, def: 3, hp: 30, crit: 5, dropRate: 40, status: 'active', createdAt: Date.now() },
+          { id: '28', icon: '🔨', name: 'Búa Nhỏ', type: 'hammer', rarity: 'common', description: 'Búa công cụ nhỏ', atk: 15, def: 5, hp: 40, crit: 4, dropRate: 40, status: 'active', createdAt: Date.now() },
+          { id: '29', icon: '🗡️', name: 'Dao Ngắn', type: 'sword', rarity: 'common', description: 'Dao ngắn dùng đa năng', atk: 10, def: 2, hp: 20, crit: 6, dropRate: 40, status: 'active', createdAt: Date.now() },
+          { id: '30', icon: '🪓', name: 'Rìu Nhỏ', type: 'axe', rarity: 'common', description: 'Rìu nhỏ cầm tay', atk: 13, def: 4, hp: 35, crit: 5, dropRate: 40, status: 'active', createdAt: Date.now() }
+        ];
+        await database.ref('sharedData/weapons').set(weapons);
+        localStorage.setItem(WEAPONS_KEY, JSON.stringify(weapons));
+        console.log('✅ Pushed', weapons.length, 'weapons to Firebase');
+      }
+    } else {
+      // Firebase không có, dùng localStorage
+      const savedWeapons = localStorage.getItem(WEAPONS_KEY);
+      if (savedWeapons) {
+        weapons = JSON.parse(savedWeapons);
+      } else {
+        weapons = [];
+      }
+    }
+  } catch (error) {
+    console.error('❌ Error loading weapons:', error);
+    const savedWeapons = localStorage.getItem(WEAPONS_KEY);
+    weapons = savedWeapons ? JSON.parse(savedWeapons) : [];
+  }
+  
+  // Load user weapons
+  const savedUserWeapons = localStorage.getItem(USER_WEAPONS_KEY);
+  if (savedUserWeapons) {
+    userWeapons = JSON.parse(savedUserWeapons);
+  }
 }
 
 function saveData() {
@@ -155,6 +314,10 @@ function saveData() {
   localStorage.setItem(CREW_IMAGES_KEY, JSON.stringify(crewImages));
   localStorage.setItem(QUESTS_KEY, JSON.stringify(quests));
   localStorage.setItem(SUBMISSIONS_KEY, JSON.stringify(submissions));
+  localStorage.setItem(REWARDS_KEY, JSON.stringify(rewards));
+  localStorage.setItem(EXCHANGES_KEY, JSON.stringify(exchanges));
+  localStorage.setItem(WEAPONS_KEY, JSON.stringify(weapons));
+  localStorage.setItem(USER_WEAPONS_KEY, JSON.stringify(userWeapons));
   // Cập nhật timestamp để Firebase không ghi đè
   localStorage.setItem('lastLocalUpdate', Date.now().toString());
   console.log('Saved rankImages:', rankImages);
@@ -175,7 +338,9 @@ function initTabs() {
     'ranks': '🏆 Quản lý Cấp Độ',
     'accounts': '👥 Quản lý Tài Khoản',
     'quests': '📝 Quản lý Nhiệm Vụ',
-    'submissions': '📸 Duyệt Bài Nộp'
+    'submissions': '📸 Duyệt Bài Nộp',
+    'rewards': '🎁 Quản lý Phần Thưởng',
+    'weapons': '⚔️ Quản lý Vũ Khí'
   };
   
   navItems.forEach(item => {
@@ -187,6 +352,17 @@ function initTabs() {
         loadSubmissionsFromFirebase();
       }
       
+      // Load rewards and exchanges when switching to rewards tab
+      if (tabId === 'rewards') {
+        renderRewards();
+        renderExchanges();
+      }
+      
+      // Load weapons when switching to weapons tab
+      if (tabId === 'weapons') {
+        renderWeapons();
+      }
+      
       // Update active nav
       navItems.forEach(nav => nav.classList.remove('active'));
       this.classList.add('active');
@@ -194,8 +370,14 @@ function initTabs() {
       // Update active tab content
       document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active');
+        tab.style.display = 'none'; // Force hide all tabs
       });
-      document.getElementById(`${tabId}-tab`).classList.add('active');
+      
+      const activeTab = document.getElementById(`${tabId}-tab`);
+      if (activeTab) {
+        activeTab.classList.add('active');
+        activeTab.style.display = 'block'; // Force show active tab
+      }
       
       // Update page title
       document.getElementById('pageTitle').textContent = pageTitles[tabId];
@@ -213,6 +395,8 @@ function renderAll() {
   renderAccounts();
   renderQuests();
   renderSubmissions();
+  renderRewards();
+  renderExchanges();
   updateStats();
 }
 
@@ -1191,13 +1375,15 @@ async function syncToCloud() {
       crewImages: crewImages,
       quests: quests,
       submissions: submissions,
+      rewards: rewards,
+      exchanges: exchanges,
       lastUpdate: Date.now(),
       lastUserId: userId
     };
     
     await database.ref('sharedData').set(data);
     localStorage.setItem('lastLocalUpdate', Date.now().toString());
-    showToast('success', `☁️ Đã đồng bộ ${pirates.length} hải tặc, ${crews.length} băng nhóm, ${accounts.length} tài khoản, ${quests.length} nhiệm vụ, ${submissions.length} bài nộp và hình ảnh lên cloud!`);
+    showToast('success', `☁️ Đã đồng bộ ${pirates.length} hải tặc, ${crews.length} băng nhóm, ${accounts.length} tài khoản, ${quests.length} nhiệm vụ, ${submissions.length} bài nộp, ${rewards.length} phần thưởng, ${exchanges.length} lịch sử đổi thưởng và hình ảnh lên cloud!`);
   } catch (error) {
     console.error('Sync error:', error);
     showToast('error', '❌ Lỗi đồng bộ: ' + error.message);
@@ -1937,3 +2123,417 @@ async function deleteSubmission(submissionId) {
   });
 }
 
+// =====================================================
+// REWARDS MANAGEMENT
+// =====================================================
+
+function renderRewards() {
+  const tbody = document.getElementById('rewardsTableBody');
+  if (!tbody) return;
+
+  if (!rewards || rewards.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Chưa có phần thưởng nào</td></tr>';
+    updateRewardStats();
+    return;
+  }
+
+  tbody.innerHTML = rewards.map(reward => {
+    const typeColors = {
+      normal: '#95a5a6',
+      rare: '#3498db',
+      epic: '#9b59b6',
+      legendary: '#f39c12',
+      secret: '#e74c3c'
+    };
+    
+    const typeLabels = {
+      normal: 'Thường',
+      rare: 'Hiếm',
+      epic: 'Sử Thi',
+      legendary: 'Huyền Thoại',
+      secret: 'Bí Mật'
+    };
+
+    const exchangeCount = exchanges.filter(e => e.rewardId === reward.id).length;
+    const statusBadge = reward.status === 'active' 
+      ? '<span class="badge badge-success">Kích Hoạt</span>'
+      : '<span class="badge badge-secondary">Tạm Ngưng</span>';
+
+    return `
+      <tr>
+        <td style="font-size: 2em; text-align: center;">${reward.icon || '🎁'}</td>
+        <td><strong>${reward.name}</strong></td>
+        <td>${reward.description || '-'}</td>
+        <td><strong>${reward.points.toLocaleString()}฿</strong></td>
+        <td><span class="badge" style="background: ${typeColors[reward.type]}">${typeLabels[reward.type]}</span></td>
+        <td>${statusBadge}</td>
+        <td>${exchangeCount} lần</td>
+        <td>
+          <button class="btn-sm btn-edit" onclick="editReward('${reward.id}')" title="Sửa">✏️</button>
+          <button class="btn-sm btn-delete" onclick="deleteReward('${reward.id}')" title="Xóa">🗑️</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  updateRewardStats();
+}
+
+function updateRewardStats() {
+  const totalRewards = rewards.length;
+  const totalExchanges = exchanges.length;
+  const totalPoints = exchanges.reduce((sum, ex) => sum + ex.points, 0);
+
+  document.getElementById('totalRewards').textContent = totalRewards;
+  document.getElementById('totalExchanges').textContent = totalExchanges;
+  document.getElementById('totalRewardPoints').textContent = totalPoints.toLocaleString() + '฿';
+}
+
+function openAddRewardModal() {
+  document.getElementById('rewardModalTitle').textContent = '➕ Thêm Phần Thưởng';
+  document.getElementById('rewardForm').reset();
+  document.getElementById('rewardId').value = '';
+  document.getElementById('rewardModal').style.display = 'flex';
+}
+
+function editReward(id) {
+  const reward = rewards.find(r => r.id === id);
+  if (!reward) return;
+
+  document.getElementById('rewardModalTitle').textContent = '✏️ Sửa Phần Thưởng';
+  document.getElementById('rewardId').value = reward.id;
+  document.getElementById('rewardName').value = reward.name;
+  document.getElementById('rewardDescription').value = reward.description || '';
+  document.getElementById('rewardPoints').value = reward.points;
+  document.getElementById('rewardIcon').value = reward.icon || '';
+  document.getElementById('rewardType').value = reward.type;
+  document.getElementById('rewardStatus').value = reward.status;
+  
+  if (reward.limit) {
+    document.getElementById('rewardLimited').checked = true;
+    document.getElementById('rewardLimit').value = reward.limit;
+    document.getElementById('rewardLimit').style.display = 'block';
+  }
+
+  document.getElementById('rewardModal').style.display = 'flex';
+}
+
+function saveReward(e) {
+  e.preventDefault();
+
+  const id = document.getElementById('rewardId').value;
+  const rewardData = {
+    id: id || Date.now().toString(),
+    name: document.getElementById('rewardName').value.trim(),
+    description: document.getElementById('rewardDescription').value.trim(),
+    points: parseInt(document.getElementById('rewardPoints').value),
+    icon: document.getElementById('rewardIcon').value.trim() || '🎁',
+    type: document.getElementById('rewardType').value,
+    status: document.getElementById('rewardStatus').value,
+    limit: document.getElementById('rewardLimited').checked 
+      ? parseInt(document.getElementById('rewardLimit').value) || null
+      : null,
+    createdAt: id ? rewards.find(r => r.id === id)?.createdAt : new Date().toISOString()
+  };
+
+  if (id) {
+    // Update existing
+    const index = rewards.findIndex(r => r.id === id);
+    if (index !== -1) {
+      rewards[index] = rewardData;
+      showToast('success', '✅ Đã cập nhật phần thưởng!');
+    }
+  } else {
+    // Add new
+    rewards.push(rewardData);
+    showToast('success', '✅ Đã thêm phần thưởng mới!');
+  }
+
+  saveData();
+  syncToCloud();
+  renderRewards();
+  closeModal('rewardModal');
+}
+
+function deleteReward(id) {
+  const reward = rewards.find(r => r.id === id);
+  if (!reward) return;
+
+  showConfirm(
+    `Bạn có chắc muốn xóa phần thưởng "${reward.name}"?`,
+    () => {
+      rewards = rewards.filter(r => r.id !== id);
+      saveData();
+      syncToCloud();
+      renderRewards();
+      showToast('success', '✅ Đã xóa phần thưởng!');
+    }
+  );
+}
+
+function toggleLimitInput() {
+  const checkbox = document.getElementById('rewardLimited');
+  const input = document.getElementById('rewardLimit');
+  input.style.display = checkbox.checked ? 'block' : 'none';
+  if (!checkbox.checked) {
+    input.value = '';
+  }
+}
+
+function renderExchanges() {
+  const tbody = document.getElementById('exchangesTableBody');
+  if (!tbody) return;
+
+  if (!exchanges || exchanges.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Chưa có lịch sử đổi thưởng</td></tr>';
+    return;
+  }
+
+  const sortedExchanges = [...exchanges].sort((a, b) => 
+    new Date(b.timestamp) - new Date(a.timestamp)
+  );
+
+  tbody.innerHTML = sortedExchanges.map(ex => {
+    const reward = rewards.find(r => r.id === ex.rewardId);
+    const rewardName = reward ? reward.name : 'N/A';
+    const date = new Date(ex.timestamp);
+    const formattedDate = date.toLocaleString('vi-VN');
+
+    const statusBadge = ex.status === 'completed'
+      ? '<span class="badge badge-success">Hoàn Thành</span>'
+      : ex.status === 'pending'
+      ? '<span class="badge badge-warning">Chờ Xử Lý</span>'
+      : '<span class="badge badge-danger">Đã Hủy</span>';
+
+    return `
+      <tr>
+        <td>${formattedDate}</td>
+        <td><strong>${ex.pirateName}</strong></td>
+        <td>${rewardName}</td>
+        <td><strong>${ex.points.toLocaleString()}฿</strong></td>
+        <td>${statusBadge}</td>
+        <td>
+          ${ex.status === 'pending' ? `
+            <button class="btn-sm btn-success" onclick="approveExchange('${ex.id}')" title="Duyệt">✅</button>
+            <button class="btn-sm btn-danger" onclick="cancelExchange('${ex.id}')" title="Hủy">❌</button>
+          ` : '-'}
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+async function approveExchange(id) {
+  const exchange = exchanges.find(e => e.id === id);
+  if (!exchange) return;
+
+  exchange.status = 'completed';
+  exchange.approvedAt = new Date().toISOString();
+
+  saveData();
+  await syncToCloud();
+  renderExchanges();
+  showToast('success', '✅ Đã duyệt đổi thưởng!');
+}
+
+async function cancelExchange(id) {
+  const exchange = exchanges.find(e => e.id === id);
+  if (!exchange) return;
+
+  showConfirm(
+    'Hủy đổi thưởng sẽ hoàn lại điểm cho hải tặc. Bạn có chắc?',
+    async () => {
+      // Hoàn điểm
+      const pirate = pirates.find(p => p.name === exchange.pirateName);
+      if (pirate) {
+        pirate.bounty += exchange.points;
+      }
+
+      exchange.status = 'cancelled';
+      exchange.cancelledAt = new Date().toISOString();
+
+      saveData();
+      await syncToCloud();
+      renderExchanges();
+      renderPirates();
+      showToast('success', '✅ Đã hủy và hoàn điểm!');
+    }
+  );
+}
+
+function searchExchanges(query) {
+  const tbody = document.getElementById('exchangesTableBody');
+  if (!tbody) return;
+
+  const filtered = exchanges.filter(ex => 
+    ex.pirateName.toLowerCase().includes(query.toLowerCase()) ||
+    (rewards.find(r => r.id === ex.rewardId)?.name || '').toLowerCase().includes(query.toLowerCase())
+  );
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Không tìm thấy kết quả</td></tr>';
+    return;
+  }
+
+  renderExchanges();
+}
+
+// =====================================================
+// WEAPONS MANAGEMENT
+// =====================================================
+
+function renderWeapons() {
+  const tbody = document.getElementById('weaponsTableBody');
+  if (!tbody) return;
+
+  if (weapons.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Chưa có vũ khí nào</td></tr>';
+    document.getElementById('totalWeapons').textContent = '0';
+    return;
+  }
+
+  // Mapping cho type và rarity sang tiếng Việt
+  const typeNames = {
+    'sword': 'Kiếm',
+    'gun': 'Súng',
+    'bow': 'Cung',
+    'staff': 'Gậy',
+    'hammer': 'Búa',
+    'spear': 'Thương',
+    'axe': 'Rìu'
+  };
+
+  const rarityNames = {
+    'common': 'Thường',
+    'uncommon': 'Khá',
+    'rare': 'Hiếm',
+    'epic': 'Sử Thi',
+    'legendary': 'Huyền Thoại',
+    'mythic': 'Thần Thoại'
+  };
+
+  const rarityColors = {
+    'common': '#95a5a6',
+    'uncommon': '#2ecc71',
+    'rare': '#3498db',
+    'epic': '#9b59b6',
+    'legendary': '#f1c40f',
+    'mythic': '#e74c3c'
+  };
+
+  tbody.innerHTML = weapons.map(weapon => {
+    const stats = [];
+    if (weapon.atk > 0) stats.push(`💪 ${weapon.atk}%`);
+    if (weapon.def > 0) stats.push(`🛡️ ${weapon.def}`);
+    if (weapon.hp > 0) stats.push(`❤️ ${weapon.hp}`);
+    if (weapon.crit > 0) stats.push(`⚡ ${weapon.crit}%`);
+
+    return `
+      <tr>
+        <td style="text-align: center;"><span style="font-size: 2em;">${weapon.icon}</span></td>
+        <td><strong>${weapon.name}</strong></td>
+        <td>${typeNames[weapon.type] || weapon.type}</td>
+        <td><span style="color: ${rarityColors[weapon.rarity]}; font-weight: bold;">${rarityNames[weapon.rarity] || weapon.rarity}</span></td>
+        <td>${stats.join(' • ') || 'Không có'}</td>
+        <td style="text-align: center;">${weapon.dropRate}%</td>
+        <td><span class="status-badge ${weapon.status}">${weapon.status === 'active' ? '✅ Hoạt Động' : '❌ Tạm Dừng'}</span></td>
+        <td style="text-align: center;">
+          <button class="btn-icon" onclick="editWeapon('${weapon.id}')" title="Sửa">✏️</button>
+          <button class="btn-icon" onclick="deleteWeapon('${weapon.id}')" title="Xóa">🗑️</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  document.getElementById('totalWeapons').textContent = weapons.length;
+  
+  // Count total dropped weapons
+  const totalDropped = Object.values(userWeapons).reduce((sum, arr) => sum + arr.length, 0);
+  document.getElementById('totalDropped').textContent = totalDropped;
+  
+  // Count equipped weapons
+  const totalEquipped = Object.values(userWeapons).reduce((sum, arr) => {
+    return sum + arr.filter(w => w.equipped).length;
+  }, 0);
+  document.getElementById('totalEquipped').textContent = totalEquipped;
+}
+
+function openWeaponModal(weaponId = null) {
+  const modal = document.getElementById('weaponModal');
+  const title = document.getElementById('weaponModalTitle');
+  const form = document.getElementById('weaponForm');
+  
+  form.reset();
+  
+  if (weaponId) {
+    const weapon = weapons.find(w => w.id === weaponId);
+    if (weapon) {
+      title.textContent = '✏️ Chỉnh Sửa Vũ Khí';
+      document.getElementById('weaponId').value = weapon.id;
+      document.getElementById('weaponIcon').value = weapon.icon;
+      document.getElementById('weaponName').value = weapon.name;
+      document.getElementById('weaponType').value = weapon.type;
+      document.getElementById('weaponRarity').value = weapon.rarity;
+      document.getElementById('weaponDescription').value = weapon.description || '';
+      document.getElementById('weaponATK').value = weapon.atk;
+      document.getElementById('weaponDEF').value = weapon.def;
+      document.getElementById('weaponHP').value = weapon.hp;
+      document.getElementById('weaponCrit').value = weapon.crit;
+      document.getElementById('weaponDropRate').value = weapon.dropRate;
+      document.getElementById('weaponStatus').value = weapon.status;
+    }
+  } else {
+    title.textContent = '➕ Thêm Vũ Khí';
+    document.getElementById('weaponStatus').value = 'active';
+  }
+  
+  openModal('weaponModal');
+}
+
+function editWeapon(id) {
+  openWeaponModal(id);
+}
+
+async function saveWeapon(event) {
+  event.preventDefault();
+  
+  const id = document.getElementById('weaponId').value || Date.now().toString();
+  const weaponData = {
+    id: id,
+    icon: document.getElementById('weaponIcon').value,
+    name: document.getElementById('weaponName').value,
+    type: document.getElementById('weaponType').value,
+    rarity: document.getElementById('weaponRarity').value,
+    description: document.getElementById('weaponDescription').value,
+    atk: parseInt(document.getElementById('weaponATK').value) || 0,
+    def: parseInt(document.getElementById('weaponDEF').value) || 0,
+    hp: parseInt(document.getElementById('weaponHP').value) || 0,
+    crit: parseFloat(document.getElementById('weaponCrit').value) || 0,
+    dropRate: parseFloat(document.getElementById('weaponDropRate').value),
+    status: document.getElementById('weaponStatus').value,
+    createdAt: Date.now()
+  };
+  
+  const index = weapons.findIndex(w => w.id === id);
+  if (index > -1) {
+    weapons[index] = weaponData;
+  } else {
+    weapons.push(weaponData);
+  }
+  
+  saveData();
+  await syncToCloud();
+  renderWeapons();
+  closeModal('weaponModal');
+  showToast('success', '✅ Đã lưu vũ khí!');
+}
+
+async function deleteWeapon(id) {
+  if (!confirm('Xóa vũ khí này?')) return;
+  
+  weapons = weapons.filter(w => w.id !== id);
+  saveData();
+  await syncToCloud();
+  renderWeapons();
+  showToast('success', '🗑️ Đã xóa vũ khí!');
+}

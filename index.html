@@ -23,6 +23,7 @@
   <link rel="stylesheet" href="css/search.css">
   <link rel="stylesheet" href="css/login.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/bulk-bounty.css">
 </head>
 <body>
   <div class="container">
@@ -34,6 +35,7 @@
       <div class="header-buttons">
         <button class="header-btn info admin-only" onclick="openModal('settingsModal')" style="display: none;">🏴‍☠️ Cài Đặt Cấp Độ</button>
         <button class="header-btn success admin-only" onclick="openModal('addPirateModal')" style="display: none;">👤 Thêm Hải Tặc</button>
+        <button class="header-btn warning admin-only" onclick="openModal('bulkBountyModal')" style="display: none;">💰 Công Điểm Hàng Loạt</button>
         <button class="header-btn primary" onclick="showTopPirate()">🎯 Truy Nã Gắt</button>
       </div>
       <div class="header-auth">
@@ -264,6 +266,67 @@
       </button>
       
       <div class="wanted-footer">BY ORDER OF WORLD GOVERNMENT</div>
+    </div>
+  </div>
+
+  <!-- Modal Công Điểm Hàng Loạt -->
+  <div id="bulkBountyModal" class="modal">
+    <div class="modal-content" style="max-width: 700px;">
+      <span class="close" onclick="closeModal('bulkBountyModal')">&times;</span>
+      <h2>💰 Công Điểm Hàng Loạt</h2>
+      
+      <div class="bulk-bounty-info" style="background: rgba(52, 73, 94, 0.3); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+        <p style="margin: 0; color: #95a5a6;">Chọn nhiều hải tặc và nhập điểm để cộng/trừ cho tất cả cùng lúc</p>
+      </div>
+
+      <form id="bulkBountyForm" onsubmit="applyBulkBounty(event)">
+        <div class="form-group">
+          <label class="form-label">
+            <span style="font-size: 18px;">👥</span> Chọn Hải Tặc
+          </label>
+          <div class="bulk-select-controls" style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <button type="button" class="select-all-btn" onclick="toggleSelectAll()" style="flex: 1; padding: 8px; background: #27ae60; border: none; border-radius: 5px; color: white; cursor: pointer;">✅ Chọn Tất Cả</button>
+            <button type="button" class="filter-crew-btn" onclick="toggleCrewFilter()" style="flex: 1; padding: 8px; background: #3498db; border: none; border-radius: 5px; color: white; cursor: pointer;">🏴‍☠️ Lọc Theo Băng</button>
+          </div>
+          
+          <div id="crewFilterSection" style="display: none; margin: 10px 0;">
+            <select id="bulkCrewFilter" onchange="filterBulkPiratesByCrew(this.value)" style="width: 100%; padding: 10px; background: rgba(52, 73, 94, 0.5); border: 1px solid rgba(149, 165, 166, 0.3); border-radius: 5px; color: white;">
+              <option value="all">-- Tất Cả Băng Nhóm --</option>
+            </select>
+          </div>
+          
+          <div class="pirates-checklist" id="piratesChecklist" style="max-height: 300px; overflow-y: auto; background: rgba(52, 73, 94, 0.3); padding: 15px; border-radius: 8px; border: 1px solid rgba(149, 165, 166, 0.3);">
+            <!-- Danh sách checkbox sẽ được load bằng JS -->
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span style="font-size: 18px;">💰</span> Điểm Thưởng/Phạt
+          </label>
+          <input type="number" id="bulkBountyAmount" placeholder="Nhập số điểm (dương: cộng, âm: trừ)" required>
+          <small style="color: #95a5a6; margin-top: 5px; display: block;">
+            Ví dụ: 50 (cộng 50 điểm) hoặc -20 (trừ 20 điểm)
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span style="font-size: 18px;">📝</span> Ghi Chú (Tùy chọn)
+          </label>
+          <input type="text" id="bulkBountyNote" placeholder="Lý do công/trừ điểm...">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">💰 Áp Dụng</button>
+          <button type="button" class="btn-secondary" onclick="closeModal('bulkBountyModal')">❌ Hủy</button>
+        </div>
+      </form>
+
+      <div id="bulkBountyResult" style="margin-top: 20px; display: none;">
+        <h3>📊 Kết Quả:</h3>
+        <div id="bulkBountyResultContent"></div>
+      </div>
     </div>
   </div>
 

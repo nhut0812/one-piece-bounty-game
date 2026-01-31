@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>⚙️ Admin - One Piece Bounty System</title>
   <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/admin-enhanced.css">
 </head>
 <body>
   <div class="admin-container">
@@ -38,6 +39,14 @@
         <button class="nav-item" data-tab="submissions">
           <span class="nav-icon">📸</span>
           <span class="nav-text">Duyệt Bài Nộp</span>
+        </button>
+        <button class="nav-item" data-tab="rewards">
+          <span class="nav-icon">🎁</span>
+          <span class="nav-text">Quản lý Phần Thưởng</span>
+        </button>
+        <button class="nav-item" data-tab="weapons">
+          <span class="nav-icon">⚔️</span>
+          <span class="nav-text">Quản lý Vũ Khí</span>
         </button>
       </nav>
       <div class="sidebar-footer">
@@ -339,6 +348,138 @@
         
         <div class="submissions-grid" id="submissionsGrid">
           <!-- Submissions will be loaded here -->
+        </div>
+      </section>
+
+      <!-- Tab Content: Rewards -->
+      <section id="rewards-tab" class="tab-content" style="display: none;">
+        <div class="tab-header">
+          <h2>🎁 Quản lý Phần Thưởng</h2>
+          <button class="add-btn" onclick="openAddRewardModal()">
+            <span>➕</span> Thêm Phần Thưởng
+          </button>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-icon">🎁</span>
+            <div class="stat-info">
+              <span class="stat-value" id="totalRewards">0</span>
+              <span class="stat-label">Tổng Phần Thưởng</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">🔄</span>
+            <div class="stat-info">
+              <span class="stat-value" id="totalExchanges">0</span>
+              <span class="stat-label">Lượt Đổi</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-icon">💎</span>
+            <div class="stat-info">
+              <span class="stat-value" id="totalRewardPoints">0฿</span>
+              <span class="stat-label">Tổng Điểm Đã Đổi</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Icon</th>
+                <th>Tên Phần Thưởng</th>
+                <th>Mô Tả</th>
+                <th>Điểm Cần</th>
+                <th>Loại</th>
+                <th>Trạng Thái</th>
+                <th>Số Lần Đổi</th>
+                <th>Hành Động</th>
+              </tr>
+            </thead>
+            <tbody id="rewardsTableBody">
+              <tr><td colspan="8" style="text-align: center;">Đang tải...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Exchange History -->
+        <div class="tab-header" style="margin-top: 40px;">
+          <h3>📜 Lịch Sử Đổi Thưởng</h3>
+          <div class="search-box">
+            <input type="text" id="exchangeSearch" placeholder="🔍 Tìm kiếm..." oninput="searchExchanges(this.value)">
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Thời Gian</th>
+                <th>Hải Tặc</th>
+                <th>Phần Thưởng</th>
+                <th>Điểm Đã Dùng</th>
+                <th>Trạng Thái</th>
+                <th>Hành Động</th>
+              </tr>
+            </thead>
+            <tbody id="exchangesTableBody">
+              <tr><td colspan="6" style="text-align: center;">Chưa có lịch sử đổi thưởng</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Weapons Tab -->
+      <section id="weapons-tab" class="tab-content" style="display: none;">
+        <div class="tab-header">
+          <h2>⚔️ Quản Lý Vũ Khí</h2>
+          <button class="btn-primary" onclick="openWeaponModal()">➕ Thêm Vũ Khí</button>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon">⚔️</div>
+            <div class="stat-info">
+              <div class="stat-value" id="totalWeapons">0</div>
+              <div class="stat-label">Tổng Vũ Khí</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🎲</div>
+            <div class="stat-info">
+              <div class="stat-value" id="totalDropped">0</div>
+              <div class="stat-label">Đã Rơi</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+              <div class="stat-value" id="totalEquipped">0</div>
+              <div class="stat-label">Đang Trang Bị</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="data-table" style="width: 100%;">
+          <table style="width: 100%;">
+            <thead>
+              <tr>
+                <th style="width: 80px; text-align: center;">Icon</th>
+                <th style="width: 200px;">Tên Vũ Khí</th>
+                <th style="width: 100px;">Loại</th>
+                <th style="width: 120px;">Độ Hiếm</th>
+                <th style="min-width: 200px;">Chỉ Số</th>
+                <th style="width: 100px; text-align: center;">Tỉ Lệ Rơi</th>
+                <th style="width: 120px;">Trạng Thái</th>
+                <th style="width: 120px; text-align: center;">Hành Động</th>
+              </tr>
+            </thead>
+            <tbody id="weaponsTableBody">
+              <tr><td colspan="8" style="text-align: center;">Chưa có vũ khí nào</td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
     </main>
@@ -693,6 +834,185 @@
           <button type="button" class="btn-cancel" onclick="closeModal('confirmModal')">Hủy</button>
           <button type="button" class="btn-danger" id="confirmBtn">Xác nhận</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Reward Modal -->
+  <div id="rewardModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="rewardModalTitle">➕ Thêm Phần Thưởng</h2>
+        <button class="close-btn" onclick="closeModal('rewardModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="rewardForm" onsubmit="saveReward(event)">
+          <input type="hidden" id="rewardId">
+          
+          <div class="form-group">
+            <label>🎯 Tên Phần Thưởng</label>
+            <input type="text" id="rewardName" required placeholder="Ví dụ: Devil Fruit, Wanted Poster...">
+          </div>
+
+          <div class="form-group">
+            <label>📝 Mô Tả</label>
+            <textarea id="rewardDescription" rows="3" placeholder="Mô tả chi tiết về phần thưởng..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>💰 Điểm Cần (Bounty)</label>
+              <input type="number" id="rewardPoints" required min="1" placeholder="1000">
+            </div>
+            <div class="form-group">
+              <label>😀 Icon/Emoji</label>
+              <input type="text" id="rewardIcon" placeholder="🎁" maxlength="10">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>🏷️ Loại</label>
+              <select id="rewardType">
+                <option value="normal">Thường</option>
+                <option value="rare">Hiếm</option>
+                <option value="epic">Sử Thi</option>
+                <option value="legendary">Huyền Thoại</option>
+                <option value="secret">Bí Mật</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>📊 Trạng Thái</label>
+              <select id="rewardStatus">
+                <option value="active">Kích Hoạt</option>
+                <option value="inactive">Tạm Ngưng</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="rewardLimited" onchange="toggleLimitInput()">
+              Giới hạn số lượng
+            </label>
+            <input type="number" id="rewardLimit" min="1" placeholder="Số lượng tối đa" style="margin-top: 8px; display: none;">
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal('rewardModal')">Hủy</button>
+            <button type="submit" class="btn-save">💾 Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add/Edit Weapon -->
+  <div id="weaponModal" class="modal-overlay">
+    <div class="modal" style="max-width: 700px;">
+      <div class="modal-header">
+        <h2 id="weaponModalTitle">⚔️ Thêm Vũ Khí</h2>
+        <button class="close-btn" onclick="closeModal('weaponModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="weaponForm" onsubmit="saveWeapon(event)">
+          <input type="hidden" id="weaponId">
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Icon Vũ Khí <span class="required">*</span></label>
+              <input type="text" id="weaponIcon" placeholder="⚔️" maxlength="2" required>
+              <small>Nhập emoji (⚔️ 🗡️ 🏹 ⚡ 🔥)</small>
+            </div>
+            
+            <div class="form-group">
+              <label>Tên Vũ Khí <span class="required">*</span></label>
+              <input type="text" id="weaponName" placeholder="Kiếm Demon" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Loại <span class="required">*</span></label>
+              <select id="weaponType" required>
+                <option value="">-- Chọn Loại --</option>
+                <option value="sword">⚔️ Kiếm (Sword)</option>
+                <option value="gun">🔫 Súng (Gun)</option>
+                <option value="bow">🏹 Cung (Bow)</option>
+                <option value="staff">🔮 Gậy (Staff)</option>
+                <option value="hammer">🔨 Búa (Hammer)</option>
+                <option value="spear">🗡️ Thương (Spear)</option>
+                <option value="axe">🪓 Rìu (Axe)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Độ Hiếm <span class="required">*</span></label>
+              <select id="weaponRarity" required>
+                <option value="">-- Chọn Độ Hiếm --</option>
+                <option value="common">⚪ Common (Thường)</option>
+                <option value="uncommon">🟢 Uncommon (Khá)</option>
+                <option value="rare">🔵 Rare (Hiếm)</option>
+                <option value="epic">🟣 Epic (Sử Thi)</option>
+                <option value="legendary">🟡 Legendary (Huyền Thoại)</option>
+                <option value="mythic">🔴 Mythic (Thần Thoại)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Mô Tả</label>
+            <textarea id="weaponDescription" rows="2" placeholder="Thanh kiếm huyền thoại với sức mạnh khủng khiếp..."></textarea>
+          </div>
+
+          <hr style="margin: 20px 0; border-color: rgba(243, 156, 18, 0.3);">
+          <h4 style="color: #f39c12; margin-bottom: 15px;">📊 Chỉ Số Stats</h4>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>💪 ATK (Tấn Công %)</label>
+              <input type="number" id="weaponATK" value="0" min="0">
+            </div>
+            
+            <div class="form-group">
+              <label>🛡️ DEF (Phòng Thủ)</label>
+              <input type="number" id="weaponDEF" value="0" min="0">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>❤️ HP (Máu)</label>
+              <input type="number" id="weaponHP" value="0" min="0">
+            </div>
+            
+            <div class="form-group">
+              <label>⚡ Crit Rate (%)</label>
+              <input type="number" id="weaponCrit" value="0" min="0" max="100" step="0.1">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>🎲 Tỉ Lệ Rơi (%) <span class="required">*</span></label>
+              <input type="number" id="weaponDropRate" value="10" min="0.1" max="100" step="0.1" required>
+              <small>Càng cao càng dễ rơi (Common: 40-50%, Legendary: 1-5%)</small>
+            </div>
+
+            <div class="form-group">
+              <label>Trạng Thái</label>
+              <select id="weaponStatus">
+                <option value="active">✅ Kích Hoạt</option>
+                <option value="inactive">❌ Tạm Dừng</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal('weaponModal')">Hủy</button>
+            <button type="submit" class="btn-save">💾 Lưu Vũ Khí</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

@@ -546,3 +546,215 @@ function loadFromLocalStorage() {
     saveToLocalStorage();
   }
 }
+// =====================================================
+// BULK BOUNTY FUNCTIONS
+// =====================================================
+let selectedPiratesForBulk = [];
+let allPiratesForBulk = [];
+
+function loadBulkPiratesList() {
+  allPiratesForBulk = [...pirates];
+  renderBulkPiratesList(allPiratesForBulk);
+  loadCrewsForBulkFilter();
+}
+
+function loadCrewsForBulkFilter() {
+  const select = document.getElementById('bulkCrewFilter');
+  const uniqueCrews = [...new Set(pirates.map(p => p.crew))].sort();
+  
+  select.innerHTML = '<option value="all">-- Tất Cả Băng Nhóm --</option>';
+  uniqueCrews.forEach(crew => {
+    const crewData = crews.find(c => c.name === crew);
+    const option = document.createElement('option');
+    option.value = crew;
+    option.textContent = crewData ? `${crewData.icon} ${crewData.nameVi}` : crew;
+    select.appendChild(option);
+  });
+}
+
+function renderBulkPiratesList(piratesList) {
+  const container = document.getElementById('piratesChecklist');
+  
+  if (piratesList.length === 0) {
+    container.innerHTML = '<p style="color: #95a5a6; text-align: center; padding: 20px;">Không có hải tặc nào</p>';
+    return;
+  }
+  
+  // Use DocumentFragment for better performance
+  const fragment = document.createDocumentFragment();
+  
+  piratesList.forEach(pirate => {
+    const rank = getRankByBounty(pirate.bounty);
+    const isChecked = selectedPiratesForBulk.includes(pirate.name);
+    
+    const label = document.createElement('label');
+    label.className = 'pirate-checkbox-item';
+    label.style.cssText = 'display: flex; align-items: center; padding: 10px; margin-bottom: 8px; background: rgba(44, 62, 80, 0.5); border-radius: 8px; cursor: pointer;';
+    
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = pirate.name;
+    checkbox.checked = isChecked;
+    checkbox.style.cssText = 'margin-right: 10px; width: 18px; height: 18px; cursor: pointer;';
+    checkbox.onchange = () => togglePirateSelection(pirate.name);
+    
+    const infoDiv = document.createElement('div');
+    infoDiv.style.flex = '1';
+    infoDiv.innerHTML = `
+      <div style="font-weight: bold; color: white; margin-bottom: 3px;">${pirate.name}</div>
+      <div style="font-size: 0.85em; color: #95a5a6;">⚔️ ${pirate.crew} • 💰 ${pirate.bounty}฿ • ${rank.icon} ${rank.name}</div>
+    `;
+    
+    label.appendChild(checkbox);
+    label.appendChild(infoDiv);
+    fragment.appendChild(label);
+  });
+  
+  container.innerHTML = '';
+  container.appendChild(fragment);
+}
+
+function togglePirateSelection(pirateName) {
+  const index = selectedPiratesForBulk.indexOf(pirateName);
+  if (index > -1) {
+    selectedPiratesForBulk.splice(index, 1);
+  } else {
+    selectedPiratesForBulk.push(pirateName);
+  }
+}
+
+function toggleSelectAll() {
+  const checkboxes = document.querySelectorAll('#piratesChecklist input[type="checkbox"]');
+  const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+  
+  if (allChecked) {
+    // Bỏ chọn tất cả
+    selectedPiratesForBulk = [];
+    checkboxes.forEach(cb => cb.checked = false);
+  } else {
+    // Chọn tất cả
+    selectedPiratesForBulk = allPiratesForBulk.map(p => p.name);
+    checkboxes.forEach(cb => cb.checked = true);
+  }
+}
+
+function toggleCrewFilter() {
+  const section = document.getElementById('crewFilterSection');
+  section.style.display = section.style.display === 'none' ? 'block' : 'none';
+}
+
+function filterBulkPiratesByCrew(crew) {
+  if (crew === 'all') {
+    allPiratesForBulk = [...pirates];
+  } else {
+    allPiratesForBulk = pirates.filter(p => p.crew === crew);
+  }
+  
+  // Giữ lại các lựa chọn hiện tại nếu pirate vẫn trong danh sách
+  selectedPiratesForBulk = selectedPiratesForBulk.filter(name => 
+    allPiratesForBulk.some(p => p.name === name)
+  );
+  
+  renderBulkPiratesList(allPiratesForBulk);
+}
+
+async function applyBulkBounty(event) {
+  event.preventDefault();
+  
+  if (selectedPiratesForBulk.length === 0) {
+    alert('❌ Vui lòng chọn ít nhất 1 hải tặc!');
+    return;
+  }
+  
+  const amount = parseInt(document.getElementById('bulkBountyAmount').value);
+  const note = document.getElementById('bulkBountyNote').value;
+  
+  if (amount === 0) {
+    alert('❌ Số điểm không thể bằng 0!');
+    return;
+  }
+  
+  const confirmMsg = amount > 0 
+    ? `Cộng ${amount}฿ cho ${selectedPiratesForBulk.length} hải tặc?`
+    : `Trừ ${Math.abs(amount)}฿ cho ${selectedPiratesForBulk.length} hải tặc?`;
+  
+  if (!confirm(confirmMsg)) return;
+  
+  let successCount = 0;
+  let results = [];
+  
+  selectedPiratesForBulk.forEach(pirateName => {
+    const pirate = pirates.find(p => p.name === pirateName);
+    if (pirate) {
+      const oldBounty = pirate.bounty;
+      pirate.bounty = Math.max(0, pirate.bounty + amount);
+      const newBounty = pirate.bounty;
+      
+      results.push({
+        name: pirateName,
+        old: oldBounty,
+        new: newBounty,
+        change: amount
+      });
+      
+      successCount++;
+    }
+  });
+  
+  saveToLocalStorage();
+  renderPirates();
+  
+  // Hiển thị kết quả
+  const resultDiv = document.getElementById('bulkBountyResult');
+  const resultContent = document.getElementById('bulkBountyResultContent');
+  
+  resultContent.innerHTML = `
+    <div style="background: rgba(46, 204, 113, 0.2); padding: 15px; border-radius: 8px; border: 1px solid rgba(46, 204, 113, 0.5); margin-bottom: 10px;">
+      <strong style="color: #2ecc71;">✅ Thành công: ${successCount}/${selectedPiratesForBulk.length}</strong>
+    </div>
+    
+    <div style="max-height: 200px; overflow-y: auto;">
+      ${results.map(r => `
+        <div style="padding: 8px; background: rgba(52, 73, 94, 0.3); margin-bottom: 5px; border-radius: 5px;">
+          <strong>${r.name}</strong>: ${r.old}฿ → ${r.new}฿ 
+          <span style="color: ${r.change > 0 ? '#2ecc71' : '#e74c3c'};">(${r.change > 0 ? '+' : ''}${r.change}฿)</span>
+        </div>
+      `).join('')}
+    </div>
+    
+    ${note ? `<div style="margin-top: 10px; padding: 10px; background: rgba(52, 73, 94, 0.3); border-radius: 5px;"><strong>📝 Ghi chú:</strong> ${note}</div>` : ''}
+  `;
+  
+  resultDiv.style.display = 'block';
+  
+  // Reset form
+  document.getElementById('bulkBountyForm').reset();
+  selectedPiratesForBulk = [];
+  
+  // Sync to cloud nếu có
+  if (typeof syncToFirebase === 'function') {
+    await syncToFirebase();
+  }
+  
+  setTimeout(() => {
+    alert(`✅ Đã cập nhật ${successCount} hải tặc!`);
+  }, 100);
+}
+
+// Gọi loadBulkPiratesList khi mở modal
+document.addEventListener('DOMContentLoaded', () => {
+  const bulkModal = document.getElementById('bulkBountyModal');
+  if (bulkModal) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.target.classList.contains('active')) {
+          loadBulkPiratesList();
+          // Reset result
+          document.getElementById('bulkBountyResult').style.display = 'none';
+        }
+      });
+    });
+    
+    observer.observe(bulkModal, { attributes: true, attributeFilter: ['class'] });
+  }
+});

@@ -1,0 +1,22 @@
+/* Bulk Bounty Modal - Optimized Performance */
+.pirates-checklist {
+  /* Enable GPU acceleration for scrolling */
+  transform: translateZ(0);
+  -webkit-overflow-scrolling: touch;
+  contain: layout style paint;
+}
+
+.pirate-checkbox-item {
+  /* Remove transitions - causes lag with many items */
+  transition: none !important;
+}
+
+.pirate-checkbox-item:hover {
+  background: rgba(52, 73, 94, 0.6) !important;
+}
+
+/* Optimize scrolling performance */
+#piratesChecklist {
+  will-change: scroll-position;
+  overscroll-behavior: contain;
+}

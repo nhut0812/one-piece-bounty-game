@@ -63,6 +63,8 @@ async function syncToFirebase() {
     const quests = JSON.parse(localStorage.getItem('onePieceQuests') || '[]');
     const submissions = JSON.parse(localStorage.getItem('onePieceSubmissions') || '[]');
     const questAttempts = JSON.parse(localStorage.getItem('onePieceQuestAttempts') || '{}');
+    const rewards = JSON.parse(localStorage.getItem('onePieceRewards') || '[]');
+    const exchanges = JSON.parse(localStorage.getItem('onePieceExchanges') || '[]');
     
     const data = {
       pirates: pirates,
@@ -73,13 +75,15 @@ async function syncToFirebase() {
       quests: quests,
       submissions: submissions,
       questAttempts: questAttempts,
+      rewards: rewards,
+      exchanges: exchanges,
       lastUpdate: Date.now(),
       lastUserId: userId
     };
     
     await database.ref('sharedData').set(data);
-    console.log('☁️ Synced to Firebase:', pirates.length, 'pirates,', accounts.length, 'accounts,', quests.length, 'quests');
-    showSyncNotification(`✅ Đã đồng bộ ${pirates.length} hải tặc, ${accounts.length} tài khoản, ${quests.length} nhiệm vụ lên cloud`);
+    console.log('☁️ Synced to Firebase:', pirates.length, 'pirates,', accounts.length, 'accounts,', quests.length, 'quests,', rewards.length, 'rewards,', exchanges.length, 'exchanges');
+    showSyncNotification(`✅ Đã đồng bộ ${pirates.length} hải tặc, ${accounts.length} tài khoản, ${quests.length} nhiệm vụ, ${rewards.length} phần thưởng, ${exchanges.length} giao dịch lên cloud`);
   } catch (error) {
     console.error('❌ Sync error:', error);
     showSyncNotification('⚠️ Lỗi đồng bộ');
@@ -130,6 +134,8 @@ async function loadFromFirebase(forceLoad = false) {
         if (data.quests) localStorage.setItem('onePieceQuests', JSON.stringify(data.quests));
         if (data.submissions) localStorage.setItem('onePieceSubmissions', JSON.stringify(data.submissions));
         if (data.questAttempts) localStorage.setItem('onePieceQuestAttempts', JSON.stringify(data.questAttempts));
+        if (data.rewards) localStorage.setItem('onePieceRewards', JSON.stringify(data.rewards));
+        if (data.exchanges) localStorage.setItem('onePieceExchanges', JSON.stringify(data.exchanges));
         
         // Chỉ gọi renderPirates nếu hàm tồn tại (không có trong battle.html)
         if (typeof renderPirates === 'function') {
@@ -152,8 +158,24 @@ async function loadFromFirebase(forceLoad = false) {
           }
         }
         
-        console.log('☁️ Loaded from Firebase:', pirates.length, 'pirates,', (data.accounts || []).length, 'accounts,', (data.quests || []).length, 'quests,', (data.submissions || []).length, 'submissions');
-        showSyncNotification(`📥 Đã tải ${pirates.length} hải tặc, ${(data.quests || []).length} nhiệm vụ, ${(data.submissions || []).length} bài nộp từ cloud`);
+        // Reload rewards in admin panel if available
+        if (typeof rewards !== 'undefined' && data.rewards) {
+          rewards = data.rewards;
+          if (typeof renderRewards === 'function') {
+            renderRewards();
+          }
+        }
+        
+        // Reload exchanges in admin panel if available
+        if (typeof exchanges !== 'undefined' && data.exchanges) {
+          exchanges = data.exchanges;
+          if (typeof renderExchanges === 'function') {
+            renderExchanges();
+          }
+        }
+        
+        console.log('☁️ Loaded from Firebase:', pirates.length, 'pirates,', (data.accounts || []).length, 'accounts,', (data.quests || []).length, 'quests,', (data.submissions || []).length, 'submissions,', (data.rewards || []).length, 'rewards,', (data.exchanges || []).length, 'exchanges');
+        showSyncNotification(`📥 Đã tải ${pirates.length} hải tặc, ${(data.quests || []).length} nhiệm vụ, ${(data.rewards || []).length} phần thưởng, ${(data.exchanges || []).length} giao dịch từ cloud`);
         return true;
       }
     }
