@@ -20,6 +20,46 @@ function setCurrentUser(user) {
   }
 }
 
+function recordLoginStreak(user) {
+  if (!user) return user;
+
+  const today = new Date().toISOString().slice(0, 10);
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  const lastLoginDate = user.lastLoginDate || '';
+
+  if (lastLoginDate === today) return user;
+
+  const streak = lastLoginDate === yesterday ? (user.loginStreak || 0) + 1 : 1;
+  const dailyReward = 10;
+  const milestoneReward = streak === 3 ? 25 : streak === 7 ? 100 : 0;
+  const reward = dailyReward + milestoneReward;
+  const accounts = getAccounts();
+  const accountIndex = accounts.findIndex(account => account.username === user.username);
+
+  user.loginStreak = streak;
+  user.lastLoginDate = today;
+  user.lastLoginReward = reward;
+
+  if (accountIndex >= 0) {
+    accounts[accountIndex] = { ...accounts[accountIndex], ...user };
+    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+  }
+
+  if (user.pirateId) {
+    const pirates = JSON.parse(localStorage.getItem('onePiecePirates') || '[]');
+    const pirate = pirates.find(item => item.name === user.pirateId);
+    if (pirate) {
+      pirate.bounty += reward;
+      localStorage.setItem('onePiecePirates', JSON.stringify(pirates));
+      if (typeof renderPirates === 'function') renderPirates();
+      if (typeof syncToFirebase === 'function') syncToFirebase();
+    }
+  }
+
+  setCurrentUser(user);
+  return user;
+}
+
 // Lấy danh sách tài khoản
 function getAccounts() {
   const saved = localStorage.getItem(ACCOUNTS_KEY);
@@ -57,7 +97,7 @@ function login(username, password) {
   }
   
   setCurrentUser(account);
-  return { success: true, user: account };
+  return { success: true, user: recordLoginStreak(account) };
 }
 
 // Đăng xuất
@@ -158,6 +198,7 @@ function updateAuthUI() {
   const headerAvatar = document.getElementById('headerAvatar');
   const headerUserName = document.getElementById('headerUserName');
   const adminOnlyButtons = document.querySelectorAll('.admin-only');
+  const userOnlyButtons = document.querySelectorAll('.user-only');
   
   if (!loginBtn) return;
   
@@ -174,14 +215,16 @@ function updateAuthUI() {
       
       // Cập nhật avatar
       if (headerAvatar) {
-        if (user.avatar) {
-          headerAvatar.innerHTML = `<img src="${user.avatar}" alt="Avatar">`;
+        const userAvatar = safeImageUrl(user.avatar);
+        if (userAvatar) {
+          headerAvatar.innerHTML = `<img src="${escapeHtml(userAvatar)}" alt="Avatar">`;
         } else {
           // Kiểm tra pirate liên kết
           const pirates = JSON.parse(localStorage.getItem('onePiecePirates') || '[]');
           const linkedPirate = pirates.find(p => p.name === user.pirateId);
-          if (linkedPirate && linkedPirate.image) {
-            headerAvatar.innerHTML = `<img src="${linkedPirate.image}" alt="Avatar">`;
+          const pirateAvatar = safeImageUrl(linkedPirate && linkedPirate.image);
+          if (pirateAvatar) {
+            headerAvatar.innerHTML = `<img src="${escapeHtml(pirateAvatar)}" alt="Avatar">`;
           } else {
             headerAvatar.innerHTML = user.role === 'admin' ? '👑' : '👤';
           }
@@ -194,6 +237,15 @@ function updateAuthUI() {
       adminOnlyButtons.forEach(btn => {
         btn.style.display = user.role === 'admin' ? 'inline-flex' : 'none';
       });
+      userOnlyButtons.forEach(btn => {
+        btn.style.display = user.role === 'admin' ? 'none' : 'inline-flex';
+      });
+      const stats = document.getElementById('studentHeaderStats');
+      if (stats && user.role !== 'admin') {
+        const pirate = JSON.parse(localStorage.getItem('onePiecePirates') || '[]').find(item => item.name === user.pirateId);
+        const bounty = pirate?.bounty || 0;
+        stats.textContent = `🔥 ${user.loginStreak || 0} ngày · 💰 ${bounty >= 1000 ? (bounty / 1000).toFixed(1) + 'K' : bounty}฿`;
+      }
     }
   } else {
     // Chưa đăng nhập - hiện nút login, ẩn user info và admin buttons
@@ -204,10 +256,17 @@ function updateAuthUI() {
         btn.style.display = 'none';
       });
     }
+    if (userOnlyButtons) userOnlyButtons.forEach(btn => { btn.style.display = 'none'; });
   }
+}
+
+function openStudentFeature(feature) {
+  window.location.href = `user.html?focus=${feature}`;
 }
 
 // Khởi tạo auth UI khi trang load
 document.addEventListener('DOMContentLoaded', function() {
+  const user = getCurrentUser();
+  if (user) recordLoginStreak(user);
   updateAuthUI();
 });

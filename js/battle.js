@@ -145,6 +145,10 @@ function saveBattleData(data) {
   syncBattleToFirebase(data);
 }
 
+function getBattleFirebasePath(pirateName) {
+  return 'sharedData/battleData/' + encodeURIComponent(pirateName);
+}
+
 // Sync battle data lên Firebase
 async function syncBattleToFirebase(data) {
   if (typeof database !== 'undefined' && database) {
@@ -154,7 +158,7 @@ async function syncBattleToFirebase(data) {
       const userPirate = pirates.find(p => p.name === user.pirateId);
       if (userPirate) {
         try {
-          const path = 'battleData/' + userPirate.name;
+          const path = getBattleFirebasePath(userPirate.name);
           console.log('[BATTLE SYNC] Đang sync lên Firebase path:', path);
           console.log('[BATTLE SYNC] Data sync:', {
             boss: BOSS_LIST[data.currentBossIndex]?.level,
@@ -267,7 +271,7 @@ async function loadBattleDataFromFirebase() {
     return getBattleData();
   }
   
-  const path = 'battleData/' + userPirate.name;
+  const path = getBattleFirebasePath(userPirate.name);
   console.log('[BATTLE SYNC] Đang load từ Firebase path:', path);
   
   try {
@@ -292,14 +296,18 @@ async function loadBattleDataFromFirebase() {
       };
       
       console.log('[BATTLE SYNC] ✅ Load thành công - Boss cấp', BOSS_LIST[fullData.currentBossIndex]?.level);
-      localStorage.setItem(BATTLE_KEY, JSON.stringify(fullData));
+        localStorage.setItem(BATTLE_KEY, JSON.stringify(fullData));
       return fullData;
     } else {
       console.log('[BATTLE SYNC] ⚠️ Chưa có data trên Firebase, dùng localStorage');
       return getBattleData();
     }
   } catch (error) {
-    console.error('[BATTLE SYNC] ❌ Lỗi load từ Firebase:', error.message);
+    if (error.code === 'PERMISSION_DENIED' || error.message.includes('permission_denied')) {
+      console.warn('[BATTLE SYNC] Firebase chưa cho phép sharedData/battleData, dùng localStorage');
+    } else {
+      console.error('[BATTLE SYNC] ❌ Lỗi load từ Firebase:', error.message);
+    }
     console.log('[BATTLE SYNC] Fallback về localStorage');
     return getBattleData();
   }
@@ -317,6 +325,12 @@ function resetDailyAttacksIfNeeded(battleData) {
     saveBattleData(battleData);
   }
   return battleData;
+}
+
+function resetBattleProgress() {
+  if (!window.confirm('Đặt lại toàn bộ tiến độ battle về Boss cấp 1?')) return;
+  localStorage.removeItem(BATTLE_KEY);
+  renderBattle();
 }
 
 // Render Battle UI

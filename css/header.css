@@ -73,6 +73,13 @@
   flex-wrap: wrap;
 }
 
+.student-header-stats {
+  color: #f1c40f;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .header-btn {
   background: rgba(255, 255, 255, 0.25);
   border: 3px solid rgba(255, 255, 255, 0.4);

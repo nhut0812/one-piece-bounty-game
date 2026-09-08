@@ -79,7 +79,28 @@
             <div class="stat-value" id="statRanking">-</div>
             <div class="stat-label">Xếp Hạng</div>
           </div>
+            <div class="stat-item">
+              <div class="stat-icon">🔥</div>
+              <div class="stat-value" id="statLoginStreak">0 ngày</div>
+              <div class="stat-label">Chuỗi đăng nhập</div>
+            </div>
         </div>
+      </section>
+
+      <!-- Progress and achievements -->
+      <section class="progress-section" id="progressSection" style="display: none;">
+        <h3>🌟 Tiến Trình Hải Tặc</h3>
+        <div class="progress-summary">
+          <strong id="studentLevel">Level 1</strong>
+          <span id="studentXpText">0 / 100 XP</span>
+        </div>
+        <div class="xp-track"><div id="studentXpBar" class="xp-bar"></div></div>
+        <div id="achievementList" class="achievement-list"></div>
+      </section>
+
+      <section class="learning-history-section" id="learningHistorySection" style="display: none;">
+        <h3>📚 Lịch Sử Học Tập</h3>
+        <div id="learningHistory" class="learning-history"></div>
       </section>
 
       <!-- Reward Exchange Section -->
@@ -92,6 +113,13 @@
         <div class="rewards-grid" id="rewardsGrid">
           <p style="text-align: center; grid-column: 1/-1;">Đang tải phần thưởng...</p>
         </div>
+      </section>
+
+      <section class="chest-section" id="chestSection" style="display: none;">
+        <h3>🧰 Rương Phần Thưởng</h3>
+        <p>Mở rương bằng 100฿ để nhận vật phẩm ngẫu nhiên.</p>
+        <button class="btn-filter" onclick="openRewardChest()">🎁 Mở Rương (100฿)</button>
+        <div id="chestInventory" class="chest-inventory"></div>
       </section>
 
       <!-- Exchange History Section -->
@@ -160,6 +188,30 @@
           </div>
           <button class="btn-filter" onclick="loadQuestsByFilter()">🔍 Xem Nhiệm Vụ</button>
         </div>
+      </section>
+
+      <section class="daily-section" id="dailySection">
+        <h3>📅 Nhiệm Vụ Hôm Nay</h3>
+        <div id="dailyTaskList"></div>
+        <div class="daily-progress-track"><div id="dailyProgressBar"></div></div>
+        <p id="dailyProgressText">Đang tải tiến độ...</p>
+        <button class="btn-filter" onclick="openQuickQuiz()">⚡ Quiz Nhanh 5 Câu</button>
+      </section>
+
+      <section class="island-section" id="islandSection">
+        <h3>🗺️ Bản Đồ Hành Trình</h3>
+        <div id="islandMap" class="island-map"></div>
+      </section>
+
+      <section class="leaderboard-section" id="leaderboardSection">
+        <h3>🏅 Bảng Xếp Hạng</h3>
+        <div class="leaderboard-filters">
+          <select id="leaderboardGrade"><option value="">Tất cả lớp</option><option value="3">Lớp 3</option><option value="4">Lớp 4</option><option value="5">Lớp 5</option></select>
+          <select id="leaderboardSubject"><option value="">Tất cả môn</option><option value="tin-hoc">Tin học</option><option value="cong-nghe">Công nghệ</option></select>
+          <select id="leaderboardPeriod"><option value="all">Tất cả</option><option value="week">Tuần</option><option value="month">Tháng</option></select>
+          <button class="btn-filter" onclick="renderStudentLeaderboard()">Xem</button>
+        </div>
+        <div id="studentLeaderboard"></div>
       </section>
 
       <!-- Regular Quests Section -->
@@ -343,14 +395,21 @@
   <script>
     // Kiểm tra đăng nhập
     document.addEventListener('DOMContentLoaded', function() {
-      const user = getCurrentUser();
+      let user = getCurrentUser();
       
       if (!user) {
         window.location.href = 'index.html';
         return;
       }
       
+      user = recordLoginStreak(user);
       loadUserProfile(user);
+      if (typeof renderDailyTasks === 'function') renderDailyTasks();
+      renderIslandMap(user);
+      renderStudentLeaderboard();
+      const focus = new URLSearchParams(window.location.search).get('focus');
+      if (focus === 'daily') setTimeout(() => document.getElementById('dailySection')?.scrollIntoView({ behavior: 'smooth' }), 300);
+      if (focus === 'quick') setTimeout(() => { document.getElementById('dailySection')?.scrollIntoView({ behavior: 'smooth' }); openQuickQuiz(); }, 300);
     });
 
     // Load thông tin user
@@ -477,6 +536,8 @@
         document.getElementById('statRank').textContent = rank.name;
         document.getElementById('statCrew').textContent = pirate.crew;
         document.getElementById('statRanking').textContent = '#' + ranking + '/' + pirates.length;
+        document.getElementById('statLoginStreak').textContent = (user.loginStreak || 0) + ' ngày';
+        renderStudentProgress(user, pirate);
       } else {
         pirateContainer.innerHTML = `
           <div class="no-pirate-card">
@@ -493,6 +554,117 @@
       if (bounty >= 1000000) return (bounty / 1000000).toFixed(1) + 'M';
       if (bounty >= 1000) return (bounty / 1000).toFixed(1) + 'K';
       return bounty.toString();
+    }
+
+    function renderStudentProgress(user, pirate) {
+      const progressSection = document.getElementById('progressSection');
+      const historySection = document.getElementById('learningHistorySection');
+      const chestSection = document.getElementById('chestSection');
+      if (!progressSection || !pirate) return;
+
+      const level = Math.floor(Math.max(0, pirate.bounty) / 100) + 1;
+      const xp = Math.max(0, pirate.bounty) % 100;
+      document.getElementById('studentLevel').textContent = `Level ${level}`;
+      document.getElementById('studentXpText').textContent = `${xp} / 100 XP`;
+      document.getElementById('studentXpBar').style.width = `${xp}%`;
+
+      const submissions = JSON.parse(localStorage.getItem('onePieceSubmissions') || '[]');
+      const approved = submissions.filter(item => item.studentName === pirate.name && item.status === 'approved').length;
+      const chestItems = JSON.parse(localStorage.getItem('onePieceChestItems') || '{}')[pirate.name] || [];
+      const battle = JSON.parse(localStorage.getItem('onePieceBattleData') || '{}');
+      const achievements = [
+        { icon: '🔥', text: 'Chuỗi 3 ngày', earned: (user.loginStreak || 0) >= 3 },
+        { icon: '📚', text: 'Bài học đầu tiên', earned: approved >= 1 },
+        { icon: '💰', text: 'Bounty 1K', earned: pirate.bounty >= 1000 },
+        { icon: '⚔️', text: 'Hạ boss đầu tiên', earned: (battle.totalBossesDefeated || 0) >= 1 },
+        { icon: '🎁', text: 'Mở rương', earned: chestItems.length >= 1 }
+      ];
+      document.getElementById('achievementList').innerHTML = achievements.map(item =>
+        `<span class="achievement ${item.earned ? 'earned' : ''}">${item.icon} ${item.text}</span>`
+      ).join('');
+      progressSection.style.display = 'block';
+      historySection.style.display = 'block';
+      chestSection.style.display = 'block';
+      renderLearningHistory(pirate);
+      renderChestInventory(pirate.name);
+    }
+
+    function renderIslandMap(user) {
+      const map = document.getElementById('islandMap');
+      if (!map) return;
+      const submissions = JSON.parse(localStorage.getItem('onePieceSubmissions') || '[]').filter(item => item.studentName === user.pirateId && item.status === 'approved').length;
+      const attempts = Object.keys(JSON.parse(localStorage.getItem('onePieceQuestAttempts') || '{}')).filter(key => key.includes(user.pirateId || '')).length;
+      const progress = submissions + attempts;
+      const config = JSON.parse(localStorage.getItem('onePieceLearningConfig') || '{}');
+      const thresholds = config.islands || [0, 2, 5, 9, 14];
+      const islands = [
+        ['🏝️', 'Đảo Khởi Đầu'], ['🌊', 'Đảo Tin Học'], ['⚙️', 'Đảo Công Nghệ'], ['🏴‍☠️', 'Grand Line'], ['👑', 'Raftel Tri Thức']
+      ].map((island, index) => [...island, thresholds[index] || 0]);
+      map.innerHTML = islands.map(([icon, name, needed], index) => `<div class="island ${progress >= needed ? 'open' : 'locked'}"><div class="island-icon">${progress >= needed ? icon : '🔒'}</div><strong>${index + 1}. ${name}</strong><small>${progress >= needed ? 'Đã mở' : `Cần ${needed} hoạt động`}</small></div>`).join('');
+    }
+
+    function renderStudentLeaderboard() {
+      const target = document.getElementById('studentLeaderboard');
+      if (!target) return;
+      const grade = document.getElementById('leaderboardGrade').value;
+      const subject = document.getElementById('leaderboardSubject').value;
+      const accounts = JSON.parse(localStorage.getItem('onePieceAccounts') || '[]');
+      const pirates = JSON.parse(localStorage.getItem('onePiecePirates') || '[]');
+      const rows = accounts.filter(account => account.role !== 'admin' && (!grade || String(account.grade || '') === grade) && (!subject || account.subject === subject)).map(account => {
+        const pirate = pirates.find(item => item.name === account.pirateId);
+        return pirate ? { nickname: account.nickname || account.username, bounty: pirate.bounty || 0 } : null;
+      }).filter(Boolean).sort((a, b) => b.bounty - a.bounty).slice(0, 10);
+      target.innerHTML = rows.length ? rows.map((row, index) => `<div class="leaderboard-row"><strong>${index + 1}. ${row.nickname}</strong><span>${formatBounty(row.bounty)}฿</span></div>`).join('') : '<p>Chưa có dữ liệu xếp hạng.</p>';
+    }
+
+    function renderLearningHistory(pirate) {
+      const history = document.getElementById('learningHistory');
+      const submissions = JSON.parse(localStorage.getItem('onePieceSubmissions') || '[]')
+        .filter(item => item.studentName === pirate.name);
+      const exchanges = JSON.parse(localStorage.getItem('onePieceExchanges') || '[]')
+        .filter(item => item.pirateName === pirate.name);
+      const entries = [
+        ...submissions.map(item => ({ date: item.submittedAt, text: `📝 ${item.questTitle}`, status: item.status })),
+        ...exchanges.map(item => ({ date: item.timestamp, text: `🎁 Đổi phần thưởng`, status: item.status }))
+      ].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 8);
+      history.innerHTML = entries.length ? entries.map(entry =>
+        `<div class="history-row"><span>${entry.text}</span><small>${new Date(entry.date).toLocaleDateString('vi-VN')} · ${entry.status}</small></div>`
+      ).join('') : '<p>Chưa có hoạt động học tập.</p>';
+    }
+
+    function renderChestInventory(pirateName) {
+      const inventory = document.getElementById('chestInventory');
+      const items = JSON.parse(localStorage.getItem('onePieceChestItems') || '{}')[pirateName] || [];
+      inventory.innerHTML = items.length ? items.slice(-8).map(item =>
+        `<span class="chest-item" title="${item.type}">${item.icon} ${item.name}</span>`
+      ).join('') : '<p>Chưa có vật phẩm. Hãy mở rương!</p>';
+    }
+
+    async function openRewardChest() {
+      const user = getCurrentUser();
+      const piratesData = JSON.parse(localStorage.getItem('onePiecePirates') || '[]');
+      const index = piratesData.findIndex(item => item.name === user?.pirateId);
+      if (index < 0) return showToast('warning', '⚠️ Bạn chưa có hải tặc liên kết!');
+      if (piratesData[index].bounty < 100) return showToast('warning', '⚠️ Cần 100฿ để mở rương!');
+      if (!confirm('Mở rương với 100฿?')) return;
+
+      const loot = [
+        { icon: '🖼️', name: 'Avatar Hải Tặc', type: 'avatar' },
+        { icon: '🪪', name: 'Khung Bounty', type: 'frame' },
+        { icon: '🏅', name: 'Danh Hiệu Chiến Binh', type: 'title' },
+        { icon: '✨', name: 'Hiệu Ứng Lên Cấp', type: 'effect' },
+        { icon: '⚔️', name: 'Vũ Khí Bí Ẩn', type: 'weapon' }
+      ];
+      const item = loot[Math.floor(Math.random() * loot.length)];
+      piratesData[index].bounty -= 100;
+      localStorage.setItem('onePiecePirates', JSON.stringify(piratesData));
+      if (typeof pirates !== 'undefined') pirates = piratesData;
+      const chestItems = JSON.parse(localStorage.getItem('onePieceChestItems') || '{}');
+      chestItems[user.pirateId] = [...(chestItems[user.pirateId] || []), { ...item, obtainedAt: new Date().toISOString() }];
+      localStorage.setItem('onePieceChestItems', JSON.stringify(chestItems));
+      if (typeof syncToFirebase === 'function') await syncToFirebase();
+      showToast('success', `🎉 Mở rương nhận được ${item.icon} ${item.name}!`);
+      loadLinkedPirate(user);
     }
 
     // Modal functions
@@ -796,6 +968,9 @@
 
       if (pirate.bounty < reward.points) {
         showToast('warning', '⚠️ Bạn không đủ Bounty!');
+        if (reward.points - pirate.bounty <= 100) {
+          showToast('info', `💡 Chỉ còn ${(reward.points - pirate.bounty).toLocaleString()}฿ nữa là đổi được ${reward.name}!`);
+        }
         return;
       }
 

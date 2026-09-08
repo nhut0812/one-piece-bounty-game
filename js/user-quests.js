@@ -7,6 +7,82 @@ const SUBMISSIONS_KEY = 'onePieceSubmissions';
 const PIRATES_KEY = 'onePiecePirates';
 const CREWS_KEY = 'onePieceCrews';
 const QUEST_ATTEMPTS_KEY = 'onePieceQuestAttempts';
+let quickQuizQuestions = [];
+
+function todayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function getDailyProgress(user) {
+  const progress = JSON.parse(localStorage.getItem('onePieceDailyProgress') || '{}');
+  return progress[user?.username] || { date: todayKey(), quizDone: false, submitted: false, score: 0 };
+}
+
+function saveDailyProgress(user, value) {
+  const progress = JSON.parse(localStorage.getItem('onePieceDailyProgress') || '{}');
+  progress[user.username] = value;
+  localStorage.setItem('onePieceDailyProgress', JSON.stringify(progress));
+}
+
+function renderDailyTasks() {
+  const user = getCurrentUser();
+  const list = document.getElementById('dailyTaskList');
+  if (!user || !list) return;
+  let progress = getDailyProgress(user);
+  if (progress.date !== todayKey()) progress = { date: todayKey(), quizDone: false, submitted: false, score: 0 };
+  saveDailyProgress(user, progress);
+  const tasks = [
+    { done: progress.quizDone, text: 'Hoàn thành một quiz nhanh' },
+    { done: progress.submitted, text: 'Nộp một bài học' },
+    { done: progress.score >= 80, text: 'Đạt ít nhất 80 điểm' }
+  ];
+  list.innerHTML = tasks.map(task => `<div class="daily-task ${task.done ? 'done' : ''}">${task.done ? '✅' : '⬜'} ${task.text}</div>`).join('');
+  const completed = tasks.filter(task => task.done).length;
+  document.getElementById('dailyProgressBar').style.width = `${completed / tasks.length * 100}%`;
+  const config = JSON.parse(localStorage.getItem('onePieceLearningConfig') || '{}');
+  if (completed === 3 && progress.rewardClaimedDate !== todayKey()) {
+    const pirates = JSON.parse(localStorage.getItem(PIRATES_KEY) || '[]');
+    const pirate = pirates.find(item => item.name === user.pirateId);
+    if (pirate) {
+      pirate.bounty += config.dailyCompletionReward || 100;
+      progress.rewardClaimedDate = todayKey();
+      localStorage.setItem(PIRATES_KEY, JSON.stringify(pirates));
+      localStorage.setItem('onePieceDailyProgress', JSON.stringify({ ...JSON.parse(localStorage.getItem('onePieceDailyProgress') || '{}'), [user.username]: progress }));
+      if (typeof syncToFirebase === 'function') syncToFirebase();
+      showToast('success', `🎉 Hoàn thành nhiệm vụ ngày! +${config.dailyCompletionReward || 100}฿`);
+    }
+  }
+  document.getElementById('dailyProgressText').textContent = `${completed}/3 nhiệm vụ hoàn thành hôm nay · Thưởng: ${completed === 3 ? '+' + (config.dailyCompletionReward || 100) + '฿' : 'Hoàn thành đủ để nhận thưởng'}`;
+}
+
+function openQuickQuiz() {
+  const user = getCurrentUser();
+  const progress = getDailyProgress(user);
+  if (progress.date === todayKey() && progress.quizDone) return showToast('info', '✅ Bạn đã hoàn thành Quiz nhanh hôm nay!');
+  const quests = JSON.parse(localStorage.getItem(QUESTS_KEY) || '[]').filter(q => q.questions?.length);
+  const questions = quests.flatMap(q => q.questions.map(question => ({ ...question, source: q.title })));
+  quickQuizQuestions = questions.sort(() => Math.random() - 0.5).slice(0, 5);
+  if (!quickQuizQuestions.length) {
+    quickQuizQuestions = [
+      { question: 'Thiết bị nào dùng để nhập văn bản?', options: ['Bàn phím', 'Màn hình', 'Loa', 'Máy in'], correctAnswer: 0 },
+      { question: '1 KB bằng bao nhiêu byte?', options: ['100', '512', '1024', '2048'], correctAnswer: 2 },
+      { question: 'Biểu tượng nào thường dùng để lưu tệp?', options: ['📁', '💾', '🔍', '🖨️'], correctAnswer: 1 },
+      { question: 'Mạng Internet dùng để làm gì?', options: ['Kết nối và trao đổi thông tin', 'Chỉ để chơi game', 'Chỉ để in tài liệu', 'Chỉ để nghe nhạc'], correctAnswer: 0 },
+      { question: 'Mật khẩu tốt nên có đặc điểm nào?', options: ['Chỉ có tên', 'Rất ngắn', 'Kết hợp nhiều loại ký tự', 'Dùng ngày sinh'], correctAnswer: 2 }
+    ];
+  }
+  if (!quickQuizQuestions.length) return showToast('warning', '⚠️ Chưa có câu hỏi để chơi!');
+  document.getElementById('quizQuestIndex').value = '-1';
+  document.getElementById('quizQuestTitle').value = 'Quiz nhanh hằng ngày';
+  document.getElementById('quizModalTitle').textContent = '⚡ Quiz Nhanh Hằng Ngày';
+  document.getElementById('quizQuestTitleDisplay').textContent = 'Quiz nhanh hằng ngày';
+  document.getElementById('quizQuestionCount').textContent = quickQuizQuestions.length;
+  document.getElementById('quizRewardPerQuestion').textContent = '80';
+  document.getElementById('quizPenaltyPerQuestion').textContent = '0';
+  const container = document.getElementById('quizQuestionsContainer');
+  container.innerHTML = quickQuizQuestions.map((q, index) => `<div class="quiz-question"><div class="quiz-question-header"><strong>Câu ${index + 1}:</strong> ${q.question}</div><div class="quiz-options">${q.options.map((option, optionIndex) => `<label class="quiz-option"><input type="radio" name="question_${index}" value="${optionIndex}" required><span>${option}</span></label>`).join('')}</div><input type="hidden" class="correct-answer" value="${q.correctAnswer}"></div>`).join('');
+  openModal('doQuizModal');
+}
 
 // Load attempts từ Firebase
 async function loadAttemptsFromFirebase() {
@@ -489,7 +565,7 @@ function handleSubmitQuiz(event) {
   
   const quests = JSON.parse(localStorage.getItem(QUESTS_KEY) || '[]');
   const regularQuests = quests.filter(q => q.type === 'quiz' || !q.type);
-  const quest = regularQuests[questIndex];
+  const quest = questIndex === -1 ? { rewardPerQuestion: 80, penaltyPerQuestion: 0 } : regularQuests[questIndex];
   
   // Calculate score
   const questions = document.querySelectorAll('.quiz-question');
@@ -516,10 +592,27 @@ function handleSubmitQuiz(event) {
   
   // Update pirate bounty (cho phép âm nếu trừ nhiều)
   const oldBounty = userPirate.bounty || 0;
+  const bestScoreKey = 'onePieceBestQuestScore_' + userPirate.name;
+  const previousBest = Number(localStorage.getItem(bestScoreKey) || 0);
   userPirate.bounty = Math.max(0, oldBounty + totalScore); // Bounty không âm, nhưng có thể giảm
   const actualChange = userPirate.bounty - oldBounty;
   
   localStorage.setItem(PIRATES_KEY, JSON.stringify(pirates));
+
+  if (questIndex === -1) {
+    const progress = getDailyProgress(user);
+    progress.date = todayKey();
+    progress.quizDone = true;
+    progress.score = correctCount * 20;
+    saveDailyProgress(user, progress);
+    if (correctCount === questions.length) {
+      const config = JSON.parse(localStorage.getItem('onePieceLearningConfig') || '{}');
+      userPirate.bounty += config.quickQuizBonus || 50;
+      localStorage.setItem(PIRATES_KEY, JSON.stringify(pirates));
+      showToast('success', `🔥 Trả lời đúng liên tiếp! Bonus +${config.quickQuizBonus || 50}฿`);
+    }
+    if (typeof renderDailyTasks === 'function') renderDailyTasks();
+  }
   
   // Sync ngay pirates lên Firebase để lưu điểm
   if (typeof database !== 'undefined' && database) {
@@ -544,6 +637,13 @@ function handleSubmitQuiz(event) {
   message += `💰 Tổng: ${actualChange >= 0 ? '+' : ''}${actualChange}฿`;
   
   showToast(actualChange >= 0 ? 'success' : 'warning', message);
+  if (totalScore > previousBest) {
+    localStorage.setItem(bestScoreKey, String(totalScore));
+    showToast('success', `🏆 Kỷ lục mới! Điểm cao nhất: ${totalScore}฿`);
+  }
+  if (actualChange > 0) {
+    showToast('success', '🌟 Tuyệt vời! Bạn vừa hoàn thành nhiệm vụ học tập.');
+  }
   
   // Reload quests to update remaining attempts
   loadRegularQuests();
@@ -681,6 +781,11 @@ async function handleSubmitQuest(event) {
     
     // Record attempt
     recordQuestAttempt(questTitle);
+    const dailyProgress = getDailyProgress(user);
+    dailyProgress.date = todayKey();
+    dailyProgress.submitted = true;
+    saveDailyProgress(user, dailyProgress);
+    if (typeof renderDailyTasks === 'function') renderDailyTasks();
     
     closeModal('submitQuestModal');
     showToast('success', '✅ Đã nộp bài thành công! Chờ giáo viên duyệt.');

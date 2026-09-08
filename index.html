@@ -37,6 +37,8 @@
         <button class="header-btn success admin-only" onclick="openModal('addPirateModal')" style="display: none;">👤 Thêm Hải Tặc</button>
         <button class="header-btn warning admin-only" onclick="openModal('bulkBountyModal')" style="display: none;">💰 Công Điểm Hàng Loạt</button>
         <button class="header-btn primary" onclick="showTopPirate()">🎯 Truy Nã Gắt</button>
+        <button class="header-btn success user-only" onclick="openStudentFeature('daily')" style="display: none;">📅 Nhiệm Vụ Hôm Nay</button>
+        <button class="header-btn warning user-only" onclick="openStudentFeature('quick')" style="display: none;">⚡ Quiz Nhanh</button>
       </div>
       <div class="header-auth">
         <!-- Chưa đăng nhập -->
@@ -45,6 +47,7 @@
         <div class="user-info" id="userInfo" style="display: none;">
           <div class="user-avatar-small" id="headerAvatar" onclick="openProfile()">👤</div>
           <span class="user-name" id="headerUserName">User</span>
+          <span class="student-header-stats" id="studentHeaderStats"></span>
           <button class="auth-btn logout-small" onclick="logout()" title="Đăng xuất">🚪</button>
         </div>
       </div>

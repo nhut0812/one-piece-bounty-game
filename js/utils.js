@@ -1,4 +1,25 @@
 // Toast notification system
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, character => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    "'": '&#39;',
+    '"': '&quot;'
+  })[character]);
+}
+
+function safeImageUrl(value) {
+  const url = String(value || '').trim();
+  if (url.startsWith('data:image/')) return url;
+  try {
+    const parsed = new URL(url, window.location.href);
+    return ['http:', 'https:'].includes(parsed.protocol) ? parsed.href : '';
+  } catch (error) {
+    return '';
+  }
+}
+
 function showToast(type, message) {
   // Tạo toast element
   const toast = document.createElement('div');

@@ -78,10 +78,10 @@ async function syncToFirebase() {
       rewards: rewards,
       exchanges: exchanges,
       lastUpdate: Date.now(),
-      lastUserId: userId
+      lastUserId: userId,
     };
     
-    await database.ref('sharedData').set(data);
+    await database.ref('sharedData').update(data);
     console.log('☁️ Synced to Firebase:', pirates.length, 'pirates,', accounts.length, 'accounts,', quests.length, 'quests,', rewards.length, 'rewards,', exchanges.length, 'exchanges');
     showSyncNotification(`✅ Đã đồng bộ ${pirates.length} hải tặc, ${accounts.length} tài khoản, ${quests.length} nhiệm vụ, ${rewards.length} phần thưởng, ${exchanges.length} giao dịch lên cloud`);
   } catch (error) {
@@ -104,10 +104,11 @@ async function loadFromFirebase(forceLoad = false) {
     if (data && data.pirates && data.pirates.length > 0) {
       const localLastUpdate = localStorage.getItem('lastLocalUpdate') || 0;
       const cloudLastUpdate = data.lastUpdate || 0;
+          const hasNewerData = forceLoad || cloudLastUpdate > localLastUpdate;
       
-      // Khi bật sync lần đầu (forceLoad), luôn ưu tiên cloud nếu có dữ liệu
-      if (forceLoad || cloudLastUpdate > localLastUpdate) {
-        pirates = data.pirates;
+      // Chỉ thay local bằng cloud khi cloud mới hơn, trừ khi được yêu cầu ép tải.
+        if (hasNewerData) {
+          pirates = data.pirates;
         rankImages = data.rankImages || {};
         crewImages = data.crewImages || {};
         if (data.crews) crews = data.crews;
@@ -126,7 +127,6 @@ async function loadFromFirebase(forceLoad = false) {
           
           localStorage.setItem('onePieceAccounts', JSON.stringify(finalAccounts));
         }
-        localStorage.setItem('lastLocalUpdate', cloudLastUpdate);
         localStorage.setItem('onePiecePirates', JSON.stringify(pirates));
         localStorage.setItem('onePieceRankImages', JSON.stringify(rankImages));
         localStorage.setItem('onePieceCrewImages', JSON.stringify(crewImages));
@@ -195,66 +195,14 @@ function listenToFirebase() {
     if (isSyncing) return; // Skip nếu đang sync
     
     const data = snapshot.val();
-    if (data && data.pirates) {
-      // Chỉ update nếu là từ device khác
-      if (data.lastUserId === userId) return;
-      
-      const localLastUpdate = localStorage.getItem('lastLocalUpdate') || 0;
-      const cloudLastUpdate = data.lastUpdate || 0;
-      
-      if (cloudLastUpdate > localLastUpdate) {
-        pirates = data.pirates;
-        rankImages = data.rankImages || {};
-        crewImages = data.crewImages || {};
-        if (data.crews) crews = data.crews;
-        if (data.accounts) {
-          // Đảm bảo luôn có admin account
-          const hasAdmin = data.accounts.some(a => a.role === 'admin');
-          let finalAccounts = data.accounts;
-          
-          if (!hasAdmin) {
-            finalAccounts = [
-              { username: 'admin', email: 'admin@onepiece.com', password: 'admin123', role: 'admin', status: 'active', createdAt: '2025-01-01' },
-              ...data.accounts
-            ];
-          }
-          
-          localStorage.setItem('onePieceAccounts', JSON.stringify(finalAccounts));
-        }
-        localStorage.setItem('lastLocalUpdate', cloudLastUpdate);
-        localStorage.setItem('onePiecePirates', JSON.stringify(pirates));
-        localStorage.setItem('onePieceRankImages', JSON.stringify(rankImages));
-        localStorage.setItem('onePieceCrewImages', JSON.stringify(crewImages));
-        if (data.crews) localStorage.setItem('onePieceCrews', JSON.stringify(crews));
-        if (data.quests) localStorage.setItem('onePieceQuests', JSON.stringify(data.quests));
-        if (data.submissions) localStorage.setItem('onePieceSubmissions', JSON.stringify(data.submissions));
-        if (data.questAttempts) localStorage.setItem('onePieceQuestAttempts', JSON.stringify(data.questAttempts));
-        
-        // Chỉ gọi renderPirates nếu hàm tồn tại (không có trong battle.html)
-        if (typeof renderPirates === 'function') {
-          renderPirates();
-        }
-        
-        // Reload submissions in admin panel if available
-        if (typeof submissions !== 'undefined' && data.submissions) {
-          submissions = data.submissions;
-          if (typeof renderSubmissions === 'function') {
-            renderSubmissions();
-          }
-        }
-        
-        // Reload quests in admin panel if available
-        if (typeof quests !== 'undefined' && data.quests) {
-          quests = data.quests;
-          if (typeof renderQuests === 'function') {
-            renderQuests();
-          }
-        }
-        
+    if (!data || !data.pirates || data.lastUserId === userId) return;
+
+    loadFromFirebase(false).then(loaded => {
+      if (loaded) {
         console.log('🔄 Realtime update from Firebase');
         showSyncNotification('🔄 Dữ liệu đã cập nhật');
       }
-    }
+    });
   });
 }
 
@@ -305,8 +253,8 @@ function proceedWithSync() {
   
   console.log('✅ Bắt đầu đồng bộ...');
   
-  // Luôn load từ cloud trước khi bật sync
-  loadFromFirebase(true).then((loaded) => {
+  // Chọn dữ liệu mới hơn trước khi bật sync để không ghi đè thay đổi local.
+  loadFromFirebase().then((loaded) => {
     if (!loaded) {
       // Chỉ upload khi cloud thực sự trống
       console.log('📤 Cloud trống, upload dữ liệu local lên...');
@@ -443,7 +391,8 @@ function closeSyncPrompt() {
 window.addEventListener('load', () => {
   // Khôi phục trạng thái sync từ localStorage trước
   const savedSyncState = localStorage.getItem('firebaseSyncEnabled');
-  syncEnabled = savedSyncState === 'true';
+  // Thiết bị mới tự bật sync để dữ liệu dùng chung giữa nhiều máy.
+  syncEnabled = savedSyncState === null || savedSyncState === 'true';
   
   // Cập nhật button ngay lập tức
   updateSyncButton();
@@ -453,9 +402,9 @@ window.addEventListener('load', () => {
     const initialized = initFirebase();
     
     if (initialized && syncEnabled) {
-      // Khi mở trang, nếu sync đang bật, load từ cloud ngay
+      // Khi mở trang, nếu sync đang bật, chọn dữ liệu mới hơn.
       console.log('🔄 Sync đang bật, đang load dữ liệu từ cloud...');
-      loadFromFirebase(true).then((loaded) => {
+      loadFromFirebase().then((loaded) => {
         if (loaded) {
           console.log('✅ Đã load dữ liệu từ cloud khi khởi động');
         }

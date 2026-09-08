@@ -181,6 +181,7 @@ function filterByBounty(range) {
 // Render hải tặc
 function renderPirates(filter = 'all') {
   const grid = document.getElementById("pirateGrid");
+  if (!grid) return;
   grid.innerHTML = "";
 
   let filteredPirates = pirates;
@@ -225,8 +226,9 @@ function renderPirates(filter = 'all') {
   filteredPirates.forEach((p, index) => {
     const realIndex = pirates.indexOf(p);
     const rank = getRankByBounty(p.bounty);
-    const avatarContent = p.image ? 
-      `<img src="${p.image}" alt="${p.name}">` : 
+    const imageUrl = safeImageUrl(p.image);
+    const avatarContent = imageUrl ?
+      `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(p.name)}">` :
       (rankImages[rank.type] ? `<img src="${rankImages[rank.type]}" alt="${rank.name}">` : rank.icon);
 
     // Kiểm tra xem user hiện tại có phải admin không
@@ -241,7 +243,7 @@ function renderPirates(filter = 'all') {
       <div class="card-icon">${rank.icon}</div>
       <div class="avatar" ${isAdmin ? `onclick="changeAvatar(${realIndex})" style="cursor: pointer;" title="Nhấn để đổi ảnh đại diện"` : ''}>${avatarContent}</div>
       ${isAdmin ? `<input type="file" id="avatar-input-${realIndex}" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event, ${realIndex})">` : ''}
-      <div class="name">${p.name}</div>
+      <div class="name">${escapeHtml(p.name)}</div>
       <div style="text-align: center;">
         <div class="crew-badge" style="background: ${crewInfo.color}; color: white; padding: 5px 12px; border-radius: 12px; font-size: 13px; font-weight: 900; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
           ${crewImages[crewInfo.name] ? `<img src="${crewImages[crewInfo.name]}" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;">` : crewInfo.icon} ${crewInfo.name}
@@ -279,6 +281,9 @@ function changeBounty(index, delta) {
     // Hiệu ứng thăng hạng
     if (pirates[index].bounty > oldRank.minBounty) {
       showRankUpEffect(pirates[index].name, newRank.name);
+      if (typeof showToast === 'function') {
+        showToast('success', `🎉 Chúc mừng! Bạn đã lên cấp ${newRank.name}!`);
+      }
     }
   }
   
@@ -495,7 +500,7 @@ function loadFromLocalStorage() {
   if (saved) {
     pirates = JSON.parse(saved);
   } else {
-    // Lần đầu chạy - lưu dữ liệu mẫu vào localStorage
+    // Lần đầu chạy, bắt đầu với danh sách rỗng.
     saveToLocalStorage();
   }
   if (savedRanks) {

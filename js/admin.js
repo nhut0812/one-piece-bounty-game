@@ -30,6 +30,7 @@ let rewards = [];
 let exchanges = [];
 let weapons = [];
 let userWeapons = {};
+let learningConfig = { dailyCompletionReward: 100, quickQuizBonus: 50, islands: [0, 2, 5, 9, 14] };
 
 // Default crews
 const defaultCrews = [
@@ -104,6 +105,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 async function loadData() {
+  const savedLearningConfig = localStorage.getItem('onePieceLearningConfig');
+  if (savedLearningConfig) learningConfig = { ...learningConfig, ...JSON.parse(savedLearningConfig) };
   // Load pirates
   const savedPirates = localStorage.getItem(PIRATES_KEY);
   if (savedPirates) {
@@ -318,8 +321,8 @@ function saveData() {
   localStorage.setItem(EXCHANGES_KEY, JSON.stringify(exchanges));
   localStorage.setItem(WEAPONS_KEY, JSON.stringify(weapons));
   localStorage.setItem(USER_WEAPONS_KEY, JSON.stringify(userWeapons));
-  // Cập nhật timestamp để Firebase không ghi đè
   localStorage.setItem('lastLocalUpdate', Date.now().toString());
+  localStorage.setItem('onePieceLearningConfig', JSON.stringify(learningConfig));
   console.log('Saved rankImages:', rankImages);
   
   // Xác nhận đã lưu
@@ -341,6 +344,7 @@ function initTabs() {
     'submissions': '📸 Duyệt Bài Nộp',
     'rewards': '🎁 Quản lý Phần Thưởng',
     'weapons': '⚔️ Quản lý Vũ Khí'
+    , 'learning': '🧭 Gamification Học Tập'
   };
   
   navItems.forEach(item => {
@@ -398,6 +402,27 @@ function renderAll() {
   renderRewards();
   renderExchanges();
   updateStats();
+  renderLearningConfig();
+}
+
+function renderLearningConfig() {
+  const reward = document.getElementById('dailyCompletionReward');
+  const bonus = document.getElementById('quickQuizBonus');
+  const list = document.getElementById('islandConfigList');
+  if (!reward || !bonus || !list) return;
+  reward.value = learningConfig.dailyCompletionReward;
+  bonus.value = learningConfig.quickQuizBonus;
+  const names = ['Đảo Khởi Đầu', 'Đảo Tin Học', 'Đảo Công Nghệ', 'Grand Line', 'Raftel Tri Thức'];
+  list.innerHTML = names.map((name, index) => `<div class="form-group"><label>${index + 1}. ${name}</label><input class="island-threshold" type="number" min="0" value="${learningConfig.islands[index] || 0}"></div>`).join('');
+}
+
+function saveLearningConfig(event) {
+  event.preventDefault();
+  learningConfig.dailyCompletionReward = Number(document.getElementById('dailyCompletionReward').value) || 0;
+  learningConfig.quickQuizBonus = Number(document.getElementById('quickQuizBonus').value) || 0;
+  learningConfig.islands = Array.from(document.querySelectorAll('.island-threshold')).map(input => Number(input.value) || 0);
+  localStorage.setItem('onePieceLearningConfig', JSON.stringify(learningConfig));
+  showToast('success', '✅ Đã lưu cấu hình gamification!');
 }
 
 function renderPirates() {
@@ -931,6 +956,7 @@ function deleteAllPirates() {
   }
   
   showConfirm(`⚠️ BẠN CÓ CHẮC CHẮN?\n\nXóa tất cả ${pirates.length} hải tặc?\nTất cả tài khoản liên kết cũng sẽ bị xóa.\n\nHành động này KHÔNG THỂ HOÀN TÁC!`, () => {
+    createLocalBackup();
     // Xóa tất cả tài khoản liên kết (trừ admin)
     accounts = accounts.filter(a => a.role === 'admin');
     
@@ -1172,6 +1198,9 @@ function editAccount(index) {
   document.getElementById('accountIndex').value = index;
   document.getElementById('accountUsername').value = account.username;
   document.getElementById('accountEmail').value = account.email;
+  document.getElementById('accountNickname').value = account.nickname || '';
+  document.getElementById('accountGrade').value = account.grade || '';
+  document.getElementById('accountSubject').value = account.subject || '';
   document.getElementById('accountPassword').value = '';
   document.getElementById('accountRole').value = account.role;
   document.getElementById('accountStatus').value = account.status;
@@ -1189,6 +1218,9 @@ function saveAccount(event) {
   const accountData = {
     username: document.getElementById('accountUsername').value,
     email: document.getElementById('accountEmail').value,
+    nickname: document.getElementById('accountNickname').value.trim(),
+    grade: document.getElementById('accountGrade').value,
+    subject: document.getElementById('accountSubject').value,
     role: document.getElementById('accountRole').value,
     status: document.getElementById('accountStatus').value,
     pirateId: pirateIdSelect ? pirateIdSelect.value || null : null,
@@ -1301,6 +1333,7 @@ function importData(event) {
   reader.onload = function(e) {
     try {
       const data = JSON.parse(e.target.result);
+      createLocalBackup();
       
       let newAccountsCreated = 0;
       
@@ -1347,6 +1380,34 @@ function importData(event) {
   event.target.value = '';
 }
 
+function createLocalBackup() {
+  const data = {};
+  for (let index = 0; index < localStorage.length; index++) {
+    const key = localStorage.key(index);
+    data[key] = localStorage.getItem(key);
+  }
+  localStorage.setItem('onePieceLastBackup', JSON.stringify({
+    createdAt: new Date().toISOString(),
+    data
+  }));
+}
+
+function restoreLastBackup() {
+  const backup = localStorage.getItem('onePieceLastBackup');
+  if (!backup) {
+    showToast('warning', '⚠️ Chưa có bản backup gần nhất!');
+    return;
+  }
+
+  showConfirm('Khôi phục dữ liệu trước thao tác gần nhất? Trang sẽ tải lại.', () => {
+    const parsed = JSON.parse(backup);
+    Object.entries(parsed.data || {}).forEach(([key, value]) => {
+      localStorage.setItem(key, value);
+    });
+    location.reload();
+  });
+}
+
 // =====================================================
 // SYNC TO CLOUD (Firebase)
 // =====================================================
@@ -1378,10 +1439,10 @@ async function syncToCloud() {
       rewards: rewards,
       exchanges: exchanges,
       lastUpdate: Date.now(),
-      lastUserId: userId
+      lastUserId: userId,
     };
     
-    await database.ref('sharedData').set(data);
+    await database.ref('sharedData').update(data);
     localStorage.setItem('lastLocalUpdate', Date.now().toString());
     showToast('success', `☁️ Đã đồng bộ ${pirates.length} hải tặc, ${crews.length} băng nhóm, ${accounts.length} tài khoản, ${quests.length} nhiệm vụ, ${submissions.length} bài nộp, ${rewards.length} phần thưởng, ${exchanges.length} lịch sử đổi thưởng và hình ảnh lên cloud!`);
   } catch (error) {

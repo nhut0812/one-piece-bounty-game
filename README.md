@@ -1,133 +1,255 @@
-# 🏴‍☠️ ONE PIECE BOUNTY HUNTER SYSTEM
+# One Piece Bounty Game
 
-Hệ thống quản lý hải tặc với tiền truy nã theo phong cách One Piece.
+Web game học tập cá nhân theo chủ đề One Piece. Học sinh làm nhiệm vụ, trả lời quiz, nhận bounty, mở khóa đảo, đánh boss và đổi phần thưởng.
 
-## 📊 Hệ thống 7 cấp độ
+## Chạy nhanh
 
-| Cấp Độ | Tiền Truy Nã | Icon | Màu sắc |
-|--------|--------------|------|---------|
-| 👶 Tân Binh | 0-99฿ | 👶 | Xám (#95a5a6) |
-| 🏴‍☠️ Hải Tặc | 100-499฿ | 🏴‍☠️ | Xanh (#3498db) |
-| ⭐ Siêu Tân Tinh | 500-999฿ | ⭐ | Cam (#f39c12) |
-| ⚔️ Thất Vũ Hải | 1K-2.9K฿ | ⚔️ | Tím (#9b59b6) |
-| 💪 Tứ Hoàng Phó | 3K-4.9K฿ | 💪 | Đỏ nhạt (#e74c3c) |
-| 👹 Tứ Hoàng | 5K-9.9K฿ | 👹 | Đỏ đậm (#c0392b) |
-| 👑 Vua Hải Tặc | 10K+฿ | 👑 | Vàng (#f1c40f) |
+Không cần build.
 
-## 🎮 Chức năng
-
-### 1. Thêm Hải Tặc
-- Nhập tên hải tặc
-- Upload ảnh đại diện (tùy chọn)
-- Mặc định bắt đầu ở cấp Tân Binh (0฿)
-
-### 2. Quản lý Bounty
-- **+10฿**: Tăng nhẹ tiền truy nã
-- **+100฿**: Tăng mạnh tiền truy nã
-- **-10฿**: Giảm tiền truy nã
-- Tự động format: 100฿ → 1.5K฿ → 10M฿
-
-### 3. Wanted Poster
-- Hiển thị hải tặc có bounty cao nhất
-- Thiết kế poster vintage như trong truyện
-- Hiệu ứng confetti với emoji cướp biển
-
-### 4. Cài Đặt Ảnh Cấp Độ
-- Upload ảnh mặc định cho từng cấp độ
-- Áp dụng tự động khi hải tặc thăng cấp
-- Lưu vào LocalStorage
-
-### 5. Lọc theo cấp độ
-- 8 tab filter: Tất cả + 7 cấp độ
-- Click để xem từng nhóm hải tặc
-- Tự động sắp xếp theo bounty
-
-## 🎨 Giao diện
-
-### Theme màu sắc
-- **Nền**: Gradient xanh đen đại dương (#1a1a2e → #0f3460)
-- **Header**: Gradient đỏ/cam (#c0392b → #e67e22)
-- **Accent**: Cam vàng (#f39c12)
-- **Cards**: Gradient xanh đen với viền màu theo cấp độ
-
-### Hiệu ứng
-- ✨ Confetti với emoji cướp biển (⭐🏴‍☠️)
-- 🎯 Rank-up notification khi thăng cấp
-- 💫 Shimmer và glow effects
-- 🌊 Background animation đại dương
-- 🎪 Bounce, float, pulse animations
-
-## 📁 Cấu trúc file
-
-```
-one-piece/
-├── index.html              # File chính
-├── css/
-│   ├── styles.css         # Base styles & theme
-│   ├── header.css         # Header với gradient đỏ/cam
-│   ├── filters.css        # 8 filter tabs
-│   ├── cards.css          # Pirate cards
-│   ├── modal.css          # Modal base
-│   ├── wanted.css         # Wanted poster style
-│   ├── rank-settings.css  # Settings grid
-│   └── effects.css        # Animations
-└── js/
-    ├── pirates.js         # Dữ liệu & logic
-    ├── modals.js          # Modal handlers
-    ├── effects.js         # Visual effects
-    └── app.js             # Initialization
+```bash
+python3 -m http.server 8000
 ```
 
-## 💾 Lưu trữ dữ liệu
+Mở: http://localhost:8000/index.html
 
-### LocalStorage Keys
-- `onePiecePirates`: Danh sách hải tặc
-- `onePieceRankImages`: Ảnh cấp độ custom
+Có thể mở trực tiếp `index.html`, nhưng chạy HTTP server ổn định hơn với Firebase và upload ảnh.
 
-### Cấu trúc dữ liệu Pirate
-```javascript
-{
-  name: "Monkey D. Luffy",
-  bounty: 3000,           // Tiền truy nã
-  image: "base64...",     // Ảnh đại diện (nullable)
-  type: "commander"       // Loại cấp độ hiện tại
-}
+## Chạy online bằng GitHub Pages
+
+1. Push repository lên GitHub branch `main`.
+2. Vào **Settings → Pages**.
+3. Chọn **Deploy from a branch**.
+4. Chọn branch `main` và thư mục `/root`.
+5. Mở URL GitHub Pages được cung cấp.
+
+GitHub Pages chỉ phục vụ giao diện. Dữ liệu dùng chung nhiều máy cần Firebase Realtime Database. Firebase config nằm trong `js/firebase-config.js`.
+
+## Các trang
+
+### `index.html` - Trang chính
+
+- Danh sách pirate và bounty.
+- Tìm kiếm pirate.
+- Lọc theo băng nhóm.
+- Lọc theo cấp bounty.
+- Cộng/trừ bounty nhanh.
+- Thêm một hoặc nhiều pirate.
+- Công điểm hàng loạt.
+- Xem pirate có bounty cao nhất.
+- In Wanted Poster.
+- Upload và đổi avatar.
+- Cài ảnh mặc định theo cấp độ.
+- Đăng nhập/đăng xuất.
+- Hiển thị nhanh streak và bounty của học sinh.
+- Nút truy cập nhanh nhiệm vụ ngày và Quiz nhanh.
+- Firebase Sync bật mặc định trên thiết bị mới.
+
+### `admin.html` - Trang quản trị
+
+#### Quản lý pirate
+
+- Thêm, sửa, xóa pirate.
+- Gán băng nhóm.
+- Chỉnh bounty.
+- Upload avatar.
+- Tìm kiếm, chọn nhiều và xóa hàng loạt.
+- Thống kê tổng pirate, tổng bounty và cấp cao nhất.
+
+#### Quản lý băng nhóm
+
+- Thêm, sửa, xóa băng nhóm.
+- Captain, icon, màu sắc và ảnh băng nhóm.
+- Thống kê thành viên và bounty.
+
+#### Quản lý cấp độ
+
+- Thêm, sửa, xóa rank.
+- Cấu hình tên, icon, màu và bounty tối thiểu.
+- Upload ảnh theo rank.
+
+#### Quản lý tài khoản
+
+- Thêm, sửa, xóa tài khoản.
+- Username, email, nickname hiển thị.
+- Gán pirate.
+- Gán lớp 3/4/5 và môn Tin học/Công nghệ.
+- Vai trò user, moderator hoặc admin.
+- Trạng thái active, inactive hoặc banned.
+
+#### Quản lý nhiệm vụ
+
+- Tạo nhiệm vụ trắc nghiệm.
+- Tạo nhiệm vụ đặc biệt nộp ảnh.
+- Chọn lớp và môn.
+- Cấu hình điểm đúng/sai.
+- Thêm nhiều câu hỏi và đáp án.
+- Sửa, xóa và lọc nhiệm vụ.
+
+#### Duyệt bài nộp
+
+- Xem danh sách bài nộp.
+- Lọc theo trạng thái.
+- Xem hình ảnh học sinh gửi.
+- Chấm điểm.
+- Duyệt hoặc từ chối bài.
+- Ghi nhận xét.
+
+#### Quản lý phần thưởng
+
+- Thêm, sửa, xóa phần thưởng.
+- Cấu hình icon, mô tả, loại và số bounty cần đổi.
+- Giới hạn số lượt đổi.
+- Duyệt hoặc hủy giao dịch đổi thưởng.
+
+#### Quản lý vũ khí
+
+- Thêm, sửa, xóa vũ khí.
+- Loại, độ hiếm, icon và chỉ số.
+- Tỷ lệ rơi.
+- Trạng thái hoạt động.
+- Theo dõi số vũ khí đã rơi và đang trang bị.
+
+#### Gamification học tập
+
+- Cấu hình thưởng hoàn thành nhiệm vụ ngày.
+- Cấu hình bonus Quiz nhanh đúng 5/5.
+- Cấu hình số hoạt động cần để mở từng đảo.
+- Quản lý nickname, lớp và môn để bảng xếp hạng hoạt động chính xác.
+
+#### Sao lưu và đồng bộ
+
+- Xuất dữ liệu JSON.
+- Nhập dữ liệu JSON.
+- Tự backup trước khi nhập hoặc xóa toàn bộ pirate.
+- Khôi phục backup gần nhất.
+- Đồng bộ dữ liệu lên Firebase.
+
+### `user.html` - Trang học sinh
+
+- Hồ sơ cá nhân và avatar.
+- Pirate được liên kết.
+- Bounty, rank, băng nhóm và thứ hạng.
+- Chuỗi đăng nhập hằng ngày.
+- Level và thanh XP.
+- Huy hiệu thành tích.
+- Lịch sử học tập và đổi thưởng.
+- Kho vũ khí, trang bị và gỡ vũ khí.
+- Đổi phần thưởng bằng bounty.
+- Đổi mật khẩu.
+- Chọn lớp và môn để xem nhiệm vụ.
+- Làm nhiệm vụ trắc nghiệm.
+- Nộp bài đặc biệt bằng hình ảnh.
+- Theo dõi tiến độ nhiệm vụ ngày.
+- Quiz nhanh 5 câu mỗi ngày.
+- Bonus khi trả lời đúng liên tiếp.
+- Bản đồ 5 đảo tiến trình học tập.
+- Bảng xếp hạng theo nickname, lớp và môn.
+
+### `battle.html` - Chiến trường boss
+
+- Hiển thị boss và HP.
+- Tối đa 5 lượt đánh mỗi ngày.
+- Reset lượt theo ngày.
+- Gây sát thương theo bounty và vũ khí.
+- Hạ boss và mở boss tiếp theo.
+- Nhận bounty sau khi hạ boss.
+- Rơi vũ khí ngẫu nhiên.
+- Nhật ký chiến đấu.
+- Reset tiến độ battle thủ công.
+- Đồng bộ tiến độ battle online qua Firebase.
+- Có fallback localStorage khi offline.
+
+## Gamification
+
+### Chuỗi đăng nhập
+
+- Mỗi ngày đăng nhập được tính streak.
+- Streak liên tiếp giúp học sinh duy trì động lực.
+- Có thưởng bounty theo mốc đăng nhập.
+
+### Nhiệm vụ ngày
+
+Gồm 3 mục:
+
+- Hoàn thành một Quiz nhanh.
+- Nộp một bài học.
+- Đạt ít nhất 80 điểm.
+
+Khi hoàn thành đủ, học sinh nhận phần thưởng được admin cấu hình.
+
+### Quiz nhanh
+
+- 5 câu hỏi ngẫu nhiên.
+- Mỗi ngày một lượt.
+- Lấy câu hỏi từ kho quiz admin.
+- Có bộ câu hỏi mặc định nếu chưa có quiz nào.
+- Đúng liên tiếp 5/5 nhận bonus.
+
+### Bản đồ đảo
+
+- Đảo Khởi Đầu.
+- Đảo Tin Học.
+- Đảo Công Nghệ.
+- Grand Line.
+- Raftel Tri Thức.
+
+Mỗi đảo mở theo số hoạt động học tập đã hoàn thành.
+
+### Huy hiệu
+
+- Chiến Binh 3 Ngày.
+- Bài Học Đầu Tiên.
+- Bounty 1K.
+- Thợ Săn Boss.
+- Người Mở Rương.
+
+## Dữ liệu và đồng bộ
+
+Ứng dụng dùng `localStorage` làm cache local và Firebase Realtime Database để đồng bộ giữa các máy.
+
+Các nhóm dữ liệu chính:
+
+- Pirate, bounty, crew và rank image.
+- Account và liên kết pirate.
+- Quest, attempt và submission.
+- Reward và exchange.
+- Weapon và user weapon.
+- Battle progress.
+- Login streak, daily progress và vật phẩm rương.
+
+Khi Firebase không khả dụng, các chức năng local vẫn tiếp tục hoạt động. Khi dùng nhiều máy, nên bật Firebase Sync trên tất cả thiết bị.
+
+## Backup dữ liệu
+
+Trong `admin.html`:
+
+- Chọn **Xuất dữ liệu** để tải file JSON.
+- Chọn **Nhập dữ liệu** để khôi phục từ file.
+- Ứng dụng tự tạo backup trước thao tác nhập hoặc xóa toàn bộ.
+- Nút **Khôi phục** dùng để lấy lại backup gần nhất.
+
+Nên xuất backup định kỳ trước khi chỉnh sửa dữ liệu lớn.
+
+## Cấu trúc chính
+
+```text
+index.html       Trang chính
+admin.html       Quản trị
+user.html        Hồ sơ học sinh
+battle.html      Chiến trường boss
+css/             Giao diện
+js/pirates.js    Pirate và bounty
+js/admin.js      Chức năng admin
+js/auth.js       Đăng nhập local
+js/user-quests.js Nhiệm vụ, quiz và bài nộp
+js/battle.js     Battle và vũ khí
+js/firebase-sync.js Đồng bộ Firebase
+js/utils.js      Toast và tiện ích an toàn
 ```
 
-## 🚀 Cách sử dụng
+## Lưu ý
 
-1. **Mở file**: Double click `index.html`
-2. **Thêm hải tặc**: Click "👤 Thêm Hải Tặc"
-3. **Tăng bounty**: Dùng nút +10 hoặc +100
-4. **Xem top**: Click "🎯 Truy Nã Gắt"
-5. **Cài đặt**: Click "🏴‍☠️ Cài Đặt Cấp Độ"
-
-## 🎯 Mẹo sử dụng
-
-- Bounty càng cao, card càng có hiệu ứng đẹp
-- King rank (10K+) có animation glow đặc biệt
-- Upload ảnh rank để tự động thay avatar khi thăng cấp
-- Filter giúp quản lý khi có nhiều hải tặc
-- Dữ liệu tự động lưu sau mỗi thay đổi
-
-## 🔧 Tùy chỉnh
-
-### Thay đổi cấp độ bounty
-Sửa trong `js/pirates.js` → function `getRankByBounty()`
-
-### Thêm hiệu ứng
-Thêm animation vào `css/effects.css`
-
-### Thay icon
-Sửa icon trong `getRankByBounty()` hoặc upload ảnh mới
-
-## 📝 Ghi chú
-
-- **Responsive**: Hoạt động tốt trên mobile/tablet
-- **No server needed**: Chạy trực tiếp HTML
-- **Browser**: Chrome, Firefox, Edge, Safari
-- **LocalStorage limit**: ~5-10MB (đủ cho hàng nghìn hải tặc)
-
----
-
-**🏴‍☠️ Set sail for the Grand Line! 🏴‍☠️**
+- Đây là web cá nhân, dữ liệu tài khoản hiện được lưu phía client.
+- Không dùng mật khẩu thật hoặc dữ liệu nhạy cảm.
+- Firebase Rules cần được cấu hình phù hợp nếu mở cho nhiều người dùng.
+- Sau khi cập nhật code trên GitHub Pages, hãy refresh mạnh trình duyệt nếu vẫn thấy giao diện cũ.

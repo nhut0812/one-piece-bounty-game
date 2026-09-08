@@ -819,6 +819,161 @@ body {
   min-height: 20px;
 }
 
+.progress-section,
+.learning-history-section,
+.chest-section {
+  margin-bottom: 30px;
+  padding: 25px;
+  background: rgba(44, 62, 80, 0.75);
+  border: 2px solid rgba(243, 156, 18, 0.35);
+  border-radius: 18px;
+}
+
+.progress-summary,
+.history-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.xp-track {
+  height: 14px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 10px;
+}
+
+.xp-bar {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #f39c12, #2ecc71);
+  transition: width 0.5s ease;
+}
+
+.achievement-list,
+.chest-inventory {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.achievement,
+.chest-item {
+  padding: 8px 12px;
+  color: #95a5a6;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(149, 165, 166, 0.35);
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.achievement.earned {
+  color: #fff;
+  border-color: #f39c12;
+  background: rgba(243, 156, 18, 0.2);
+}
+
+.history-row {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.history-row small {
+  color: #95a5a6;
+}
+
+.daily-section,
+.island-section,
+.leaderboard-section {
+  margin-bottom: 30px;
+  padding: 25px;
+  background: rgba(44, 62, 80, 0.75);
+  border: 2px solid rgba(52, 152, 219, 0.35);
+  border-radius: 18px;
+}
+
+.daily-task {
+  padding: 8px 0;
+  color: #bdc3c7;
+}
+
+.daily-task.done {
+  color: #2ecc71;
+}
+
+.daily-progress-track {
+  height: 12px;
+  margin: 12px 0 8px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 10px;
+}
+
+.daily-progress-track > div {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #3498db, #2ecc71);
+  transition: width 0.4s ease;
+}
+
+.leaderboard-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.leaderboard-filters select {
+  padding: 9px;
+  color: #ecf0f1;
+  background: #2c3e50;
+  border: 1px solid #526579;
+  border-radius: 8px;
+}
+
+.leaderboard-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.island-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 12px;
+}
+
+.island {
+  padding: 15px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.22);
+  border: 2px solid #566573;
+  border-radius: 14px;
+}
+
+.island.open {
+  border-color: #f39c12;
+  box-shadow: 0 0 16px rgba(243, 156, 18, 0.25);
+}
+
+.island.locked {
+  opacity: 0.55;
+}
+
+.island-icon {
+  margin-bottom: 8px;
+  font-size: 32px;
+}
+
+.island small {
+  display: block;
+  margin-top: 6px;
+  color: #95a5a6;
+}
+
 .form-actions {
   display: flex;
   gap: 15px;
